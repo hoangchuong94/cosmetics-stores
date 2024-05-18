@@ -1,31 +1,29 @@
-'use client';
+"use client";
 
-import { useSearchParams } from 'next/navigation';
-import React, { Suspense, useState, useTransition } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useSearchParams } from "next/navigation";
+import React, { useState, useTransition } from "react";
 
-import { newVerificationEmail } from '@/actions/new-verification';
-import { Button } from '@/components/ui/button';
-import MessageForm from '@/components/auth/message-form';
-import Link from 'next/link';
-import PageTitle from '@/components/page-title';
-import { FormError } from '@/components/form-error';
-import { FormSuccess } from '@/components/form-success';
+import { newVerificationEmail } from "@/actions/new-verification";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import PageTitle from "@/components/page-title";
+import { FormError } from "@/components/form-error";
+import { FormSuccess } from "@/components/form-success";
 
 export default function NewVerificationPage() {
-  const searchParams = useSearchParams();
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
-  const tokenParam = searchParams.get('token');
   const [isPending, startTransition] = useTransition();
+  const searchParams = useSearchParams();
+  const tokenParam = searchParams.get("token");
 
   const handlerVerificationEmail = () => {
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
     startTransition(() => {
       if (!tokenParam) {
-        setError('Missing token!');
+        setError("Missing token!");
         return;
       }
 
@@ -35,7 +33,7 @@ export default function NewVerificationPage() {
           setError(data.error);
         })
         .catch(() => {
-          setError('Something went wrong!');
+          setError("Something went wrong!");
         });
     });
   };
@@ -49,11 +47,11 @@ export default function NewVerificationPage() {
           {success ? (
             <>
               <FormSuccess message={success} />
-              <Link href={'/login'} className="my-4 block text-center">
-                Click{' '}
+              <Link href={"/login"} className="my-4 block text-center">
+                Click{" "}
                 <span className="border-b-2 border-b-blue-800 text-blue-600">
                   here
-                </span>{' '}
+                </span>{" "}
                 to return to the login page
               </Link>
             </>
