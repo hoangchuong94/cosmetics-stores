@@ -48,11 +48,11 @@ export default async function Account({
 }: AvatarProps) {
   const session = await auth();
   return (
-    <>
+    <div className={className}>
       {session?.user ? (
         <DropdownMenu>
           <DropdownMenuTrigger className="outline-none">
-            <Avatar className={className}>
+            <Avatar>
               <AvatarImage src={src} alt={alt} />
               <AvatarFallback>{labelFallback}</AvatarFallback>
             </Avatar>
@@ -125,6 +125,6 @@ export default async function Account({
           </Link>
         </>
       )}
-    </>
+    </div>
   );
 }

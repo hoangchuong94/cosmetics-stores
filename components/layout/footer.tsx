@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import Logo from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { listCategory } from "@/data/placeholder";
@@ -8,7 +9,7 @@ import { Facebook, Instagram, Twitter } from "lucide-react";
 export default function Footer() {
   return (
     <div className="p-5">
-      <div className="flex flex-col border border-b-slate-300 bg-[#d4a6b6]/70 p-5 md:flex-row md:justify-between">
+      <div className="flex flex-col border border-b-slate-300 bg-[#d4a6b6]/70 p-5 md:flex-row md:justify-between md:items-center">
         <h3 className="text-center text-xl uppercase text-black">
           Subscribe to our newsletter
         </h3>
@@ -27,14 +28,16 @@ export default function Footer() {
           </Button>
         </div>
       </div>
-      <div className="flex flex-col items-center justify-center border border-red-100 bg-[#d4a6b6]/70 p-5 md:flex-row md:justify-between">
+
+      <div className="flex flex-col space-y-8 items-center justify-center border border-red-100 bg-[#d4a6b6]/70 p-5 md:flex-row md:justify-between">
         <Logo
           alt="logo header"
           href="/"
           urlStatic={lgoImage}
           className="h-auto w-24"
         />
-        <div className="mt-8 cursor-pointer uppercase flex flex-col justify-center items-center">
+
+        <div className="cursor-pointer uppercase flex flex-col justify-center items-center md:flex md:items-start">
           {listCategory.map((category) => (
             <div className="hover:text-white" key={category.id}>
               {category.name}
@@ -42,28 +45,30 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="mt-8">
-          <ul className="flex cursor-pointer flex-col items-center justify-center">
-            <li className="hover:text-white">Refund Policy</li>
-            <li className="hover:text-white">Terms & Conditions</li>
-            <li className="hover:text-white">FAQ</li>
-            <li className="hover:text-white">Privacy Policy</li>
-          </ul>
-        </div>
+        <ul className="flex cursor-pointer flex-col items-center justify-center md:items-start">
+          <li className="hover:text-white">Refund Policy</li>
+          <li className="hover:text-white">Terms & Conditions</li>
+          <li className="hover:text-white">FAQ</li>
+          <li className="hover:text-white">Privacy Policy</li>
+          <li className="hover:text-white">
+            <Link href={"/contact"}>Contact</Link>
+          </li>
+          <li className="hover:text-white">
+            <Link href={"/about"}>About</Link>
+          </li>
+        </ul>
 
-        <div className="my-8">
-          <ul className="flex">
-            <li className="mx-4">
-              <Facebook />
-            </li>
-            <li className="mx-4">
-              <Instagram />
-            </li>
-            <li className="mx-4">
-              <Twitter />
-            </li>
-          </ul>
-        </div>
+        <ul className="flex">
+          <li className="mx-4">
+            <Facebook />
+          </li>
+          <li className="mx-4">
+            <Instagram />
+          </li>
+          <li className="mx-4">
+            <Twitter />
+          </li>
+        </ul>
       </div>
     </div>
   );
