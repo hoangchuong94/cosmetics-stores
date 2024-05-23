@@ -4,10 +4,12 @@ import Account from "@/components/account";
 import ShoppingCardIcon from "@/components/layout/shopping-cart";
 import NavMobile from "@/components/layout/nav-mobile";
 import Navbar from "@/components/layout/nav-bar";
-import { auth } from "@/auth";
+import { fetchCategories } from "@/data/fetch-categories";
+
 export default async function Header() {
+  const categories = await fetchCategories();
   return (
-    <header className="min-w-full bg-white px-5">
+    <header className="min-w-full bg-white px-5 fixed z-50 shadow-lg">
       <div className="flex h-20 items-center justify-between">
         <Logo
           alt="logo header"
@@ -15,7 +17,7 @@ export default async function Header() {
           urlStatic={lgoImage}
           className="mr-3 h-auto w-24"
         />
-        <Navbar />
+        <Navbar categories={categories} />
         <div className="flex h-full items-center justify-between">
           <ShoppingCardIcon />
           <Account

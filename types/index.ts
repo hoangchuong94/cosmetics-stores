@@ -1,45 +1,15 @@
-import { StaticImageData } from 'next/image';
+import {
+  Category as PrismaCategory,
+  SubCategory as PrismaSubCategory,
+  Product as PrismaProduct,
+} from "@prisma/client";
 
-export enum UserRole {
-    USER,
-    ADMIN,
+export interface Product extends PrismaProduct {}
+
+export interface SubCategory extends PrismaSubCategory {
+  products: Product[];
 }
 
-export enum Status {
-    ERROR = 'ERROR',
-    SUCCESS = 'SUCCESS',
+export interface Category extends PrismaCategory {
+  subCategories: SubCategory[];
 }
-
-export type LoginErrorField = {
-    email?: string[];
-    password?: string[];
-};
-
-export type RegisterErrorField = {
-    name?: string[];
-    email?: string[];
-    password?: string[];
-    passwordConfirm?: string[];
-};
-
-export type MessageLogin = {
-    errors?: LoginErrorField;
-    message: string | null;
-    type: Status;
-};
-
-export type MessageRegister = {
-    errors?: RegisterErrorField;
-    message: string | null;
-    type: Status;
-};
-
-export type Product = {
-    id: string;
-    name: string;
-    image: StaticImageData;
-    description: string;
-    price: number;
-    sale: number;
-    star: number;
-};

@@ -5,14 +5,7 @@ import Image from "next/image";
 import { Product as ProductType } from "@/types";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
-export default function Product({
-  id,
-  name,
-  image,
-  price,
-  star,
-  sale,
-}: ProductType) {
+export default function Product({ id, name, image, price, sale }: ProductType) {
   return (
     <Card className="rounded-none border border-none shadow-none">
       <CardContent className="p-0">

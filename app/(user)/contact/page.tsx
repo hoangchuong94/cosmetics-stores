@@ -12,6 +12,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
@@ -109,10 +110,10 @@ export default function ContactPage() {
                   <FormItem>
                     <FormLabel>Message</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Enter your message"
-                        {...field}
+                      <Textarea
+                        placeholder="Tell us a little bit about yourself"
                         className="border border-gray-950/50"
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />

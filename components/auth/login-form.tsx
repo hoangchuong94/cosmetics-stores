@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-import { Key, Mail, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import githubIcon from "/public/icon/github-icon.svg";
 import googleIcon from "/public/icon/google-icon.svg";
 

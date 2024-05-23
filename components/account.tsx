@@ -33,12 +33,12 @@ import { auth, signOut } from "@/auth";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-type AvatarProps = {
+interface AvatarProps {
   src: string;
   labelFallback: string;
   alt?: string;
   className?: string;
-};
+}
 
 export default async function Account({
   src,
