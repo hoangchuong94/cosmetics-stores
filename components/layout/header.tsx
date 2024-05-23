@@ -26,7 +26,7 @@ export default async function Header() {
             labelFallback="AV"
             alt="user avatar"
           />
-          <NavMobile />
+          <NavMobile categories={categories} />
         </div>
       </div>
     </header>

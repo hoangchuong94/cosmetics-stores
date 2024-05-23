@@ -24,21 +24,22 @@ export default function Navbar({ categories }: NavbarProps) {
         <NavigationMenuList>
           {categories.map((category) => (
             <NavigationMenuItem key={category.id}>
-              <NavigationMenuTrigger className="max-[800]:px2 font-normal uppercase transition-all hover:bg-slate-100 hover:text-rose-300">
+              <NavigationMenuTrigger className="max-[800]:px2 font-normal uppercase transition-all hover:bg-slate-100">
                 {category.name}
               </NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid w-[400px] gap-3 bg-white p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                   {category.subCategories.map((subcategory) => (
                     <div key={subcategory.id}>
-                      <h3 className="text-red-300">{subcategory.name}</h3>
-                      {subcategory.products.map((product) => (
-                        <ListItem
-                          key={product.id}
-                          className="hover:underline hover:underline-offset-1"
-                        >
-                          {product.name}
-                        </ListItem>
+                      <h3 className="text-red-300 select-none">
+                        {subcategory.name}
+                      </h3>
+                      {subcategory.detailCategories.map((product) => (
+                        <div key={product.id} className="my-3">
+                          <ListItem className="p-0 hover:cursor-pointer hover:underline hover:underline-offset-1">
+                            {product.name}
+                          </ListItem>
+                        </div>
                       ))}
                     </div>
                   ))}

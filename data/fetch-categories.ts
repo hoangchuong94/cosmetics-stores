@@ -7,16 +7,11 @@ export const fetchCategories = async (): Promise<Category[]> => {
       include: {
         subCategories: {
           include: {
-            products: true,
+            detailCategories: true,
           },
         },
       },
     });
-
-    categories.forEach((category) =>
-      category.subCategories.forEach((subCategory) => console.log(subCategory))
-    );
-
     return categories;
   } catch (error) {
     console.error("Error fetching categories:", error);

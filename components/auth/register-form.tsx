@@ -161,7 +161,8 @@ function LoginButton() {
       className="my-4 flex w-full items-center justify-center text-sm"
     >
       <p className="text-black">
-        You Have An Account ? <span className="text-blue-500">click here</span>
+        You Have An Account ?{" "}
+        <span className="text-blue-500 active:opacity-5">click here</span>
       </p>
     </Link>
   );

@@ -5,9 +5,13 @@ import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
 import AccordionWrapped from "@/components/accordion-wrapper";
-import { listCategory } from "@/data/placeholder";
+import { Category } from "@/types";
 
-export default function NavMobile() {
+interface NavbarProps {
+  categories: Category[];
+}
+
+export default function NavMobile({ categories }: NavbarProps) {
   const [showMenuMobile, setShowMenuMobile] = useState(false);
 
   return (
@@ -24,14 +28,14 @@ export default function NavMobile() {
       </Toggle>
       {showMenuMobile && (
         <div className="md:hidden absolute z-50 right-0 top-20 flex w-full flex-col bg-white border border-t-[#e5e7eb] shadow-md">
-          {listCategory.map((category) => (
+          {categories.map((category) => (
             <AccordionWrapped
               trigger={category.name}
               value={category.id}
               key={category.id}
               className="bg-red-100/50"
             >
-              {category.subcategories.map((subcategory) => (
+              {category.subCategories.map((subcategory) => (
                 <AccordionWrapped
                   trigger={subcategory.name}
                   value={subcategory.id}
@@ -39,13 +43,13 @@ export default function NavMobile() {
                   className="bg-slate-100 mx-[-20px] border-yellow-50 border"
                 >
                   <ul>
-                    {subcategory.products.map((product) => (
+                    {subcategory.detailCategories.map((detailCategory) => (
                       <li
-                        key={product.id}
+                        key={detailCategory.id}
                         className="py-5 px-5 border hover:bg-orange-200/20 hover:underline hover:underline-offset-1 transition-all border-y-slate-200 border-x-0 mx-[-20px]"
                       >
-                        <Link href={product.href} className="block">
-                          {product.name}
+                        <Link href={"/"} className="block">
+                          {detailCategory.name}
                         </Link>
                       </li>
                     ))}

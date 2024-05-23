@@ -195,7 +195,7 @@ function RegisterButton() {
     >
       <p className="text-black">
         Do not have an account ?{" "}
-        <span className="text-blue-500">click here</span>
+        <span className="text-blue-500 active:opacity-5">click here</span>
       </p>
     </Link>
   );

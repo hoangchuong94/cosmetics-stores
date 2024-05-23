@@ -64,7 +64,9 @@ model Category {
   createdAt         DateTime      @default(now()) @map(name: "created_at")
   updatedAt         DateTime      @updatedAt @map(name: "updated_at")
   subCategories     SubCategory[]
+
   @@map("categories")
+  @@unique([name])
 }
 
 model SubCategory {
@@ -74,23 +76,55 @@ model SubCategory {
   updatedAt         DateTime      @updatedAt @map(name: "updated_at")
   categoryId        String        @map("category_id")
   category          Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  products          Product[]
+  detailCategories  DetailCategory[]
+
   @@map("sub_categories")
+}
+
+model DetailCategory{
+  id                String        @id @default(cuid())
+  name              String        
+  createdAt         DateTime      @default(now()) @map(name: "created_at")
+  updatedAt         DateTime      @updatedAt @map(name: "updated_at")
+  subCategoryId     String        @map("sub_category_id")
+  subCategory       SubCategory   @relation(fields: [subCategoryId], references: [id], onDelete: Cascade)
+  products          Product[]
+
+  @@map("detail_categories")
 }
 
 model Product {
   id                String        @id @default(cuid())
   name              String
   description       String
+  type              String
   image             String
   price             Float
-  sale              Int 
   quantity          Int
+  capacity          Int?
   createdAt         DateTime      @default(now()) @map(name: "created_at")
   updatedAt         DateTime      @updatedAt @map(name: "updated_at")
-  subCategoryId     String        @map("sub_category_id")
-  subCategory       SubCategory   @relation(fields: [subCategoryId], references: [id], onDelete: Cascade)
+  detailCategoryId  String        @map("detail_category_id")
+  detailCategory    DetailCategory@relation(fields: [detailCategoryId], references: [id], onDelete: Cascade)
+  promotionId       String        @map("promotion_id")
+  promotion         Promotion     @relation(fields: [promotionId], references: [id], onDelete: Cascade) 
 
   @@map("products")
+  @@unique([name, price])
   
+}
+
+
+model Promotion {
+  id                String        @id @default(cuid())
+  name              String
+  description       String
+  startDay          DateTime      @default(now()) @map(name: "start_day")
+  endDay            DateTime?
+  createdAt         DateTime      @default(now()) @map(name: "created_at")
+  updatedAt         DateTime      @updatedAt @map(name: "updated_at")
+  products          Product[]
+
+  @@map("promotions")
+  @@unique([name])
 }
