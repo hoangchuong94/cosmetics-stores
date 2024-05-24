@@ -1,15 +1,23 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 import Prisma from "@/lib/prisma";
 
-export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const categories = await Prisma.category.findMany({
-    include: {
-      subCategories: {
-        include: {
-          detailCategories: true,
+export const GET = async () => {
+  try {
+    const categories = await Prisma.category.findMany({
+      include: {
+        subCategories: {
+          include: {
+            detailCategories: true,
+          },
         },
       },
-    },
-  });
-  return res.status(200).json({ categories });
+    });
+    return NextResponse.json({ categories });
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
 };
