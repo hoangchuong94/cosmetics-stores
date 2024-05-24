@@ -7,7 +7,7 @@ export const GET = async (req: NextApiRequest) => {
     include: {
       subCategories: {
         include: {
-          product: true,
+          detailCategories: true,
         },
       },
     },

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -11,13 +11,28 @@ import {
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { Category } from "@/types";
+import useSWR from "swr";
+import { fetcher } from "@/lib/api";
+import axios from "axios";
 
 interface NavbarProps {
   categories: Category[];
 }
 
 export default function Navbar({ categories }: NavbarProps) {
-  categories.forEach((category) => console.log(category.subCategories));
+  // useEffect(() => {
+  //   const email = "hoangchuong300494@gmail.com";
+  //   axios
+  //     .post("http://localhost:3000/api/user", {
+  //       email,
+  //     })
+  //     .then((response) => {
+  //       console.log(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching user:", error);
+  //     });
+  // }, []);
   return (
     <div>
       <NavigationMenu className="z-20 hidden font-sans md:block">

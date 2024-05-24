@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const instance = axios.create({
+const axiosInstance = axios.create({
   baseURL: process.env.URL,
   timeout: 40000,
   headers: {
@@ -9,14 +9,14 @@ const instance = axios.create({
   },
 });
 
-export const fetcher = async (url: string) => {
-  return instance.get(url).then((res) => {
-    if (!res.data) {
-      throw Error(res.data.message);
-    }
-
-    return res.data;
-  });
+export const fetcher = async (url: string, options = {}) => {
+  try {
+    const response = await axiosInstance(url, options);
+    return response.data;
+  } catch (error) {
+    console.error("Error retrieving data:", error);
+    throw new Error("Could not get data");
+  }
 };
 
-export default instance;
+export default axiosInstance;

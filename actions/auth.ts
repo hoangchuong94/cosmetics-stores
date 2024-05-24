@@ -58,6 +58,8 @@ export async function authenticate(
       switch (error.type) {
         case "CredentialsSignin":
           return { error: "Invalid credentials!" };
+        case "OAuthAccountNotLinked":
+          return { error: "Invalid Account not Link" };
         default:
           return { error: "Something went wrong!" };
       }

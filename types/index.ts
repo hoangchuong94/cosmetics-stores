@@ -3,6 +3,7 @@ import {
   SubCategory as PrismaSubCategory,
   DetailCategory as PrismaDetailCategory,
   Product as PrismaProduct,
+  UserRole,
 } from "@prisma/client";
 
 export interface Product extends PrismaProduct {}
@@ -17,4 +18,10 @@ export interface SubCategory extends PrismaSubCategory {
 
 export interface Category extends PrismaCategory {
   subCategories: SubCategory[];
+}
+
+declare module "next-auth" {
+  interface User {
+    role: UserRole;
+  }
 }
