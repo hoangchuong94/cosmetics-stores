@@ -1,9 +1,9 @@
 import React from "react";
 import Product from "@/components/product";
-import { Product as PrismaProduct } from "@prisma/client";
+import { ProductType } from "@/types";
 
 interface Props {
-  products: PrismaProduct[];
+  products: ProductType[];
 }
 
 export default function ProductList({ products }: Props) {

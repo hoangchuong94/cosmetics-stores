@@ -5,6 +5,7 @@ import {
   Product as PrismaProduct,
   UserRole,
 } from "@prisma/client";
+import { StaticImageData } from "next/image";
 
 export interface Product extends PrismaProduct {}
 
@@ -24,4 +25,16 @@ declare module "next-auth" {
   interface User {
     role: UserRole;
   }
+}
+
+export interface ProductType {
+  id: string;
+  name: string;
+  description: string;
+  type: string;
+  image: StaticImageData;
+  price: number;
+  sale: number;
+  star: number;
+  quantity: number;
 }

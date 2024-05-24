@@ -3,10 +3,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { Star } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Product as PrismaProduct } from "@prisma/client";
+import { ProductType } from "@/types";
 
 interface Props {
-  product: PrismaProduct;
+  product: ProductType;
 }
 
 export default function Product({ product }: Props) {
