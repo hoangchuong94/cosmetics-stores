@@ -12,7 +12,7 @@ export const fetchCategories = async (): Promise<Category[]> => {
         },
       },
     });
-    return categories;
+    return categories as Category[];
   } catch (error) {
     console.error("Error fetching categories:", error);
     return [];

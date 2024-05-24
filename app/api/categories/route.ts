@@ -1,8 +1,7 @@
-import { NextApiRequest } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import Prisma from "@/lib/prisma";
-import { unstable_noStore as noStore } from "next/cache";
 
-export const GET = async (req: NextApiRequest) => {
+export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const categories = await Prisma.category.findMany({
     include: {
       subCategories: {
@@ -12,5 +11,5 @@ export const GET = async (req: NextApiRequest) => {
       },
     },
   });
-  return Response.json({ categories });
+  return res.status(200).json({ categories });
 };
