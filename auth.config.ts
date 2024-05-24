@@ -1,6 +1,6 @@
 import type { NextAuthConfig } from "next-auth";
 import prisma from "@/lib/prisma";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 import google from "next-auth/providers/google";
 import github from "next-auth/providers/github";
 import facebook from "next-auth/providers/facebook";
@@ -24,7 +24,10 @@ export default {
 
         if (
           !user ||
-          !(await bcrypt.compare(String(credentials.password), user.password!))
+          !(await bcryptjs.compare(
+            String(credentials.password),
+            user.password!
+          ))
         ) {
           return null;
         }

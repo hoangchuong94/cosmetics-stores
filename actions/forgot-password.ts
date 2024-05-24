@@ -1,7 +1,7 @@
 "use server";
 import * as z from "zod";
 import prisma from "@/lib/prisma";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 import { getVerificationByToken } from "./verification-token";
 import { ForgotPasswordSchema, EmailSchema } from "@/schema";
 import { generateVerificationToken } from "@/lib/tokens";
@@ -23,7 +23,7 @@ export const forgotPassword = async (
     }
 
     const { password } = validatedFields.data;
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcryptjs.hash(password, 10);
 
     const existingToken = await getVerificationByToken(token);
 
