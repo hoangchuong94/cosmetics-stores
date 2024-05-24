@@ -1,8 +1,8 @@
 "use server";
 import * as z from "zod";
 import prisma from "@/lib/prisma";
+import argon2 from "argon2";
 import { getVerificationByToken } from "./verification-token";
-import { hash } from "bcryptjs";
 import { ForgotPasswordSchema, EmailSchema } from "@/schema";
 import { generateVerificationToken } from "@/lib/tokens";
 import { sendVerificationForgotPassword } from "@/lib/mail";
@@ -23,7 +23,7 @@ export const forgotPassword = async (
     }
 
     const { password } = validatedFields.data;
-    const hashedPassword = await hash(password, 12);
+    const hashedPassword = await argon2.hash(password);
 
     const existingToken = await getVerificationByToken(token);
 

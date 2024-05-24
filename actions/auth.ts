@@ -2,7 +2,7 @@
 import prisma from "@/lib/prisma";
 import * as z from "zod";
 import { signIn } from "@/auth";
-import { hash } from "bcryptjs";
+import argon2 from "argon2";
 import { AuthError } from "next-auth";
 import { LoginSchema, RegisterSchema } from "@/schema/index";
 
@@ -78,7 +78,7 @@ export async function register(values: z.infer<typeof RegisterSchema>) {
     }
 
     const { email, password, name } = validatedFields.data;
-    const hashedPassword = await hash(password, 12);
+    const hashedPassword = await argon2.hash(password);
 
     const existingUser = await prisma.user.findUnique({
       where: { email },
