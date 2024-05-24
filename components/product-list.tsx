@@ -1,25 +1,21 @@
-import { Product as ProductType } from "@/types";
 import React from "react";
-import Product from "./product";
+import Product from "@/components/product";
 
-interface ProductListProps {
-  products: ProductType[];
-}
-
-export default function ProductList({ products }: ProductListProps) {
+export default function ProductList(products: any) {
   return (
     <div className="grid grid-cols-2 gap-4 py-6 md:grid md:grid-cols-3 lg:grid lg:grid-cols-4">
-      {products.map((product) => (
-        <Product
-          key={product.id}
-          id={product.id}
-          image={product.image}
-          name={product.name}
-          description={product.description}
-          price={product.price}
-          quantity={product.quantity}
-          sale={product.sale}
-        />
+      {products.map((product: any) => (
+        <div key={product.id}>
+          <Product
+            id={product.id}
+            name={product.name}
+            description={product.description}
+            type={product.type}
+            image={product.image}
+            price={product.price}
+            quantity={product.quantity}
+          />
+        </div>
       ))}
     </div>
   );

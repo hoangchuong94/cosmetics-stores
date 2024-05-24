@@ -2,16 +2,15 @@ import React from "react";
 import Link from "next/link";
 import { Star } from "lucide-react";
 import Image from "next/image";
-import { Product as ProductType } from "@/types";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
-export default function Product({ id, name, image, price, sale }: ProductType) {
+export default function Product({ product }: any) {
   return (
     <Card className="rounded-none border border-none shadow-none">
       <CardContent className="p-0">
         <Link href={`/products/${name}`}>
           <div className="relative">
-            <Image src={image} alt={`image product ${name}`} priority />
+            <Image src={product.image} alt={`image product ${name}`} priority />
             <div className="absolute left-2 top-2 rounded-2xl bg-white px-4 shadow-md">
               <span>Sale !</span>
             </div>
@@ -28,13 +27,13 @@ export default function Product({ id, name, image, price, sale }: ProductType) {
             <Star className="h-4 w-4 stroke-1 sm:h-6 sm:w-6" />
           </div>
           <Link href={`/products/${name}`}>
-            <p className="mt-2">{name}</p>
+            <p className="mt-2">{product.name}</p>
           </Link>
           <div className="mt-2 flex items-center justify-start font-bold ">
-            <p className={`${sale && "text-gray-400 line-through"}`}>
-              ${price}
-            </p>
-            {sale && <p className="ml-2 text-sm text-black">${sale}</p>}
+            {/* <p className={`${sale && "text-gray-400 line-through"}`}>
+              ${product.price}
+            </p> */}
+            {/* {sale && <p className="ml-2 text-sm text-black">${sale}</p>} */}
           </div>
         </div>
       </CardFooter>
