@@ -1,6 +1,6 @@
 import type { NextAuthConfig } from "next-auth";
 import prisma from "@/lib/prisma";
-import argon2 from "argon2";
+import bcrypt from "bcrypt";
 import google from "next-auth/providers/google";
 import github from "next-auth/providers/github";
 import facebook from "next-auth/providers/facebook";
@@ -24,7 +24,7 @@ export default {
 
         if (
           !user ||
-          !(await argon2.verify(String(credentials.password), user.password!))
+          !(await bcrypt.compare(String(credentials.password), user.password!))
         ) {
           return null;
         }

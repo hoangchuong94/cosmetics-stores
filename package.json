@@ -23,9 +23,8 @@
         "@radix-ui/react-slot": "^1.0.2",
         "@radix-ui/react-toggle": "^1.0.3",
         "@react-hook/window-size": "^3.1.1",
-        "@types/bcryptjs": "^2.4.6",
-        "argon2": "^0.40.1",
         "axios": "^1.7.0",
+        "bcrypt": "^5.1.1",
         "class-variance-authority": "^0.7.0",
         "clsx": "^2.1.0",
         "lucide-react": "^0.365.0",
@@ -44,6 +43,7 @@
         "zod": "^3.23.0"
     },
     "devDependencies": {
+        "@types/bcrypt": "^5.0.2",
         "@types/node": "^20.11.30",
         "@types/nodemailer": "^6.4.14",
         "@types/react": "^18",
