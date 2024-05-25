@@ -41,8 +41,6 @@ export default function LoginForm() {
       ? "Email already in use with different providers!"
       : "";
 
-  console.log(urlError);
-
   const signInProvider = (provider: string) => {
     signIn(provider, {
       callbackUrl: callbackUrl || DEFAULT_LOGIN_REDIRECT,

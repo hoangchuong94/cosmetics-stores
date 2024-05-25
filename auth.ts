@@ -1,7 +1,11 @@
 import NextAuth from "next-auth";
-import prisma from "@/lib/prisma";
-import authConfig from "@/auth.config";
-import { PrismaAdapter } from "@auth/prisma-adapter";
+import { authConfig } from "@/auth.config";
+import Credentials from "next-auth/providers/credentials";
+import Prisma from "@/lib/prisma";
+import bcryptjs from "bcryptjs";
+import google from "next-auth/providers/google";
+import github from "next-auth/providers/github";
+import facebook from "next-auth/providers/facebook";
 
 export const {
   handlers: { GET, POST },
@@ -9,61 +13,33 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
-  adapter: PrismaAdapter(prisma),
-  session: { strategy: "jwt" },
   ...authConfig,
-  pages: {
-    signIn: "/login",
-    error: "/error",
-  },
-  callbacks: {
-    jwt: async ({ token, user }) => {
-      if (user && token.sub) {
-        const exitingUser = await prisma.user.findUnique({
-          where: {
-            id: token.sub,
-          },
-        });
-        if (exitingUser) {
-          token.role = exitingUser.role;
+  providers: [
+    google,
+    github,
+    facebook,
+    Credentials({
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials.password) {
+          return null;
         }
-        return token;
-      }
-
-      return token;
-    },
-    session: async ({ session, token }) => {
-      if (token.sub) {
-        return { ...session, user: session.user, role: token.role };
-      }
-      return session;
-    },
-    signIn: async ({ user, account }) => {
-      if (account?.provider !== "credentials") return true;
-
-      if (user && user.id) {
-        const exitingUser = await prisma.user.findUnique({
+        const user = await Prisma.user.findUnique({
           where: {
-            id: user.id,
+            email: String(credentials.email),
           },
         });
 
-        if (!exitingUser?.emailVerified) {
-          return false;
+        if (
+          !user ||
+          !(await bcryptjs.compare(
+            String(credentials.password),
+            user.password!
+          ))
+        ) {
+          return null;
         }
-      }
-
-      return true;
-    },
-  },
-  events: {
-    linkAccount: async ({ user }) => {
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          emailVerified: new Date(),
-        },
-      });
-    },
-  },
+        return user;
+      },
+    }),
+  ],
 });

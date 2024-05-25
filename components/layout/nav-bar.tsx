@@ -14,25 +14,13 @@ import { Category } from "@/types";
 import useSWR from "swr";
 import { fetcher } from "@/lib/api";
 import axios from "axios";
+import { getUserService } from "@/data/fetch-user";
 
 interface NavbarProps {
   categories: Category[];
 }
 
 export default function Navbar({ categories }: NavbarProps) {
-  // useEffect(() => {
-  //   const email = "hoangchuong300494@gmail.com";
-  //   axios
-  //     .post("http://localhost:3000/api/user", {
-  //       email,
-  //     })
-  //     .then((response) => {
-  //       console.log(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching user:", error);
-  //     });
-  // }, []);
   return (
     <div>
       <NavigationMenu className="z-20 hidden font-sans md:block">

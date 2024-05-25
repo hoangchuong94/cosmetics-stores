@@ -109,7 +109,7 @@ export default async function Account({
               <form
                 action={async () => {
                   "use server";
-                  await signOut();
+                  await signOut({ redirectTo: "/login" });
                 }}
               >
                 <button type="submit">Log out</button>

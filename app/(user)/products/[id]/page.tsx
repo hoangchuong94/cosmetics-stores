@@ -15,7 +15,6 @@ import product1c from "@/public/products/product-12-c.jpg";
 import { Button } from "@/components/ui/button";
 
 export default function ProductDetail({ params }: { params: { id: string } }) {
-  console.log(params.id);
   const [quantity, setQuantity] = useState(1);
   const [selectedOption, setSelectedOption] = useState("");
   return (

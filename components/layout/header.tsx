@@ -9,7 +9,6 @@ import { getUserService } from "@/data/fetch-user";
 
 export default async function Header() {
   const categories = await fetchCategories();
-
   return (
     <header className="min-w-full bg-white px-5 fixed z-50 shadow-lg">
       <div className="flex h-20 items-center justify-between">

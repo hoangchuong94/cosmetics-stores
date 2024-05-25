@@ -1,7 +1,7 @@
-'use client';
-import { useSession } from 'next-auth/react';
+"use client";
+import { useSession } from "next-auth/react";
 
 export const useCurrentUser = () => {
-    const currentUser = useSession();
-    return currentUser.data?.user;
+  const currentUser = useSession();
+  return currentUser.data?.user;
 };

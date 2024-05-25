@@ -1,7 +1,6 @@
 import React from "react";
 import { auth, signOut } from "@/auth";
 import { Button } from "@/components/ui/button";
-import { redirect } from "next/navigation";
 
 const SettingsPage = async () => {
   const session = await auth();
@@ -14,7 +13,9 @@ const SettingsPage = async () => {
         className="p-16"
         action={async () => {
           "use server";
-          await signOut();
+          await signOut({
+            redirectTo: "/login",
+          });
         }}
       >
         <Button className="mt-6" type="submit">

@@ -31,7 +31,6 @@ export const sendVerificationEmail = async ({
       html: confirmLink,
     });
   } catch (error) {
-    console.log(error);
     return { error: "Sending authentication email failed" };
   }
 };
@@ -62,7 +61,6 @@ export const sendVerificationForgotPassword = async (
       html: confirmLink,
     });
   } catch (error) {
-    console.log(error);
     return { error: "Sending authentication email failed" };
   }
 };
