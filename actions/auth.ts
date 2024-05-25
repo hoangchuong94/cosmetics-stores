@@ -48,11 +48,19 @@ export async function authenticate(
   }
 
   try {
-    await signIn("credentials", {
-      email,
-      password,
-      redirectTo: callbackUrl || DEFAULT_LOGIN_REDIRECT,
-    });
+    if (user.role === "USER") {
+      await signIn("credentials", {
+        email,
+        password,
+        redirectTo: callbackUrl || "/",
+      });
+    } else {
+      await signIn("credentials", {
+        email,
+        password,
+        redirectTo: callbackUrl || DEFAULT_LOGIN_REDIRECT,
+      });
+    }
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {

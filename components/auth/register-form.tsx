@@ -21,6 +21,7 @@ import { register } from "@/actions/auth";
 import Link from "next/link";
 import PageTitle from "@/components/page-title";
 import { ArrowRight } from "lucide-react";
+import LoadingSpinner from "@/components/loading-spinner";
 
 export default function RegisterForm() {
   const [error, setError] = useState<string | undefined>("");
@@ -139,7 +140,7 @@ export default function RegisterForm() {
             type="submit"
           >
             {isPending ? (
-              <p>Loading...</p>
+              <LoadingSpinner />
             ) : (
               <>
                 <p>Register</p>

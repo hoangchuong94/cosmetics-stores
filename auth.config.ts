@@ -4,30 +4,55 @@ import {
   authRoutes,
   publicRoutes,
 } from "@/routes";
+import bcryptjs from "bcryptjs";
+import Prisma from "@/lib/prisma";
+import Credentials from "next-auth/providers/credentials";
+import google from "next-auth/providers/google";
+import github from "next-auth/providers/github";
+import facebook from "next-auth/providers/facebook";
 import type { NextAuthConfig } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import prisma from "@/lib/prisma";
 
 export const authConfig = {
   pages: {
     signIn: "/login",
   },
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(Prisma),
   session: { strategy: "jwt" },
+  providers: [
+    google,
+    github,
+    facebook,
+    Credentials({
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials.password) {
+          return null;
+        }
+        const user = await Prisma.user.findUnique({
+          where: {
+            email: String(credentials.email),
+          },
+        });
+
+        if (
+          !user ||
+          !(await bcryptjs.compare(
+            String(credentials.password),
+            user.password!
+          ))
+        ) {
+          return null;
+        }
+        return user;
+      },
+    }),
+  ],
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
       const isAuthRoute = authRoutes.includes(nextUrl.pathname);
       const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
-
-      if (isLoggedIn) {
-        if (auth.user.role === "USER" && isApiAuthRoute) {
-          return true;
-        } else if (auth.user.role === "USER" && !isPublicRoute) {
-          return Response.redirect(new URL("/feedback", nextUrl));
-        }
-      }
 
       if (isApiAuthRoute) {
         if (nextUrl.href.includes("error")) {
@@ -38,20 +63,24 @@ export const authConfig = {
       }
 
       if (isAuthRoute) {
-        if (isLoggedIn) {
+        if (isLoggedIn && auth.user.role === "ADMIN") {
           return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
+        }
+
+        if (isLoggedIn && auth.user.role === "USER") {
+          return Response.redirect(new URL("/", nextUrl));
         }
         return true;
       }
 
-      if (!isLoggedIn && !isPublicRoute) {
+      if (isLoggedIn && !isPublicRoute && auth.user.role !== "ADMIN") {
         let callbackUrl = nextUrl.pathname;
         if (nextUrl.search) {
           callbackUrl += nextUrl.search;
         }
         const encodedUrl = encodeURIComponent(callbackUrl);
         return Response.redirect(
-          new URL(`/login?callbackUrl=${encodedUrl}`, nextUrl)
+          new URL(`/feedback?callbackUrl=${encodedUrl}`, nextUrl)
         );
       }
 
@@ -76,7 +105,7 @@ export const authConfig = {
       if (account?.provider !== "credentials") return true;
 
       if (user && user.id) {
-        const exitingUser = await prisma.user.findUnique({
+        const exitingUser = await Prisma.user.findUnique({
           where: {
             id: user.id,
           },
@@ -92,7 +121,7 @@ export const authConfig = {
   },
   events: {
     linkAccount: async ({ user }) => {
-      await prisma.user.update({
+      await Prisma.user.update({
         where: { id: user.id },
         data: {
           emailVerified: new Date(),
@@ -100,5 +129,4 @@ export const authConfig = {
       });
     },
   },
-  providers: [],
 } satisfies NextAuthConfig;

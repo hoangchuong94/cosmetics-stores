@@ -28,6 +28,8 @@ import {
 } from "@/actions/forgot-password";
 import PageTitle from "@/components/page-title";
 import { ArrowRight } from "lucide-react";
+import LoadingSpinner from "@/components/loading-spinner";
+
 export default function ForgotPasswordPage() {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
@@ -171,7 +173,7 @@ export default function ForgotPasswordPage() {
               type="submit"
             >
               {isPending ? (
-                <p>Loading...</p>
+                <LoadingSpinner />
               ) : (
                 <>
                   <p>Reset password</p>

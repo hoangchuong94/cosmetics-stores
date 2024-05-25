@@ -29,6 +29,7 @@ import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import PageTitle from "@/components/page-title";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
+import LoadingSpinner from "@/components/loading-spinner";
 
 export default function LoginForm() {
   const [error, setError] = useState<string | undefined>("");
@@ -138,7 +139,7 @@ export default function LoginForm() {
             type="submit"
           >
             {isPending ? (
-              <p>Loading...</p>
+              <LoadingSpinner />
             ) : (
               <>
                 <p>Login</p>
