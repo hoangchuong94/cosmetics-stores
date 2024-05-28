@@ -1,11 +1,10 @@
 import lgoImage from "@/public/static/logo-retina.png";
 import Logo from "@/components/logo";
 import Account from "@/components/account";
-import ShoppingCardIcon from "@/components/layout/shopping-cart";
-import NavMobile from "@/components/layout/nav-mobile";
-import Navbar from "@/components/layout/nav-bar";
 import { fetchCategories } from "@/data/fetch-categories";
-import { getUserService } from "@/data/fetch-user";
+import ShoppingCard from "./shopping-cart";
+import Navbar from "./nav-bar";
+import NavMobile from "./nav-mobile";
 
 export default async function Header() {
   const categories = await fetchCategories();
@@ -20,7 +19,7 @@ export default async function Header() {
         />
         <Navbar categories={categories} />
         <div className="flex h-full items-center justify-between">
-          <ShoppingCardIcon />
+          <ShoppingCard />
           <Account
             className="hidden md:block"
             src="/customers/amy-burns.png"

@@ -1,5 +1,5 @@
 import {
-  DEFAULT_LOGIN_REDIRECT,
+  DEFAULT_ADMIN_LOGIN_REDIRECT,
   apiAuthPrefix,
   authRoutes,
   publicRoutes,
@@ -25,7 +25,7 @@ export const authConfig = {
     facebook,
     Credentials({
       async authorize(credentials) {
-        if (!credentials?.email || !credentials.password) {
+        if (!credentials.email || !credentials.password) {
           return null;
         }
         const user = await Prisma.user.findUnique({
@@ -64,7 +64,9 @@ export const authConfig = {
 
       if (isAuthRoute) {
         if (isLoggedIn && auth.user.role === "ADMIN") {
-          return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
+          return Response.redirect(
+            new URL(DEFAULT_ADMIN_LOGIN_REDIRECT, nextUrl)
+          );
         }
 
         if (isLoggedIn && auth.user.role === "USER") {
@@ -73,15 +75,22 @@ export const authConfig = {
         return true;
       }
 
-      if (isLoggedIn && !isPublicRoute && auth.user.role !== "ADMIN") {
-        let callbackUrl = nextUrl.pathname;
-        if (nextUrl.search) {
-          callbackUrl += nextUrl.search;
+      if (!isPublicRoute) {
+        if (isLoggedIn && auth?.user.role !== "ADMIN") {
+          let callbackUrl = nextUrl.pathname;
+          if (nextUrl.search) {
+            callbackUrl += nextUrl.search;
+          }
+          const encodedUrl = encodeURIComponent(callbackUrl);
+          return Response.redirect(
+            new URL(`/feedback?callbackUrl=${encodedUrl}`, nextUrl)
+          );
         }
-        const encodedUrl = encodeURIComponent(callbackUrl);
-        return Response.redirect(
-          new URL(`/feedback?callbackUrl=${encodedUrl}`, nextUrl)
-        );
+
+        if (!isLoggedIn) {
+          return Response.redirect(new URL("/login", nextUrl));
+        }
+        return true;
       }
 
       return true;

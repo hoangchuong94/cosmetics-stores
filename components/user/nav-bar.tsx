@@ -11,10 +11,6 @@ import {
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { Category } from "@/types";
-import useSWR from "swr";
-import { fetcher } from "@/lib/api";
-import axios from "axios";
-import { getUserService } from "@/data/fetch-user";
 
 interface NavbarProps {
   categories: Category[];

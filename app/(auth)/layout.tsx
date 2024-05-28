@@ -4,7 +4,6 @@ import { Suspense } from "react";
 
 import Loading from "./loading";
 import logoImage from "@/public/static/logo-retina.png";
-
 import bgRegisterPage from "@/public/static/bg-registration-form-1.jpg";
 import Logo from "@/components/logo";
 

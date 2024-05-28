@@ -1,16 +1,25 @@
-import Image from 'next/image';
-
-import Logo from '@/components/logo';
-import bgRegisterPage from '/public/static/bg-registration-form-1.jpg';
-
+import Header from "@/components/admin/header";
+import SideNav from "@/components/side-nav";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 export default function AdminLayout({
-    children,
+  children,
 }: Readonly<{
-    children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-    return (
-        <main className="flex min-h-screen items-center justify-center ">
-            {children}
-        </main>
-    );
+  return (
+    <main className="min-h-screen">
+      <Header />
+      <ResizablePanelGroup direction="horizontal" className="min-h-[inherit]">
+        <ResizablePanel defaultSize={15} maxSize={20}>
+          <SideNav />
+        </ResizablePanel>
+        <ResizableHandle withHandle className="w-[2px] bg-slate-300" />
+        <ResizablePanel defaultSize={85}>{children}</ResizablePanel>
+      </ResizablePanelGroup>
+    </main>
+  );
 }

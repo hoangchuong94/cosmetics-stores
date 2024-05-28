@@ -6,7 +6,7 @@ import bcryptjs from "bcryptjs";
 import { AuthError } from "next-auth";
 import { LoginSchema, RegisterSchema } from "@/schema/index";
 
-import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
+import { DEFAULT_ADMIN_LOGIN_REDIRECT } from "@/routes";
 import { sendVerificationEmail } from "@/lib/mail";
 import { generateVerificationToken } from "@/lib/tokens";
 
@@ -58,7 +58,7 @@ export async function authenticate(
       await signIn("credentials", {
         email,
         password,
-        redirectTo: callbackUrl || DEFAULT_LOGIN_REDIRECT,
+        redirectTo: callbackUrl || DEFAULT_ADMIN_LOGIN_REDIRECT,
       });
     }
   } catch (error) {

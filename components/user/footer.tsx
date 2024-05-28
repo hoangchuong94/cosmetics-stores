@@ -8,7 +8,7 @@ import { Facebook, Instagram, Twitter } from "lucide-react";
 
 export default function Footer() {
   return (
-    <div className="p-5">
+    <>
       <div className="flex flex-col border border-b-slate-300 bg-[#d4a6b6]/70 p-5 md:flex-row md:justify-between md:items-center">
         <h3 className="text-center text-xl uppercase text-black">
           Subscribe to our newsletter
@@ -70,6 +70,6 @@ export default function Footer() {
           </li>
         </ul>
       </div>
-    </div>
+    </>
   );
 }

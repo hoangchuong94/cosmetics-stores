@@ -25,7 +25,7 @@ import googleIcon from "/public/icon/google-icon.svg";
 import { authenticate } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { LoginSchema } from "@/schema/index";
-import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
+import { DEFAULT_ADMIN_LOGIN_REDIRECT } from "@/routes";
 import PageTitle from "@/components/page-title";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
@@ -44,7 +44,7 @@ export default function LoginForm() {
 
   const signInProvider = (provider: string) => {
     signIn(provider, {
-      callbackUrl: callbackUrl || DEFAULT_LOGIN_REDIRECT,
+      callbackUrl: callbackUrl || DEFAULT_ADMIN_LOGIN_REDIRECT,
     });
   };
 

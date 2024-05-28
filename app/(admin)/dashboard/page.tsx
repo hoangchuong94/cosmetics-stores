@@ -1,13 +1,10 @@
 import React from "react";
 import { auth, signOut } from "@/auth";
+import SideNav from "@/components/side-nav";
 export default async function AdminPage() {
-  const session = await auth();
   return (
-    <div>
+    <div className="w-9/12 px-3">
       <h1>admin page</h1>
-      {/* <button onClick={() => signOut()}>logout</button>
-      {session?.user && session.user.role === "ADMIN" && <h1>admin page</h1>}
-      {session?.user && session.user.role === "USER" && <p>not alow</p>} */}
     </div>
   );
 }
