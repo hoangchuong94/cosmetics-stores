@@ -13,7 +13,7 @@ export default function AdminLayout({
     <main className="min-h-screen">
       <ResizablePanelGroup
         direction="horizontal"
-        className="hidden min-h-[inherit] md:block"
+        className="min-h-[inherit] md:block"
       >
         <ResizablePanel defaultSize={15}>
           <SideNav />
