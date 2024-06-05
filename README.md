@@ -1,2 +1,1 @@
-# cosmetics-stores
-project cosmetics-stores
+hello world

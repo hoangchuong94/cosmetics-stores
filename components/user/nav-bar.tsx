@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
+import React from 'react';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -8,9 +8,9 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
-import { cn } from "@/lib/utils";
-import { Category } from "@/types";
+} from '@/components/ui/navigation-menu';
+import { cn } from '@/lib/utils';
+import { Category } from '@/types';
 
 interface NavbarProps {
   categories: Category[];
@@ -30,7 +30,7 @@ export default function Navbar({ categories }: NavbarProps) {
                 <ul className="grid w-[400px] gap-3 bg-white p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                   {category.subCategories.map((subcategory) => (
                     <div key={subcategory.id}>
-                      <h3 className="text-red-300 select-none">
+                      <h3 className="select-none text-red-300">
                         {subcategory.name}
                       </h3>
                       {subcategory.detailCategories.map((product) => (
@@ -53,8 +53,8 @@ export default function Navbar({ categories }: NavbarProps) {
 }
 
 const ListItem = React.forwardRef<
-  React.ElementRef<"a">,
-  React.ComponentPropsWithoutRef<"a">
+  React.ElementRef<'a'>,
+  React.ComponentPropsWithoutRef<'a'>
 >(({ className, title, children, ...props }, ref) => {
   return (
     <li>
@@ -62,8 +62,8 @@ const ListItem = React.forwardRef<
         <a
           ref={ref}
           className={cn(
-            "hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors",
-            className
+            'hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors',
+            className,
           )}
           {...props}
         >
@@ -76,4 +76,4 @@ const ListItem = React.forwardRef<
     </li>
   );
 });
-ListItem.displayName = "ListItem";
+ListItem.displayName = 'ListItem';

@@ -1,15 +1,15 @@
-import React from "react";
-import Link from "next/link";
-import Logo from "@/components/logo";
-import { Button } from "@/components/ui/button";
-import { listCategory } from "@/data/placeholder";
-import lgoImage from "@/public/static/logo-retina.png";
-import { Facebook, Instagram, Twitter } from "lucide-react";
+import React from 'react';
+import Link from 'next/link';
+import Logo from '@/components/logo';
+import { Button } from '@/components/ui/button';
+import { listCategory } from '@/data/placeholder';
+import lgoImage from '@/public/static/logo-retina.png';
+import { Facebook, Instagram, Twitter } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <>
-      <div className="flex flex-col border border-b-slate-300 bg-[#d4a6b6]/70 p-5 md:flex-row md:justify-between md:items-center">
+    <div className="p-5">
+      <div className="flex flex-col border border-b-slate-300 bg-[#d4a6b6]/70 p-5 md:flex-row md:items-center md:justify-between">
         <h3 className="text-center text-xl uppercase text-black">
           Subscribe to our newsletter
         </h3>
@@ -21,7 +21,7 @@ export default function Footer() {
           />
           <Button
             className="rounded-sm bg-black uppercase text-white md:ml-2"
-            size={"lg"}
+            size={'lg'}
             type="submit"
           >
             subscribe
@@ -29,7 +29,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="flex flex-col space-y-8 items-center justify-center border border-red-100 bg-[#d4a6b6]/70 p-5 md:flex-row md:justify-between">
+      <div className="flex flex-col items-center justify-center space-y-8 border border-red-100 bg-[#d4a6b6]/70 p-5 md:flex-row md:justify-between">
         <Logo
           alt="logo header"
           href="/"
@@ -37,7 +37,7 @@ export default function Footer() {
           className="h-auto w-24"
         />
 
-        <div className="cursor-pointer uppercase flex flex-col justify-center items-center md:flex md:items-start">
+        <div className="flex cursor-pointer flex-col items-center justify-center uppercase md:flex md:items-start">
           {listCategory.map((category) => (
             <div className="hover:text-white" key={category.id}>
               {category.name}
@@ -49,12 +49,11 @@ export default function Footer() {
           <li className="hover:text-white">Refund Policy</li>
           <li className="hover:text-white">Terms & Conditions</li>
           <li className="hover:text-white">FAQ</li>
-          <li className="hover:text-white">Privacy Policy</li>
           <li className="hover:text-white">
-            <Link href={"/contact"}>Contact</Link>
+            <Link href={'/contact'}>Contact</Link>
           </li>
           <li className="hover:text-white">
-            <Link href={"/about"}>About</Link>
+            <Link href={'/about'}>About</Link>
           </li>
         </ul>
 
@@ -70,6 +69,6 @@ export default function Footer() {
           </li>
         </ul>
       </div>
-    </>
+    </div>
   );
 }

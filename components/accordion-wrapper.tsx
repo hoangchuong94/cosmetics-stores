@@ -1,16 +1,17 @@
-import React from "react";
+import React from 'react';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
+} from '@/components/ui/accordion';
 
 interface AccordionWrapped {
   value: string;
   trigger: string | React.ReactElement;
   children?: React.ReactNode;
   className?: string;
+  defaultValue?: boolean;
 }
 
 export default function AccordionWrapped({
@@ -18,14 +19,20 @@ export default function AccordionWrapped({
   trigger,
   children,
   className,
+  defaultValue,
 }: AccordionWrapped) {
   return (
-    <Accordion type="single" collapsible className={className}>
+    <Accordion
+      type="single"
+      collapsible
+      className={className}
+      defaultValue={defaultValue ? value : 'undefined'}
+    >
       <AccordionItem value={value}>
-        <AccordionTrigger className="uppercase px-5">
+        <AccordionTrigger className="px-5 uppercase">
           {trigger}
         </AccordionTrigger>
-        <AccordionContent className="bg-white pb-0 px-5">
+        <AccordionContent className="bg-white px-5 pb-0">
           {children}
         </AccordionContent>
       </AccordionItem>

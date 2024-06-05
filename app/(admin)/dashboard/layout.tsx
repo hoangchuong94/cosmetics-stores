@@ -1,10 +1,9 @@
-import Header from "@/components/admin/header";
-import SideNav from "@/components/side-nav";
+import SideNav from '@/components/side-nav';
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@/components/ui/resizable";
+} from '@/components/ui/resizable';
 export default function AdminLayout({
   children,
 }: Readonly<{
@@ -12,12 +11,14 @@ export default function AdminLayout({
 }>) {
   return (
     <main className="min-h-screen">
-      <Header />
-      <ResizablePanelGroup direction="horizontal" className="min-h-[inherit]">
-        <ResizablePanel defaultSize={15} maxSize={20}>
+      <ResizablePanelGroup
+        direction="horizontal"
+        className="hidden min-h-[inherit] md:block"
+      >
+        <ResizablePanel defaultSize={15}>
           <SideNav />
         </ResizablePanel>
-        <ResizableHandle withHandle className="w-[2px] bg-slate-300" />
+        <ResizableHandle withHandle className="w-1 bg-slate-300" />
         <ResizablePanel defaultSize={85}>{children}</ResizablePanel>
       </ResizablePanelGroup>
     </main>
