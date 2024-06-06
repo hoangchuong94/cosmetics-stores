@@ -11,8 +11,8 @@ export interface LogoProps {
 
 const Logo = ({ alt, href, urlStatic, className }: LogoProps) => {
     return (
-        <Link href={href}>
-            <Image src={urlStatic} alt={alt} className={className} priority />
+        <Link className={`block ${className}`} href={href}>
+            <Image src={urlStatic} alt={alt} priority />
         </Link>
     );
 };
