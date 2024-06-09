@@ -98,49 +98,44 @@ const menuItems = [
 const SideNav = async () => {
   const session = await auth();
   return (
-    <div className="min-h-screen">
-      <div className="custom-scrollbar flex h-screen w-full flex-wrap overflow-y-auto overflow-x-hidden bg-slate-500/50 p-3">
-        <div className="flex max-w-72 flex-1 flex-col items-center justify-between rounded-3xl bg-gradient-to-r from-indigo-300 to-red-50">
-          <div className="w-full">
-            <div className="flex w-full items-center justify-center py-4">
-              <Logo
-                alt="logo header"
-                href="/"
-                urlStatic={lgoImage}
-                className="light-logo h-auto max-w-24"
-              />
-            </div>
-            <div className="flex h-auto flex-col text-cyan-950 mix-blend-multiply">
-              {menuItems.map((item) => (
-                <AccordionWrapped
-                  trigger={item.name}
-                  value={item.id}
-                  key={item.id}
-                  className="bg-red-100/50"
-                >
-                  <ul className="cursor-pointer">
-                    {item.subMenu.map((subMenu) => (
-                      <li
-                        key={subMenu.id}
-                        className="mx-[-20px] border border-x-0 border-y-slate-200 bg-gray-100/50 px-5 py-5 hover:bg-blue-100/60 hover:underline hover:underline-offset-4"
-                      >
-                        <Link href={'/'} className="block">
-                          {subMenu.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </AccordionWrapped>
-              ))}
-            </div>
+    <div className="custom-scrollbar flex h-screen w-full flex-wrap overflow-y-auto overflow-x-hidden bg-slate-500/50 p-3">
+      <div className="flex max-w-72 flex-1 flex-col items-center justify-between rounded-3xl bg-gradient-to-r from-indigo-300 to-red-50">
+        <div className="w-full">
+          <div className="flex w-full items-center justify-center py-4">
+            <Logo
+              alt="logo header"
+              href="/"
+              urlStatic={lgoImage}
+              className="light-logo h-auto max-w-24"
+            />
           </div>
-          <div className="flex w-full items-center justify-center border-t border-t-slate-300 px-2 py-4">
-            {session?.user && (
-              <Account user={session.user} />
-            )}
+          <div className="flex h-auto flex-col text-cyan-950 mix-blend-multiply">
+            {menuItems.map((item) => (
+              <AccordionWrapped
+                trigger={item.name}
+                value={item.id}
+                key={item.id}
+                className="bg-red-100/50"
+              >
+                <ul className="cursor-pointer">
+                  {item.subMenu.map((subMenu) => (
+                    <li
+                      key={subMenu.id}
+                      className="mx-[-20px] border border-x-0 border-y-slate-200 bg-gray-100/50 px-5 py-5 hover:bg-blue-100/60 hover:underline hover:underline-offset-4"
+                    >
+                      <Link href={'/'} className="block">
+                        {subMenu.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </AccordionWrapped>
+            ))}
           </div>
         </div>
-        <div className=""></div>
+        <div className="flex w-full items-center justify-center border-t border-t-slate-300 px-2 py-4">
+          {session?.user && <Account user={session.user} />}
+        </div>
       </div>
     </div>
   );

@@ -8,8 +8,8 @@ import { Facebook, Instagram, Twitter } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <div className="p-5">
-      <div className="flex flex-col border border-b-slate-300 bg-[#d4a6b6]/70 p-5 md:flex-row md:items-center md:justify-between">
+    <footer className="p-5">
+      <section className="flex flex-col border border-b-slate-300 bg-[#d4a6b6]/70 p-5 md:flex-row md:items-center md:justify-between">
         <h3 className="text-center text-xl uppercase text-black">
           Subscribe to our newsletter
         </h3>
@@ -27,9 +27,9 @@ export default function Footer() {
             subscribe
           </Button>
         </div>
-      </div>
+      </section>
 
-      <div className="flex flex-col items-center justify-center space-y-8 border border-red-100 bg-[#d4a6b6]/70 p-5 md:flex-row md:justify-between">
+      <section className="flex flex-col items-center justify-center space-y-8 border border-red-100 bg-[#d4a6b6]/70 p-5 md:flex-row md:justify-between">
         <Logo
           alt="logo header"
           href="/"
@@ -68,7 +68,7 @@ export default function Footer() {
             <Twitter />
           </li>
         </ul>
-      </div>
-    </div>
+      </section>
+    </footer>
   );
 }

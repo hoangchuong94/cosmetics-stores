@@ -1,13 +1,18 @@
 import { SessionProvider } from 'next-auth/react';
+import { EdgeStoreProvider } from '@/lib/edgestore';
 
 import React from 'react';
 
 const Providers = ({
-    children,
+  children,
 }: Readonly<{
-    children: React.ReactNode;
+  children: React.ReactNode;
 }>) => {
-    return <SessionProvider>{children}</SessionProvider>;
+  return (
+    <SessionProvider>
+      <EdgeStoreProvider>{children}</EdgeStoreProvider>
+    </SessionProvider>
+  );
 };
 
 export default Providers;

@@ -10,19 +10,18 @@ export default function AdminLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <main className="min-h-screen">
-      <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel defaultSize={20}>
-          <SideNav />
-        </ResizablePanel>
-        <ResizableHandle
-          withHandle
-          className="w-1 bg-slate-200/50"
-        />
-        <ResizablePanel defaultSize={80}>
-          {children}
-        </ResizablePanel>
-      </ResizablePanelGroup>
-    </main>
+    <ResizablePanelGroup direction="horizontal">
+      <ResizablePanel defaultSize={20}>
+        <SideNav />
+      </ResizablePanel>
+      <ResizableHandle withHandle className="w-1 bg-slate-200/50" />
+      <ResizablePanel defaultSize={80}>
+        <div className="h-full w-full bg-slate-500/50 p-3">
+          <div className="h-full w-full rounded-3xl bg-white p-6">
+            {children}
+          </div>
+        </div>
+      </ResizablePanel>
+    </ResizablePanelGroup>
   );
 }

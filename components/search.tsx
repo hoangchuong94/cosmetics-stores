@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function Search() {
   return (
-    <div className="mx-3 min-w-20 md:min-w-80">
+    <div className="mx-2 min-w-20 md:min-w-80">
       <form action="">
         <div className="relative w-full max-w-md">
           <input

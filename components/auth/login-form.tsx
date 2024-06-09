@@ -1,12 +1,12 @@
-"use client";
-import { useState, useTransition } from "react";
-import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
-import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+'use client';
+import { useState, useTransition } from 'react';
+import { signIn } from 'next-auth/react';
+import { useSearchParams } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
+import * as z from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import {
   Form,
@@ -15,32 +15,35 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 
-import { ArrowRight } from "lucide-react";
-import githubIcon from "/public/icon/github-icon.svg";
-import googleIcon from "/public/icon/google-icon.svg";
+import { ArrowRight } from 'lucide-react';
+import githubIcon from '/public/icon/github-icon.svg';
+import googleIcon from '/public/icon/google-icon.svg';
 
-import { authenticate } from "@/actions/auth";
-import { Button } from "@/components/ui/button";
-import { LoginSchema } from "@/schema/index";
-import { DEFAULT_ADMIN_LOGIN_REDIRECT } from "@/routes";
-import PageTitle from "@/components/page-title";
-import { FormError } from "@/components/form-error";
-import { FormSuccess } from "@/components/form-success";
-import LoadingSpinner from "@/components/loading-spinner";
+import { authenticate } from '@/actions/auth';
+import { Button } from '@/components/ui/button';
+import { LoginSchema } from '@/schema/index';
+import { DEFAULT_ADMIN_LOGIN_REDIRECT } from '@/routes';
+import { FormError } from '@/components/form-error';
+import { FormSuccess } from '@/components/form-success';
+import CardWrapper from '@/components/card-wrapper';
+import LoadingSpinner from '@/components/loading-spinner';
+import { useToast } from '@/components/ui/use-toast';
+import { ToastAction } from '../ui/toast';
 
 export default function LoginForm() {
-  const [error, setError] = useState<string | undefined>("");
-  const [success, setSuccess] = useState<string | undefined>("");
+  const [error, setError] = useState<string | undefined>('');
+  const [success, setSuccess] = useState<string | undefined>('');
   const [isPending, startTransition] = useTransition();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl");
+  const callbackUrl = searchParams.get('callbackUrl');
+  const { toast } = useToast();
   const urlError =
-    searchParams.get("error") === "OAuthAccountNotLinked"
-      ? "Email already in use with different providers!"
-      : "";
+    searchParams.get('error') === 'OAuthAccountNotLinked'
+      ? 'Email already in use with different providers!'
+      : '';
 
   const signInProvider = (provider: string) => {
     signIn(provider, {
@@ -51,14 +54,14 @@ export default function LoginForm() {
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
   });
 
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-    setError("");
-    setSuccess("");
+    setError('');
+    setSuccess('');
 
     startTransition(() => {
       authenticate(values, callbackUrl)
@@ -66,6 +69,12 @@ export default function LoginForm() {
           if (data?.error) {
             form.reset();
             setError(data.error);
+            toast({
+              variant: 'destructive',
+              title: 'Uh oh! Something went wrong.',
+              description: 'There was a problem with your request.',
+              action: <ToastAction altText="Try again">Try again</ToastAction>,
+            });
           }
 
           if (data?.success) {
@@ -73,16 +82,19 @@ export default function LoginForm() {
             setSuccess(data.success);
           }
         })
-        .catch(() => setError("Something went wrong"));
+        .catch(() => setError('Something went wrong'));
     });
   };
 
   return (
-    <>
-      <PageTitle label="Login" />
-
+    <CardWrapper
+      className="md:rounded-l-none md:rounded-r-3xl"
+      headerLabel="Login"
+      footerLabel="Do not have an account ? "
+      footerHref="/register"
+    >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
           <div className="space-y-4">
             <FormField
               control={form.control}
@@ -125,15 +137,17 @@ export default function LoginForm() {
             />
           </div>
 
-          <Link
-            href="/forgot-password"
-            className="float-right text-sm text-blue-500 hover:text-blue-700"
-          >
-            Forgot password?
-          </Link>
+          <div>
+            <Link
+              href="/forgot-password"
+              className="float-right mb-4 mt-2 text-sm text-blue-500 hover:text-blue-700"
+            >
+              Forgot password?
+            </Link>
+          </div>
 
           <Button
-            className={`mt-6 w-full ${isPending && "bg-gray-700"}`}
+            className={`mt-6 w-full ${isPending && 'bg-gray-700'}`}
             aria-disabled={isPending}
             disabled={isPending}
             type="submit"
@@ -157,10 +171,10 @@ export default function LoginForm() {
         <p className="mx-1">OR</p>
         <span className="w-full border border-b-black"></span>
       </div>
-      <div className="flex py-1">
+      <div className="grid grid-cols-2 gap-2">
         <Button
           className="flex w-full justify-center border-2 border-solid border-b-gray-50 bg-slate-50/55 py-8 hover:bg-slate-300  hover:transition-all active:bg-slate-100"
-          onClick={() => signInProvider("google")}
+          onClick={() => signInProvider('google')}
         >
           <Image
             src={googleIcon}
@@ -172,7 +186,7 @@ export default function LoginForm() {
         </Button>
         <Button
           className="flex w-full justify-center border-2 border-solid border-b-gray-50 bg-slate-50/55 py-8 hover:bg-slate-300  hover:transition-all active:bg-slate-100"
-          onClick={() => signInProvider("github")}
+          onClick={() => signInProvider('github')}
         >
           <Image
             src={githubIcon}
@@ -183,21 +197,6 @@ export default function LoginForm() {
           />
         </Button>
       </div>
-      <RegisterButton />
-    </>
-  );
-}
-
-function RegisterButton() {
-  return (
-    <Link
-      href={"/register"}
-      className="my-4 flex w-full items-center justify-center text-sm"
-    >
-      <p className="text-black">
-        Do not have an account ?{" "}
-        <span className="text-blue-500 active:opacity-5">click here</span>
-      </p>
-    </Link>
+    </CardWrapper>
   );
 }
