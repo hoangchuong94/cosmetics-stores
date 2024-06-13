@@ -10,7 +10,6 @@ export default function AuthenticationLayout({
 }>) {
   return (
     <main className="h-screen">
-      {/* <Suspense fallback={<Loading />}> */}
       <div className="flex h-full w-full bg-red-300 p-4">
         <div className="relative hidden w-6/12 md:block">
           <Image
@@ -25,7 +24,6 @@ export default function AuthenticationLayout({
         </div>
         <div className="w-full md:w-6/12">{children}</div>
       </div>
-      {/* </Suspense> */}
     </main>
   );
 }
