@@ -4,15 +4,11 @@ import { EdgeStoreProvider } from '@/lib/edgestore';
 import React from 'react';
 
 const Providers = ({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) => {
-  return (
-    <SessionProvider>
-      <EdgeStoreProvider>{children}</EdgeStoreProvider>
-    </SessionProvider>
-  );
+    return <SessionProvider>{children}</SessionProvider>;
 };
 
 export default Providers;

@@ -1,5 +1,5 @@
 import React from 'react';
-import Background from './background';
+import Background from '@/components/user/background';
 import bg01 from '@/public/static/bg-001.jpg';
 import bg02 from '@/public/static/bg-02.jpg';
 

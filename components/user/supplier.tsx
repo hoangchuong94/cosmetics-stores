@@ -1,5 +1,5 @@
 import React from 'react';
-import SlideComponent from './slide';
+import SlideComponent from '../slide';
 
 const Supplier = () => {
     return (

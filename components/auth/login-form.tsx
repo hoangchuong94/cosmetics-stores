@@ -7,7 +7,6 @@ import Link from 'next/link';
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-
 import {
     Form,
     FormControl,
@@ -29,9 +28,8 @@ import { DEFAULT_ADMIN_LOGIN_REDIRECT } from '@/routes';
 import { FormError } from '@/components/form-error';
 import { FormSuccess } from '@/components/form-success';
 import CardWrapper from '@/components/card-wrapper';
-import LoadingSpinner from '@/components/loading-spinner';
+import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
 import { useToast } from '@/components/ui/use-toast';
-import { ToastAction } from '../ui/toast';
 
 export default function LoginForm() {
     const [error, setError] = useState<string | undefined>('');
@@ -69,17 +67,6 @@ export default function LoginForm() {
                     if (data?.error) {
                         form.reset();
                         setError(data.error);
-                        toast({
-                            variant: 'destructive',
-                            title: 'Uh oh! Something went wrong.',
-                            description:
-                                'There was a problem with your request.',
-                            action: (
-                                <ToastAction altText="Try again">
-                                    Try again
-                                </ToastAction>
-                            ),
-                        });
                     }
 
                     if (data?.success) {
@@ -134,11 +121,10 @@ export default function LoginForm() {
                                             className="border border-gray-800"
                                             {...field}
                                             disabled={isPending}
-                                            placeholder="******"
+                                            placeholder="Enter your password"
                                             type="password"
                                         />
                                     </FormControl>
-
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -174,6 +160,7 @@ export default function LoginForm() {
 
             <FormError message={error || urlError} />
             <FormSuccess message={success} />
+
             <div className="my-3 flex items-center justify-center">
                 <span className="w-full border  border-b-black"></span>
                 <p className="mx-1">OR</p>
