@@ -29,7 +29,6 @@ import { FormError } from '@/components/form-error';
 import { FormSuccess } from '@/components/form-success';
 import CardWrapper from '@/components/card-wrapper';
 import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
-import { useToast } from '@/components/ui/use-toast';
 
 export default function LoginForm() {
     const [error, setError] = useState<string | undefined>('');
@@ -37,7 +36,6 @@ export default function LoginForm() {
     const [isPending, startTransition] = useTransition();
     const searchParams = useSearchParams();
     const callbackUrl = searchParams.get('callbackUrl');
-    const { toast } = useToast();
     const urlError =
         searchParams.get('error') === 'OAuthAccountNotLinked'
             ? 'Email already in use with different providers!'
@@ -45,7 +43,7 @@ export default function LoginForm() {
 
     const signInProvider = (provider: string) => {
         signIn(provider, {
-            callbackUrl: callbackUrl || DEFAULT_ADMIN_LOGIN_REDIRECT,
+            callbackUrl: callbackUrl || '/',
         });
     };
 
