@@ -118,7 +118,14 @@ export default function ForgotPasswordPage() {
                             type="submit"
                             className="w-full"
                         >
-                            Send email
+                            {isPending ? (
+                                <LoadingSpinner />
+                            ) : (
+                                <>
+                                    <p>Send Email</p>
+                                    <ArrowRight className="ml-auto h-5 w-5 text-gray-50" />
+                                </>
+                            )}
                         </Button>
                     </form>
                 </Form>
