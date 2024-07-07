@@ -2,6 +2,7 @@
 import ToggleWife from '@/components/button-primary/toggle-wife';
 import Info from '@/components/button-primary/info';
 import React, { useState } from 'react';
+import ButtonPrimary from '@/components/button-primary/button-primary';
 
 const HomePage = () => {
     const [bypassPhone, setByPassPhone] = useState(false);
@@ -21,7 +22,7 @@ const HomePage = () => {
         }
     };
     return (
-        <div className="h-lvh w-full">
+        <div className="h-svh w-full">
             {wife ? (
                 <div className="relative h-full w-full">
                     {showFormInfo ? (
@@ -51,19 +52,11 @@ const HomePage = () => {
                                     </span>
 
                                     <button
-                                        type="button"
-                                        className="btn-wife mt-2 w-full border border-gray-500"
+                                        className="group relative overflow-hidden rounded-md border border-b-4 border-gray-400 bg-gray-950 px-4 py-2 font-medium text-gray-400 outline-none duration-300 hover:border-b hover:border-t-4 hover:brightness-150 active:opacity-75"
                                         onClick={handleSubmit}
                                     >
-                                        <strong>CONNECT</strong>
-                                        <div id="container-stars">
-                                            <div id="stars"></div>
-                                        </div>
-
-                                        <div id="glow">
-                                            <div className="circle"></div>
-                                            <div className="circle"></div>
-                                        </div>
+                                        <span className="absolute -top-[150%] left-0 inline-flex h-[5px] w-80 rounded-md bg-gray-400 opacity-50 shadow-[0_0_10px_10px_rgba(0,0,0,0.3)] shadow-gray-400 duration-500 group-hover:top-[150%]"></span>
+                                        CONNECT
                                     </button>
                                 </div>
                             </div>
