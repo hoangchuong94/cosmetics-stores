@@ -21,15 +21,12 @@ import { register } from '@/actions/auth';
 
 import { ArrowRight } from 'lucide-react';
 import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
-import CardWrapper from '@/components/card-wrapper';
-import { useToast } from '@/components/ui/use-toast';
-import { ToastAction } from '@/components/ui/toast';
+import AuthCardWrapper from '@/components/card-wrapper';
 
 export default function RegisterForm() {
     const [error, setError] = useState<string | undefined>('');
     const [success, setSuccess] = useState<string | undefined>('');
     const [isPending, startTransition] = useTransition();
-    const { toast } = useToast();
 
     const form = useForm<z.infer<typeof RegisterSchema>>({
         resolver: zodResolver(RegisterSchema),
@@ -59,7 +56,7 @@ export default function RegisterForm() {
     };
 
     return (
-        <CardWrapper
+        <AuthCardWrapper
             className="h-full md:rounded-l-none md:rounded-r-3xl"
             headerLabel="Register"
             footerLabel="You Have An Account ? "
@@ -166,6 +163,6 @@ export default function RegisterForm() {
                     </Button>
                 </form>
             </Form>
-        </CardWrapper>
+        </AuthCardWrapper>
     );
 }

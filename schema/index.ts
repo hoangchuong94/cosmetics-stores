@@ -63,3 +63,25 @@ export const ForgotPasswordSchema = z
         path: ['passwordConfirm'],
         message: 'Password confirmation is incorrect',
     });
+
+export const ProductSchema = z.object({
+    name: z
+        .string({ required_error: 'Product name is required' })
+        .min(1, 'Product name is required')
+        .min(6, 'Product name must be more than 6 characters')
+        .max(32, 'Product name must be less than 32 characters'),
+    description: z
+        .string({
+            required_error: 'Product description name is required',
+        })
+        .min(1, 'Please confirm your password')
+        .max(150, 'Product name must be less than 150 characters'),
+});
+
+export const InfoGirl = z.object({
+    fullName: z.string({ required_error: 'name is required' }),
+
+    phone: z.string({
+        required_error: 'name is required',
+    }),
+});

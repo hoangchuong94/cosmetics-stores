@@ -20,6 +20,7 @@ export default async function ProfilePage() {
                 <p className="mb-3">ID: {user?.id}</p>
                 <p className="mb-3">Name: {user?.name}</p>
                 <p className="mb-3">Email: {user?.email}</p>
+                <p className="mb-3">Email: {user?.role}</p>
             </div>
         </div>
     );

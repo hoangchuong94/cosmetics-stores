@@ -81,14 +81,14 @@ model SubCategory {
   @@map("sub_categories")
 }
 
-model DetailCategory{
+model DetailCategory {
   id                String        @id @default(cuid())
   name              String        
   createdAt         DateTime      @default(now()) @map(name: "created_at")
   updatedAt         DateTime      @updatedAt @map(name: "updated_at")
   subCategoryId     String        @map("sub_category_id")
   subCategory       SubCategory   @relation(fields: [subCategoryId], references: [id])
-  products          Product[]
+  products          ProductDetailCategory[]
 
   @@map("detail_categories")
 }
@@ -103,15 +103,13 @@ model Product {
   capacity          Int?
   createdAt         DateTime      @default(now()) @map(name: "created_at")
   updatedAt         DateTime      @updatedAt @map(name: "updated_at")
-  detailCategoryId  String        @map("detail_category_id")
-  detailCategory    DetailCategory@relation(fields: [detailCategoryId], references: [id])
-  promotionId       String        @map("promotion_id")
-  promotion         Promotion     @relation(fields: [promotionId], references: [id]) 
-  images            Image[]
+  detailCategories  ProductDetailCategory[]
+  images            ProductImage[]
+  colors            ProductColor[]
+  promotions        ProductPromotion[]
 
   @@map("products")
   @@unique([name, price])
-  
 }
 
 model Image {
@@ -119,10 +117,19 @@ model Image {
   url               String
   createdAt         DateTime      @default(now()) @map(name: "created_at")
   updatedAt         DateTime      @updatedAt @map(name: "updated_at")
-  productId         String
-  product           Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
-  @@map("images")
+  products          ProductImage[]
   
+  @@map("images")
+}
+
+model Color {
+  id                String        @id @default(cuid())
+  name              String
+  createdAt         DateTime      @default(now()) @map(name: "created_at")
+  updatedAt         DateTime      @updatedAt @map(name: "updated_at")
+  products          ProductColor[]
+
+  @@map("colors")
 }
 
 model Promotion {
@@ -133,8 +140,56 @@ model Promotion {
   endDay            DateTime?
   createdAt         DateTime      @default(now()) @map(name: "created_at")
   updatedAt         DateTime      @updatedAt @map(name: "updated_at")
-  products          Product[]
+  products          ProductPromotion[]
 
   @@map("promotions")
   @@unique([name])
 }
+
+model ProductDetailCategory {
+  productId        String
+  detailCategoryId String
+  product          Product       @relation(fields: [productId], references: [id])
+  detailCategory   DetailCategory @relation(fields: [detailCategoryId], references: [id])
+  
+  @@id([productId, detailCategoryId])
+  @@map("product_detail_categories")
+}
+
+model ProductImage {
+  productId String
+  imageId   String
+  product   Product @relation(fields: [productId], references: [id])
+  image     Image   @relation(fields: [imageId], references: [id])
+
+  @@id([productId, imageId])
+  @@map("product_images")
+}
+
+model ProductColor {
+  productId String
+  colorId   String
+  product   Product @relation(fields: [productId], references: [id])
+  color     Color   @relation(fields: [colorId], references: [id])
+
+  @@id([productId, colorId])
+  @@map("product_colors")
+}
+
+model ProductPromotion {
+  productId   String
+  promotionId String
+  product     Product   @relation(fields: [productId], references: [id])
+  promotion   Promotion @relation(fields: [promotionId], references: [id])
+
+  @@id([productId, promotionId])
+  @@map("product_promotions")
+}
+
+model Cte {
+  id    String        @id @default(cuid())
+  name  String
+  phone String
+   @@map("Cte")
+}
+

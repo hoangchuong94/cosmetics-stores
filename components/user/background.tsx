@@ -4,7 +4,7 @@ import { StaticImageData } from 'next/image';
 import { Button } from '../ui/button';
 import Link from 'next/link';
 
-interface CardWrapperProps {
+interface BackgroundProps {
     title: string;
     name: string;
     description: string;
@@ -18,7 +18,7 @@ export default function Background({
     name,
     image,
     fixed,
-}: CardWrapperProps) {
+}: BackgroundProps) {
     return (
         <div className="relative bg-transparent p-8">
             <div className="relative z-10 min-h-96 w-full py-[8%]">

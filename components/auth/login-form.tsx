@@ -24,10 +24,9 @@ import googleIcon from '/public/icon/google-icon.svg';
 import { authenticate } from '@/actions/auth';
 import { Button } from '@/components/ui/button';
 import { LoginSchema } from '@/schema/index';
-import { DEFAULT_ADMIN_LOGIN_REDIRECT } from '@/routes';
 import { FormError } from '@/components/form-error';
 import { FormSuccess } from '@/components/form-success';
-import CardWrapper from '@/components/card-wrapper';
+import AuthCardWrapper from '@/components/card-wrapper';
 import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
 
 export default function LoginForm() {
@@ -77,7 +76,7 @@ export default function LoginForm() {
     };
 
     return (
-        <CardWrapper
+        <AuthCardWrapper
             className="h-full md:rounded-l-none md:rounded-r-3xl"
             headerLabel="Login"
             footerLabel="Do not have an account ? "
@@ -190,6 +189,6 @@ export default function LoginForm() {
                     />
                 </Button>
             </div>
-        </CardWrapper>
+        </AuthCardWrapper>
     );
 }

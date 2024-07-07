@@ -8,7 +8,11 @@ const Providers = ({
 }: Readonly<{
     children: React.ReactNode;
 }>) => {
-    return <SessionProvider>{children}</SessionProvider>;
+    return (
+        <SessionProvider>
+            <EdgeStoreProvider>{children}</EdgeStoreProvider>
+        </SessionProvider>
+    );
 };
 
 export default Providers;
