@@ -83,6 +83,8 @@ export default function ProductPage() {
                     </SelectContent>
                 </Select>
             </div>
+
+            {/* <ProductList products={products} /> */}
         </div>
     );
 }

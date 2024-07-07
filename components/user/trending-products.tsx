@@ -57,7 +57,7 @@ export default function TrendingProducts() {
                 <h6 className="text-[#5d5b5b]">popular products</h6>
                 <h2 className="text-3xl">trending now</h2>
             </div>
-            <ProductList products={products} />
+            {/* <ProductList products={products} /> */}
         </div>
     );
 }

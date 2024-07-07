@@ -59,7 +59,7 @@ export default function BestSaleProducts() {
                 <h6 className="text-[#5d5b5b]">shop</h6>
                 <h2 className="text-3xl">best selling</h2>
             </div>
-            <ProductList products={products} />
+            {/* <ProductList products={products} /> */}
         </div>
     );
 }
