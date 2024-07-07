@@ -77,11 +77,3 @@ export const ProductSchema = z.object({
         .min(1, 'Please confirm your password')
         .max(150, 'Product name must be less than 150 characters'),
 });
-
-export const InfoGirl = z.object({
-    fullName: z.string({ required_error: 'name is required' }),
-
-    phone: z.string({
-        required_error: 'name is required',
-    }),
-});
