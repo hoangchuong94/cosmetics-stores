@@ -48,8 +48,8 @@ const Info = () => {
                     là anh không quen với lời nói ngọt ngào. Nên anh quyết định
                     viết những dòng này gửi đến em. Tình cờ thấy em, anh thật sự
                     bị cuốn hút bởi nụ cười dể thương của em có đôi lúc anh nghĩ
-                    về em và thật sự Anh rất muốn làm quen và hy vọng em cũng
-                    cảm thấy như vậy.
+                    về em thật sự Anh rất muốn làm quen với em và hy vọng em
+                    cũng cảm thấy như vậy
                 </div>
             </div>
 
