@@ -21,7 +21,7 @@ const HomePage = () => {
         }
     };
     return (
-        <div className="h-screen w-full">
+        <div className="h-lvh w-full">
             {wife ? (
                 <div className="relative h-full w-full">
                     {showFormInfo ? (
@@ -52,7 +52,7 @@ const HomePage = () => {
 
                                     <button
                                         type="button"
-                                        className="btn-wife mt-2"
+                                        className="btn-wife mt-2 w-full border border-gray-500"
                                         onClick={handleSubmit}
                                     >
                                         <strong>CONNECT</strong>
