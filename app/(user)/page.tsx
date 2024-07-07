@@ -31,7 +31,7 @@ const HomePage = () => {
                         </div>
                     ) : (
                         <div className="absolute inset-0 h-full w-full bg-slate-950 p-10">
-                            <div className="card-style-wife h-full w-full">
+                            <div className="card-style-wife h-full w-full rounded-lg">
                                 <div className="flex flex-1 flex-col items-center justify-center">
                                     <div className="form__group field">
                                         <input
