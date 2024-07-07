@@ -43,7 +43,7 @@ const Info = () => {
                 <div className="notiglow"></div>
                 <div className="notiborderglow"></div>
                 <div className="notititle">Chào Thân Ái</div>
-                <div className="notibody text-sm capitalize">
+                <div className="notibody font-serif text-base capitalize text-white">
                     Anh đã thử nghĩ ra mọi cách để bắt chuyện với em, nhưng chắc
                     là anh không quen với lời nói ngọt ngào. Nên anh quyết định
                     viết những dòng này gửi đến em. Tình cờ thấy em, anh thật sự
