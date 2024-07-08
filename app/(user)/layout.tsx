@@ -4,7 +4,6 @@ import { Viewport } from 'next';
 
 export const viewport: Viewport = {
     maximumScale: 1,
-    width: 'device-width',
 };
 export default function UserLayout({
     children,
@@ -13,10 +12,9 @@ export default function UserLayout({
 }>) {
     return (
         <>
-            {/* <Header />
-      {children}
-      <Footer /> */}
+            <Header />
             {children}
+            <Footer />
         </>
     );
 }
