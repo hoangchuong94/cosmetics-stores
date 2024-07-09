@@ -42,8 +42,8 @@
 .notititle {
     color: var(--color);
     padding: 0.65rem 0.25rem 0.4rem 1.25rem;
-    font-weight: 500;
-    font-size: 2rem;
+    font-weight: 400;
+    font-size: 1.8rem;
     transition: transform 300ms ease;
     z-index: 5;
 }
