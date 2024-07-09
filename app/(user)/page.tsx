@@ -74,7 +74,7 @@ const HomePage = () => {
                                     <div className="form__group field">
                                         <input
                                             type="password"
-                                            className="form__field"
+                                            className="form__field border-t-0"
                                             placeholder="Wife Password"
                                         />
                                         <label
