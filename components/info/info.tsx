@@ -38,7 +38,7 @@ const Info = () => {
     };
 
     return (
-        <div className="flex h-full flex-col space-y-4">
+        <div className="flex h-full flex-col">
             <div className="notification flex-1">
                 <div className="notiglow"></div>
                 <div className="notiborderglow"></div>
