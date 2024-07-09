@@ -12,9 +12,10 @@ export default function UserLayout({
 }>) {
     return (
         <>
-            <Header />
+            {/* <Header />
             {children}
-            <Footer />
+            <Footer /> */}
+            {children}
         </>
     );
 }

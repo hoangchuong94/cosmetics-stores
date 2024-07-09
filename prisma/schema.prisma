@@ -187,9 +187,10 @@ model ProductPromotion {
 }
 
 model Cte {
-  id    String        @id @default(cuid())
-  name  String
-  phone String
-   @@map("Cte")
+  id                String        @id @default(cuid())
+  name              String
+  phone             String
 }
+
+
 
