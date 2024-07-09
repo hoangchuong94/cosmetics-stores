@@ -48,8 +48,7 @@ const Info = () => {
                     anh không quen với những lời nói ngọt ngào. Nên anh quyết
                     định viết vài dòng này gửi đến em. Tình cờ thấy em, anh bị
                     cuốn hút bởi nụ cười dễ thương của em. Anh rất muốn làm quen
-                    và hy vọng em cũng cảm thấy như vậy. Em có thể cho anh cơ
-                    hội không?
+                    và hy vọng em cũng cảm thấy như vậy. Cho anh cơ hội em hấy ?
                 </div>
             </div>
 
