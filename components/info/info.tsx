@@ -43,13 +43,13 @@ const Info = () => {
                 <div className="notiglow"></div>
                 <div className="notiborderglow"></div>
                 <div className="notititle">Chào Thân Ái</div>
-                <div className="notibody font-serif text-sm capitalize text-white">
-                    Anh đã thử nghĩ ra mọi cách để bắt chuyện với em, nhưng chắc
-                    là anh không quen với lời nói ngọt ngào. Nên anh quyết định
-                    viết những dòng này gửi đến em. Tình cờ thấy em, anh thật sự
-                    bị cuốn hút bởi nụ cười dể thương của em có đôi lúc anh nghĩ
-                    về em thật sự Anh rất muốn làm quen với em và hy vọng em
-                    cũng cảm thấy như vậy
+                <div className="notibody font-sans text-base text-white">
+                    Anh đã thử nghĩ nhiều cách để bắt chuyện với em, nhưng có lẽ
+                    anh không quen với những lời nói ngọt ngào. Nên anh quyết
+                    định viết vài dòng này gửi đến em. Tình cờ thấy em, anh bị
+                    cuốn hút bởi nụ cười dễ thương của em. Anh rất muốn làm quen
+                    và hy vọng em cũng cảm thấy như vậy. Em có thể cho anh cơ
+                    hội để chúng ta hiểu nhau hơn không?
                 </div>
             </div>
 
