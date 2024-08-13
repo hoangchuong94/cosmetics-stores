@@ -1,7 +1,8 @@
-import React from 'react';
+'use server';
+import ControlPanelProducts from '@/components/admin/control-panel-products';
 
 const Products = () => {
-    return <div>list product</div>;
+    return <ControlPanelProducts />;
 };
 
 export default Products;

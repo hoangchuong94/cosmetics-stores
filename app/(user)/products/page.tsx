@@ -66,7 +66,7 @@ export default function ProductPage() {
             <h1 className="my-6 text-5xl">Skin Care</h1>
             <div className="flex items-center justify-between">
                 <p className="font-serif ">
-                    Showing 1–8 of 13 results Default sorting
+                    Showing 1-8 of 13 results Default sorting
                 </p>
                 <Select>
                     <SelectTrigger className="w-[180px]">

@@ -1,9 +1,3 @@
-@import '../components/styles/card.css';
-@import '../components/styles/tonggle.css';
-@import '../components/styles/input.css';
-@import '../components/styles/button.css';
-@import '../components/styles/notification.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

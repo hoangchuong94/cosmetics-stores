@@ -97,7 +97,7 @@ const menuItems = [
 const SideNav = async () => {
     const session = await auth();
     return (
-        <div className="custom-scrollbar flex h-screen w-full flex-wrap overflow-y-auto overflow-x-hidden bg-slate-500/50 p-3">
+        <div className="custom-scrollbar flex h-full w-full flex-wrap overflow-y-auto overflow-x-hidden bg-slate-500/50 p-3">
             <div className="flex max-w-72 flex-1 flex-col items-center justify-between rounded-3xl bg-gradient-to-r from-indigo-300 to-red-50">
                 <div className="w-full">
                     <div className="flex w-full items-center justify-center py-4">

@@ -7,7 +7,6 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { StaticImageData } from 'next/image';
 import Header from '@/components/auth/header';
 import Footer from '@/components/auth/footer';
 

@@ -26,7 +26,7 @@ import { Button } from '@/components/ui/button';
 import { LoginSchema } from '@/schema/index';
 import { FormError } from '@/components/form-error';
 import { FormSuccess } from '@/components/form-success';
-import AuthCardWrapper from '@/components/card-wrapper';
+import AuthCardWrapper from '@/components/auth-card-wrapper';
 import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
 
 export default function LoginForm() {

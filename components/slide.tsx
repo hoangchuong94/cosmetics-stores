@@ -61,17 +61,17 @@ const SlideComponent = () => {
     };
 
     return (
-        <div className="slider-container">
+        <div className="slider-container mt-2">
             <Slider {...settings}>
                 {slides.map((slide) => (
-                    <div className="pr-2" key={slide.id}>
+                    <div key={slide.id}>
                         <figure>
                             <Image
                                 src={slide.image}
                                 alt="logo provider"
                                 width={200}
                                 height={100}
-                                className="border cursor-pointer border-neutral-800"
+                                className="cursor-pointer border border-neutral-800"
                             />
                         </figure>
                     </div>

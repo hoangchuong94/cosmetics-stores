@@ -21,7 +21,7 @@ import { register } from '@/actions/auth';
 
 import { ArrowRight } from 'lucide-react';
 import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
-import AuthCardWrapper from '@/components/card-wrapper';
+import AuthCardWrapper from '@/components/auth-card-wrapper';
 
 export default function RegisterForm() {
     const [error, setError] = useState<string | undefined>('');
