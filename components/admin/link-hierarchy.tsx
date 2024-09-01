@@ -31,7 +31,7 @@ export default function LinkHierarchy() {
                                 <BreadcrumbLink
                                     href={`/${segments.slice(0, index + 1).join('/')}`}
                                 >
-                                    <p className="uppercase hover:underline hover:underline-offset-4">
+                                    <p className="uppercase text-stone-950 hover:underline hover:underline-offset-4">
                                         {segment}
                                     </p>
                                 </BreadcrumbLink>

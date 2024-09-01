@@ -187,11 +187,6 @@ model ProductPromotion {
   @@map("product_promotions")
 }
 
-model Cte {
-  id                String        @id @default(cuid())
-  name              String
-  phone             String
-}
 
 
 

@@ -1,4 +1,5 @@
 'use client';
+import { useState } from 'react';
 import { Copy, Flag } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -9,19 +10,9 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
+    DialogClose,
+    DialogFooter,
 } from '@/components/ui/dialog';
-
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
 
 interface ModalProps {
     title: string;
@@ -30,19 +21,27 @@ interface ModalProps {
 }
 
 const Modal = ({ children, title, label }: ModalProps) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const handleOpenChange = (open: boolean) => {
+        setIsOpen(open);
+    };
+
     return (
-        <Dialog>
+        <Dialog modal={false} open={isOpen} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
                 <Button variant="outline">{label}</Button>
             </DialogTrigger>
-            <DialogContent className="min-h-[90%] min-w-[90%] p-10 sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle>{title}</DialogTitle>
-                    <DialogDescription>
-                        Make changes to your profile here. Click save when
-                    </DialogDescription>
-                </DialogHeader>
-                <div>{children}</div>
+            <DialogContent className="h-screen min-w-full bg-black p-10 sm:max-w-[425px]">
+                <div className="rounded-md bg-white p-10">
+                    <DialogHeader>
+                        <DialogTitle>{title}</DialogTitle>
+                        <DialogDescription>
+                            Make changes to your profile here. Click save when
+                        </DialogDescription>
+                    </DialogHeader>
+                    {children}
+                </div>
             </DialogContent>
         </Dialog>
     );

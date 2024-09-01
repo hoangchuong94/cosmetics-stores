@@ -3,7 +3,7 @@ export const publicRoutes = [
     '/new-verification',
     '/contact',
     '/about',
-    '/products',
+    '/product',
     '/feedback',
 ];
 

@@ -56,7 +56,6 @@ const AddProductImages = () => {
                                         },
                                     },
                                 );
-                                console.log(res);
                             } catch (err) {
                                 updateFileProgress(addedFileState.key, 'ERROR');
                             }
