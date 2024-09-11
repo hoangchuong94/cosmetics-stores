@@ -158,3 +158,5 @@ export const NewProductSchema = z.object({
         subCategoryId: z.string(),
     }),
 });
+
+export const ImageSchema = z.object({});

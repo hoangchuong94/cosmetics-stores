@@ -26,7 +26,7 @@ export default function LinkHierarchy() {
                                 <Slash />
                             </BreadcrumbSeparator>
                         )}
-                        <BreadcrumbItem>
+                        <BreadcrumbItem className="text-[12px]">
                             {index !== segments.length - 1 ? (
                                 <BreadcrumbLink
                                     href={`/${segments.slice(0, index + 1).join('/')}`}

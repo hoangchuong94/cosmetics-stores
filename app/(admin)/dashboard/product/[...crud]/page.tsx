@@ -1,4 +1,4 @@
-import CreateProductForm from '@/components/admin/create-product-form';
+import TestUploadFile from '@/components/admin/test-upload-image';
 import {
     getCategories,
     getColors,
@@ -21,12 +21,13 @@ const CreateProduct = async () => {
         }
 
         return (
-            <CreateProductForm
-                colors={colors}
-                categories={categories}
-                detailCategories={detailCategories}
-                subCategories={subCategories}
-            />
+            // <CreateProductForm
+            //     colors={colors}
+            //     categories={categories}
+            //     detailCategories={detailCategories}
+            //     subCategories={subCategories}
+            // />
+            <TestUploadFile />
         );
     } catch (error) {
         console.error('Error loading product data:', error);

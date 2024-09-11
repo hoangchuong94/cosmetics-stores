@@ -28,7 +28,7 @@ const Modal = ({ children, title, label }: ModalProps) => {
     };
 
     return (
-        <Dialog modal={false} open={isOpen} onOpenChange={handleOpenChange}>
+        <Dialog open={isOpen} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
                 <Button variant="outline">{label}</Button>
             </DialogTrigger>

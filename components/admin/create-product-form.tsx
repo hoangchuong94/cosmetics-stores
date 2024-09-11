@@ -131,24 +131,24 @@ const CreateProductForm = ({
                                         },
                                     },
                                 );
-                                return res as UploadedImageResponse;
+                                return res;
                             }
                             return null;
                         }),
                     );
 
-                    if (uploadedImages) {
-                        const imageUrls = uploadedImages
-                            .filter((res): res is { url: string } => !!res)
-                            .map((res) => res.url);
+                    // if (uploadedImages) {
+                    //     const imageUrls = uploadedImages
+                    //         .filter((res): res is { url: string } => !!res)
+                    //         .map((res) => res.url);
 
-                        const finalValues = {
-                            ...values,
-                            images: imageUrls,
-                        };
+                    //     const finalValues = {
+                    //         ...values,
+                    //         images: imageUrls,
+                    //     };
 
-                        await createProduct(finalValues);
-                    }
+                    //     await createProduct(finalValues);
+                    // }
                 } else {
                     setError('No images were uploaded!');
                     return;
@@ -170,7 +170,7 @@ const CreateProductForm = ({
     }, [selectedSubCategory, resetField]);
 
     return (
-        <div className="">
+        <div className="p-4">
             <LinkHierarchy />
             <Form {...form}>
                 <form
@@ -259,23 +259,25 @@ const CreateProductForm = ({
                         renderItem={(color) => color.name}
                     />
 
-                    <MultiImageDropzone
-                        value={imagesFileState}
-                        dropzoneOptions={{
-                            maxFiles: 6,
-                        }}
-                        onChange={(files) => {
-                            setError('');
-                            setImagesFileState(files);
-                        }}
-                        onFilesAdded={async (addedFiles) => {
-                            setError('');
-                            setImagesFileState([
-                                ...imagesFileState,
-                                ...addedFiles,
-                            ]);
-                        }}
-                    />
+                    <div className="grid grid-cols-3">
+                        <MultiImageDropzone
+                            value={imagesFileState}
+                            dropzoneOptions={{
+                                maxFiles: 6,
+                            }}
+                            onChange={(files) => {
+                                setError('');
+                                setImagesFileState(files);
+                            }}
+                            onFilesAdded={async (addedFiles) => {
+                                setError('');
+                                setImagesFileState([
+                                    ...imagesFileState,
+                                    ...addedFiles,
+                                ]);
+                            }}
+                        />
+                    </div>
                     <FormError message={error} />
 
                     <Button disabled={isPending}>
