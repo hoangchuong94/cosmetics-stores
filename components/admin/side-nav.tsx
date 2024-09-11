@@ -5,7 +5,7 @@ import Logo from '@/components/logo';
 import AccordionWrapped from '@/components/accordion-wrapper';
 import Link from 'next/link';
 import { auth } from '@/auth';
-import Account from '../account';
+import Account from '@/components/account';
 
 const menuItems = [
     {

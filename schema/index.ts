@@ -108,26 +108,32 @@ export const ProductSchema = z.object({
         .nonempty('At least one color must be selected'),
     images: z.array(z.string()),
 
-    category: z.object({
-        id: z.string(),
-        name: z.string(),
-        createdAt: z.date(),
-        updatedAt: z.date(),
-    }),
-    subCategory: z.object({
-        id: z.string(),
-        name: z.string(),
-        createdAt: z.date(),
-        updatedAt: z.date(),
-        categoryId: z.string(),
-    }),
-    detailCategory: z.object({
-        id: z.string(),
-        name: z.string(),
-        createdAt: z.date(),
-        updatedAt: z.date(),
-        subCategoryId: z.string(),
-    }),
+    category: z
+        .object({
+            id: z.string(),
+            name: z.string(),
+            createdAt: z.date(),
+            updatedAt: z.date(),
+        })
+        .nullable(),
+    subCategory: z
+        .object({
+            id: z.string(),
+            name: z.string(),
+            createdAt: z.date(),
+            updatedAt: z.date(),
+            categoryId: z.string(),
+        })
+        .nullable(),
+    detailCategory: z
+        .object({
+            id: z.string(),
+            name: z.string(),
+            createdAt: z.date(),
+            updatedAt: z.date(),
+            subCategoryId: z.string(),
+        })
+        .nullable(),
 });
 
 export const NewProductSchema = z.object({
