@@ -21,14 +21,14 @@ import {
 
 interface CustomSelectProps<T> {
     items: T[];
-    value: T | null;
+    value: T;
     getItemName: (item: T) => string;
     getKey: (item: T) => string | number;
     onChange?: (value: T | null) => void;
     disabled?: boolean;
 }
 
-export function CustomSelect<T>({
+export default function CustomSelect<T>({
     items = [],
     value,
     getItemName,
@@ -38,15 +38,16 @@ export function CustomSelect<T>({
 }: CustomSelectProps<T>) {
     const [open, setOpen] = React.useState(false);
 
-    const selectedItemName = value ? getItemName(value) : 'Select item...';
+    const selectedItemName = React.useMemo(
+        () => (value ? getItemName(value) : 'Select item'),
+        [value, getItemName],
+    );
 
     const handleSelect = React.useCallback(
         (currentValue: string) => {
             const selectedItem = items.find(
                 (item) => getItemName(item) === currentValue,
             );
-
-            console.log(selectedItem);
 
             if (onChange) {
                 onChange(selectedItem || null);
@@ -63,32 +64,37 @@ export function CustomSelect<T>({
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="w-[200px] justify-between"
+                    aria-haspopup="listbox"
+                    aria-labelledby="custom-select-button"
+                    className="justify-between"
                     disabled={disabled}
                 >
                     {selectedItemName}
                     <ChevronsUpDown
-                        className={cn(
-                            'ml-2 h-4 w-4 shrink-0 opacity-50',
-                            disabled ? 'opacity-30' : 'opacity-50',
-                        )}
+                        className={cn('ml-2 h-4 w-4 shrink-0 opacity-50')}
                     />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
+            <PopoverContent className="p-0">
                 <Command>
                     <CommandInput placeholder="Search..." disabled={disabled} />
                     <CommandList>
-                        <CommandEmpty>No items found.</CommandEmpty>
+                        <CommandEmpty>No data</CommandEmpty>
                         <CommandGroup>
                             {items.map((item) => (
                                 <CommandItem
                                     key={getKey(item)}
                                     value={getItemName(item)}
-                                    onSelect={() => {
-                                        handleSelect(getItemName(item));
-                                    }}
+                                    onSelect={() =>
+                                        handleSelect(getItemName(item))
+                                    }
                                     disabled={disabled}
+                                    aria-selected={
+                                        value &&
+                                        getItemName(value) === getItemName(item)
+                                            ? true
+                                            : false
+                                    }
                                 >
                                     <Check
                                         className={cn(

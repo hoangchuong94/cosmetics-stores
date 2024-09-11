@@ -1,4 +1,4 @@
-import CreateProductForm from '@/components/admin/create-form';
+import CreateProductForm from '@/components/admin/create-product-form';
 import {
     getCategories,
     getColors,

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React from 'react';
 import { ChevronsUpDown } from 'lucide-react';
 import {
     CommandList,
@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import TagList from '@/components/tag-list';
 
-interface CheckboxPopsUpProps<T> {
+interface PopoverCheckboxProps<T> {
     items: T[];
     value: T[];
     onChange: (value: T[]) => void;
@@ -28,7 +28,7 @@ interface CheckboxPopsUpProps<T> {
     disabled?: boolean;
 }
 
-const CheckboxPopsUp = <T,>({
+const PopoverCheckbox = <T,>({
     items = [],
     value,
     onChange,
@@ -36,37 +36,23 @@ const CheckboxPopsUp = <T,>({
     getItemKey,
     placeholder = 'Select Item',
     disabled = false,
-}: CheckboxPopsUpProps<T>) => {
+}: PopoverCheckboxProps<T>) => {
     const [open, setOpen] = React.useState(false);
 
-    const handleSelect = useCallback(
-        (item: T) => {
-            if (disabled) return;
+    const handleSelect = (item: T) => {
+        if (disabled) return;
 
-            const isSelected = value.some(
-                (selected) => getItemKey(selected) === getItemKey(item),
-            );
-            const newSelectedItems = isSelected
-                ? value.filter(
-                      (selected) => getItemKey(selected) !== getItemKey(item),
-                  )
-                : [...value, item];
+        const isSelected = value.some(
+            (selected) => getItemKey(selected) === getItemKey(item),
+        );
+        const newSelectedItems = isSelected
+            ? value.filter(
+                  (selected) => getItemKey(selected) !== getItemKey(item),
+              )
+            : [...value, item];
 
-            onChange(newSelectedItems);
-        },
-        [value, getItemKey, disabled, onChange],
-    );
-
-    const selectedItems = useMemo(
-        () =>
-            items.map((item) => ({
-                item,
-                isSelected: value.some(
-                    (selected) => getItemKey(selected) === getItemKey(item),
-                ),
-            })),
-        [items, value, getItemKey],
-    );
+        onChange(newSelectedItems);
+    };
 
     return (
         <div
@@ -92,34 +78,36 @@ const CheckboxPopsUp = <T,>({
                         <CommandGroup>
                             <CommandList>
                                 {items.length > 0 ? (
-                                    selectedItems.map(
-                                        ({ item, isSelected }) => (
-                                            <CommandItem
-                                                key={getItemKey(item)}
-                                                onSelect={() =>
-                                                    handleSelect(item)
-                                                }
-                                            >
-                                                <div className="flex items-center space-x-2">
-                                                    <Checkbox
-                                                        id={String(
+                                    items.map((item) => (
+                                        <CommandItem
+                                            key={getItemKey(item)}
+                                            onSelect={() => handleSelect(item)}
+                                        >
+                                            <div className="flex items-center space-x-2">
+                                                <Checkbox
+                                                    id={String(
+                                                        getItemKey(item),
+                                                    )}
+                                                    checked={value.some(
+                                                        (selected) =>
+                                                            getItemKey(
+                                                                selected,
+                                                            ) ===
                                                             getItemKey(item),
-                                                        )}
-                                                        checked={isSelected}
-                                                        disabled={disabled}
-                                                    />
-                                                    <label
-                                                        htmlFor={String(
-                                                            getItemKey(item),
-                                                        )}
-                                                        className="text-sm font-medium"
-                                                    >
-                                                        {renderItem(item)}
-                                                    </label>
-                                                </div>
-                                            </CommandItem>
-                                        ),
-                                    )
+                                                    )}
+                                                    disabled={disabled}
+                                                />
+                                                <label
+                                                    htmlFor={String(
+                                                        getItemKey(item),
+                                                    )}
+                                                    className="text-sm font-medium"
+                                                >
+                                                    {renderItem(item)}
+                                                </label>
+                                            </div>
+                                        </CommandItem>
+                                    ))
                                 ) : (
                                     <CommandEmpty>No item found.</CommandEmpty>
                                 )}
@@ -134,4 +122,4 @@ const CheckboxPopsUp = <T,>({
     );
 };
 
-export default React.memo(CheckboxPopsUp);
+export default PopoverCheckbox;

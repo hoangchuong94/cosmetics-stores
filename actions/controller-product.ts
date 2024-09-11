@@ -75,7 +75,7 @@ export const createProduct = async (values: z.infer<typeof ProductSchema>) => {
                 detailCategories: {
                     create: {
                         detailCategory: {
-                            connect: { id: values.detailCategory.id },
+                            connect: { id: values.detailCategory!.id },
                         },
                     },
                 },
