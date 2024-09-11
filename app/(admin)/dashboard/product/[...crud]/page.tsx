@@ -20,15 +20,7 @@ const CreateProduct = async () => {
             return <div>Error loading data. Please try again later.</div>;
         }
 
-        return (
-            // <CreateProductForm
-            //     colors={colors}
-            //     categories={categories}
-            //     detailCategories={detailCategories}
-            //     subCategories={subCategories}
-            // />
-            <TestUploadFile />
-        );
+        return <TestUploadFile />;
     } catch (error) {
         console.error('Error loading product data:', error);
         return <div>Failed to load product data. Please try again later.</div>;
