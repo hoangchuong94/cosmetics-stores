@@ -1,32 +1,47 @@
 import {
-    Category as PrismaCategory,
-    SubCategory as PrismaSubCategory,
-    DetailCategory as PrismaDetailCategory,
-    Product as PrismaProduct,
+    Category,
+    SubCategory,
+    DetailCategory,
+    Product,
+    Color,
+    Image,
+    Promotion,
 } from '@prisma/client';
 
-export interface Product extends PrismaProduct {}
+export type ProductWithDetails = Product & {
+    images: {
+        image: Image;
+    }[];
+    colors: {
+        color: Color;
+    }[];
+    detailCategories: {
+        detailCategory: DetailCategory;
+    }[];
+    promotions: {
+        promotion: Promotion;
+    }[];
+};
 
-export interface DetailCategory extends PrismaDetailCategory {
-    products: Product[];
-}
+// export type ProductWithDetails = Product & {
+//     detailCategories: CategoryWithDetails[];
+//     colors: Color[];
+//     images: Image[];
+//     promotions: Promotion[];
+// };
 
-export interface SubCategory extends PrismaSubCategory {
+export type CategoryWithDetails = Category & {
+    subCategories: SubCategoryWithDetails[];
+};
+
+export type SubCategoryWithDetails = SubCategory & {
     detailCategories: DetailCategory[];
-}
+};
 
-export interface Category extends PrismaCategory {
-    subCategories: SubCategory[];
-}
-
-export interface ProductType {
+export interface CustomTypeUser {
     id: string;
+    email: string;
     name: string;
-    description: string;
-    type: string;
     image: string;
-    price: number;
-    sale: number;
-    star: number;
-    quantity: number;
+    role: string;
 }

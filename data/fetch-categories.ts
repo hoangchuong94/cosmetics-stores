@@ -1,5 +1,5 @@
 import Prisma from '@/lib/prisma';
-import { Category } from '@/types';
+import { Category } from '@prisma/client';
 
 export const fetchCategories = async (): Promise<Category[]> => {
     try {

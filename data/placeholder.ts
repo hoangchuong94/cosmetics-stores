@@ -1,3 +1,5 @@
+import { Category, Color } from '@prisma/client';
+
 export const listColors: { id: string; name: string; code: string }[] = [
     { id: '1', name: 'Red', code: '#FF0000' },
     { id: '2', name: 'Green', code: '#00FF00' },
@@ -12,4 +14,50 @@ export const listColors: { id: string; name: string; code: string }[] = [
     { id: '11', name: 'Teal', code: '#008080' },
     { id: '12', name: 'Lavender', code: '#E6E6FA' },
     { id: '13', name: 'Brown', code: '#A52A2A' },
+];
+
+export const listCategory = [
+    {
+        name: 'nam',
+        subCategories: [
+            {
+                name: 'áo',
+                detailCategories: [
+                    { name: 'áo sơ mi ' },
+                    { name: 'áo khoác' },
+                    { name: 'áo polo' },
+                    { name: 'áo thun' },
+                ],
+            },
+            {
+                name: 'quần',
+                detailCategories: [
+                    { name: 'quần jean' },
+                    { name: 'quần sort' },
+                ],
+            },
+        ],
+    },
+    {
+        name: 'Nữ',
+        subCategories: [
+            {
+                name: 'áo',
+                detailCategories: [
+                    { name: 'áo sơ mi' },
+                    { name: 'áo khoác' },
+                    { name: 'áo dài' },
+                    { name: 'Đầm' },
+                ],
+            },
+            {
+                name: 'váy',
+                detailCategories: [
+                    { name: 'váy đi dạo' },
+                    { name: 'váy dạ hội' },
+                    { name: 'đồ ngủ' },
+                ],
+            },
+        ],
+    },
 ];

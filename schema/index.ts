@@ -80,10 +80,21 @@ export const ProductSchema = z.object({
         .min(1, 'Type product description is required')
         .max(50, 'Type product description must be less than 50 characters'),
 
-    price: z.coerce
-        .string({ required_error: 'Price is required' })
-        .min(1, 'Price is required'),
+    price: z.coerce.number().positive('Price must be a positive number'),
 
+    quantity: z.coerce
+        .number()
+        .positive('Price must be a positive number')
+        .int('Quantity must be an integer'),
+
+    thumbnail: z
+        .string({ required_error: 'Type product description is required' })
+        .min(1, 'Type product description is required')
+        .max(50, 'Type product description must be less than 50 characters'),
+    capacity: z.coerce
+        .number()
+        .positive('Price must be a positive number')
+        .int('Quantity must be an integer'),
     colors: z
         .array(
             z.object({
@@ -95,13 +106,49 @@ export const ProductSchema = z.object({
             }),
         )
         .nonempty('At least one color must be selected'),
+    images: z.array(z.string()),
 
-    categories: z.array(
-        z.object({
-            id: z.string(),
-            name: z.string(),
-            createdAt: z.date(),
-            updatedAt: z.date(),
-        }),
-    ),
+    category: z.object({
+        id: z.string(),
+        name: z.string(),
+        createdAt: z.date(),
+        updatedAt: z.date(),
+    }),
+    subCategory: z.object({
+        id: z.string(),
+        name: z.string(),
+        createdAt: z.date(),
+        updatedAt: z.date(),
+        categoryId: z.string(),
+    }),
+    detailCategory: z.object({
+        id: z.string(),
+        name: z.string(),
+        createdAt: z.date(),
+        updatedAt: z.date(),
+        subCategoryId: z.string(),
+    }),
+});
+
+export const NewProductSchema = z.object({
+    category: z.object({
+        id: z.string(),
+        name: z.string(),
+        createdAt: z.date(),
+        updatedAt: z.date(),
+    }),
+    subCategory: z.object({
+        id: z.string(),
+        name: z.string(),
+        createdAt: z.date(),
+        updatedAt: z.date(),
+        categoryId: z.string(),
+    }),
+    detailCategory: z.object({
+        id: z.string(),
+        name: z.string(),
+        createdAt: z.date(),
+        updatedAt: z.date(),
+        subCategoryId: z.string(),
+    }),
 });

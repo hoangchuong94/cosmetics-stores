@@ -1,17 +1,18 @@
 import React from 'react';
 import Product from '@/components/user/product';
-import { ProductType } from '@/types';
+import type { ProductWithDetails } from '@/types';
 
-interface Props {
-    products: ProductType[];
+interface ProductListProps {
+    products: ProductWithDetails[];
 }
 
-export default function ProductList({ products }: Props) {
+export default async function ProductList({ products }: ProductListProps) {
     return (
         <div className="grid grid-cols-2 gap-4 py-6 md:grid md:grid-cols-3 lg:grid lg:grid-cols-4">
-            {products.map((product: any) => (
-                <Product product={product} key={product.id} />
-            ))}
+            {products.length > 0 &&
+                products.map((product) => (
+                    <Product product={product} key={product.id} />
+                ))}
         </div>
     );
 }

@@ -2,7 +2,6 @@
 
 import { formatFileSize } from '@edgestore/react/utils';
 import { UploadCloudIcon, X } from 'lucide-react';
-import Image from 'next/image';
 import * as React from 'react';
 import { useDropzone, type DropzoneOptions } from 'react-dropzone';
 import { twMerge } from 'tailwind-merge';
@@ -58,7 +57,7 @@ const MultiImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
             if (value) {
                 return value.map((fileState) => {
                     if (typeof fileState.file === 'string') {
-                        // in case a url is passed in, use it to display the image
+                        // in case an url is passed in, use it to display the image
                         return fileState.file;
                     } else {
                         // in case a file is passed in, create a base64 url to display the image
@@ -155,13 +154,11 @@ const MultiImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
                     {value?.map(({ file, progress }, index) => (
                         <div
                             key={index}
-                            className={variants.image + ' aspect-square h-full'}
+                            className={variants.image + ' aspect-square'}
                         >
-                            <Image
+                            <img
                                 className="h-full w-full rounded-md object-cover"
                                 src={imageUrls[index]}
-                                width={100}
-                                height={100}
                                 alt={
                                     typeof file === 'string' ? file : file.name
                                 }
@@ -215,7 +212,9 @@ const MultiImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
                                     drag & drop to upload
                                 </div>
                                 <div className="mt-3">
-                                    <Button disabled={disabled}>select</Button>
+                                    <Button type="button" disabled={disabled}>
+                                        select
+                                    </Button>
                                 </div>
                             </div>
                         </div>

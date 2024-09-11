@@ -1,17 +1,20 @@
 import logo from '@/public/static/logo-retina.png';
 import Logo from '@/components/logo';
 import Account from '@/components/account';
-import { fetchCategories } from '@/data/fetch-categories';
-import ShoppingCard from './shopping-cart';
-import Navbar from './nav-bar';
-import NavMobile from './nav-mobile';
+import ShoppingCard from '@/components/user/shopping-cart';
+import { User as IconUser } from 'lucide-react';
 import { auth } from '@/auth';
+
 import Link from 'next/link';
-import { User } from 'lucide-react';
+import Navbar from '@/components/user/nav-bar';
+import NavMobile from '@/components/user/nav-mobile';
+import { getCategories } from '@/actions/controller-product';
+import { CustomTypeUser } from '@/types';
 
 export default async function Header() {
-    const categories = await fetchCategories();
+    const categories = await getCategories();
     const session = await auth();
+    const user: CustomTypeUser | undefined = session?.user;
 
     return (
         <header className="fixed z-50 flex w-full items-center justify-between bg-white p-5 shadow-lg">
@@ -30,12 +33,12 @@ export default async function Header() {
                     ) : (
                         <>
                             <Link href={'/login'}>
-                                <User />
+                                <IconUser />
                             </Link>
                         </>
                     )}
                 </div>
-                <NavMobile categories={categories} user={session?.user} />
+                <NavMobile categories={categories} user={user} />
             </div>
         </header>
     );

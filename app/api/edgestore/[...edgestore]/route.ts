@@ -8,7 +8,7 @@ import { auth } from '@/auth';
 
 type Context = {
     userId: string;
-    userRole: string;
+    userRole: 'ADMIN' | 'USER';
 };
 
 const getUser = async () => {
@@ -30,6 +30,15 @@ const createContext = async () => {
 const es = initEdgeStore.context<Context>().create();
 
 const edgeStoreRouter = es.router({
+    publicImages: es
+        .imageBucket()
+        .input(
+            z.object({
+                type: z.enum(['product', 'profile']),
+            }),
+        )
+        .path(({ input }) => [{ type: input.type }]),
+
     publicFiles: es
         .fileBucket()
         .path(({ ctx }) => [{ owner: ctx.userId }])
@@ -43,14 +52,6 @@ const edgeStoreRouter = es.router({
                 },
             ],
         }),
-    publicImages: es
-        .imageBucket({ maxSize: 1024 * 1024 * 1 })
-        .input(
-            z.object({
-                type: z.enum(['product', 'profile']),
-            }),
-        )
-        .path(({ input }) => [{ type: input.type }]),
 });
 const handler = createEdgeStoreNextHandler({
     router: edgeStoreRouter,

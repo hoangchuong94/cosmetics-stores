@@ -1,6 +1,6 @@
 import ControlPanelProducts from '@/components/admin/control-panel-products';
 
-const Products = () => {
+const Products = async () => {
     return <ControlPanelProducts />;
 };
 

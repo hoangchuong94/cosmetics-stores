@@ -1,12 +1,37 @@
 import CreateProductForm from '@/components/admin/create-product-form';
-import React from 'react';
-import { getColors } from '@/actions/get-colors';
-import { getCategories } from '@/actions/get-categories';
+import {
+    getCategories,
+    getColors,
+    getDetailCategories,
+    getSubCategories,
+} from '@/actions/controller-product';
 
 const CreateProduct = async () => {
-    const colors = await getColors();
-    const categories = await getCategories();
-    return <CreateProductForm colors={colors} categories={categories} />;
+    try {
+        const [colors, categories, subCategories, detailCategories] =
+            await Promise.all([
+                getColors(),
+                getCategories(),
+                getSubCategories(),
+                getDetailCategories(),
+            ]);
+
+        if (!colors || !categories || !subCategories || !detailCategories) {
+            return <div>Error loading data. Please try again later.</div>;
+        }
+
+        return (
+            <CreateProductForm
+                colors={colors}
+                categories={categories}
+                detailCategories={detailCategories}
+                subCategories={subCategories}
+            />
+        );
+    } catch (error) {
+        console.error('Error loading product data:', error);
+        return <div>Failed to load product data. Please try again later.</div>;
+    }
 };
 
 export default CreateProduct;
