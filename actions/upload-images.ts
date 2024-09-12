@@ -1,5 +1,3 @@
-'use server';
-
 import { type FileState } from '@/components/multi-image-dropzone';
 
 interface UploadedImagesResponse {
@@ -36,7 +34,7 @@ function updateFileProgress(
     });
 }
 
-export async function uploadFiles(
+export async function uploadImages(
     fileStates: FileState[],
     edgestore: any,
     setImagesFileState: React.Dispatch<React.SetStateAction<FileState[]>>,
@@ -67,6 +65,7 @@ export async function uploadFiles(
                                 }
                             },
                         });
+                    console.log(res);
                     return res;
                 } catch (error) {
                     console.error(

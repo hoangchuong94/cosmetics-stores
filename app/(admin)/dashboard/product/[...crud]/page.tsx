@@ -1,3 +1,4 @@
+import CreateProductForm from '@/components/admin/create-product-form';
 import TestUploadFile from '@/components/admin/test-upload-image';
 import {
     getCategories,
@@ -20,7 +21,23 @@ const CreateProduct = async () => {
             return <div>Error loading data. Please try again later.</div>;
         }
 
-        return <TestUploadFile />;
+        return (
+            <>
+                {/* <CreateProductForm
+                    colors={colors}
+                    categories={categories}
+                    subCategories={subCategories}
+                    detailCategories={detailCategories}
+                /> */}
+
+                <TestUploadFile
+                    colors={colors}
+                    categories={categories}
+                    subCategories={subCategories}
+                    detailCategories={detailCategories}
+                />
+            </>
+        );
     } catch (error) {
         console.error('Error loading product data:', error);
         return <div>Failed to load product data. Please try again later.</div>;

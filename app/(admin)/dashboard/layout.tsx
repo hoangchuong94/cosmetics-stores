@@ -19,7 +19,7 @@ export default function AdminLayout({
                 <ResizableHandle className="w-1 bg-slate-200/50" withHandle />
                 <ResizablePanel defaultSize={80}>
                     <div className="h-full w-full bg-slate-500/50 p-3">
-                        <div className="h-full w-full overflow-auto rounded-3xl bg-white">
+                        <div className="custom-scrollbar h-full w-full overflow-auto rounded-3xl bg-white">
                             {children}
                         </div>
                     </div>
