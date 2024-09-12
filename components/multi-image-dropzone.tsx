@@ -2,6 +2,7 @@
 
 import { formatFileSize } from '@edgestore/react/utils';
 import { UploadCloudIcon, X } from 'lucide-react';
+import Image from 'next/image';
 import * as React from 'react';
 import { useDropzone, type DropzoneOptions } from 'react-dropzone';
 import { twMerge } from 'tailwind-merge';
@@ -156,12 +157,14 @@ const MultiImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
                             key={index}
                             className={variants.image + ' aspect-square'}
                         >
-                            <img
+                            <Image
                                 className="h-full w-full rounded-md object-cover"
                                 src={imageUrls[index]}
                                 alt={
                                     typeof file === 'string' ? file : file.name
                                 }
+                                width={500}
+                                height={500}
                             />
                             {/* Progress Bar */}
                             {typeof progress === 'number' && (

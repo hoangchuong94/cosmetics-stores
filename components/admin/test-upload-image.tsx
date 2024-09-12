@@ -54,6 +54,7 @@ const CreateProductForm = ({
             price: 0,
             quantity: 0,
             capacity: 0,
+            thumbnail: '',
             colors: [],
             images: [],
             category: undefined,
@@ -87,26 +88,19 @@ const CreateProductForm = ({
     const onSubmit = useCallback(
         async (values: z.infer<typeof ProductSchema>) => {
             startTransition(async () => {
-                try {
-                    const imageUrls = await uploadImages();
+                const imageUrls = await uploadImages();
 
-                    if (imageUrls.length > 0) {
-                        const finalValues = {
-                            ...values,
-                            images: imageUrls,
-                            thumbnail: imageUrls[0],
-                        };
-                        console.log(finalValues);
-                    } else {
-                        setError('No images were uploaded!');
-                    }
-                } catch (err) {
-                    console.error('Error uploading images', err);
-                    setError('There is an error, please try again later');
+                if (imageUrls) {
+                    const finalValues = {
+                        ...values,
+                        images: imageUrls,
+                        thumbnail: imageUrls[0],
+                    };
+                    console.log(finalValues);
                 }
             });
         },
-        [uploadImages, setError],
+        [uploadImages],
     );
 
     useEffect(() => {

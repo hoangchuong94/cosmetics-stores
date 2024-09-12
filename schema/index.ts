@@ -87,9 +87,9 @@ export const ProductSchema = z.object({
         .positive('Price must be a positive number')
         .int('Quantity must be an integer'),
 
-    // thumbnail: z.string({
-    //     required_error: 'Type product description is required',
-    // }),
+    thumbnail: z.string({
+        required_error: 'Type product description is required',
+    }),
 
     capacity: z.coerce
         .number()
