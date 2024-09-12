@@ -31,7 +31,9 @@ const es = initEdgeStore.context<Context>().create();
 
 const edgeStoreRouter = es.router({
     publicImages: es
-        .imageBucket()
+        .imageBucket({
+            maxSize: 10 * 1024,
+        })
         .input(
             z.object({
                 type: z.enum(['product', 'profile']),
@@ -40,7 +42,10 @@ const edgeStoreRouter = es.router({
         .path(({ input }) => [{ type: input.type }]),
 
     publicFiles: es
-        .fileBucket()
+        .fileBucket({
+            maxSize: 1024 * 1024 * 10, // 10MB
+            accept: ['image/jpeg', 'image/png'],
+        })
         .path(({ ctx }) => [{ owner: ctx.userId }])
         .accessControl({
             OR: [
@@ -51,6 +56,14 @@ const edgeStoreRouter = es.router({
                     userRole: { eq: 'admin' },
                 },
             ],
+        })
+        .beforeUpload(({ ctx, input, fileInfo }) => {
+            console.log('beforeUpload', ctx, input, fileInfo);
+            return true; // allow upload
+        })
+        .beforeDelete(({ ctx, fileInfo }) => {
+            console.log('beforeDelete', ctx, fileInfo);
+            return true; // allow delete
         }),
 });
 const handler = createEdgeStoreNextHandler({

@@ -87,14 +87,15 @@ export const ProductSchema = z.object({
         .positive('Price must be a positive number')
         .int('Quantity must be an integer'),
 
-    thumbnail: z
-        .string({ required_error: 'Type product description is required' })
-        .min(1, 'Type product description is required')
-        .max(50, 'Type product description must be less than 50 characters'),
+    // thumbnail: z.string({
+    //     required_error: 'Type product description is required',
+    // }),
+
     capacity: z.coerce
         .number()
         .positive('Price must be a positive number')
         .int('Quantity must be an integer'),
+
     colors: z
         .array(
             z.object({
@@ -106,6 +107,7 @@ export const ProductSchema = z.object({
             }),
         )
         .nonempty('At least one color must be selected'),
+
     images: z.array(z.string()),
 
     category: z
@@ -116,6 +118,7 @@ export const ProductSchema = z.object({
             updatedAt: z.date(),
         })
         .nullable(),
+
     subCategory: z
         .object({
             id: z.string(),
@@ -125,6 +128,7 @@ export const ProductSchema = z.object({
             categoryId: z.string(),
         })
         .nullable(),
+
     detailCategory: z
         .object({
             id: z.string(),
@@ -135,28 +139,3 @@ export const ProductSchema = z.object({
         })
         .nullable(),
 });
-
-export const NewProductSchema = z.object({
-    category: z.object({
-        id: z.string(),
-        name: z.string(),
-        createdAt: z.date(),
-        updatedAt: z.date(),
-    }),
-    subCategory: z.object({
-        id: z.string(),
-        name: z.string(),
-        createdAt: z.date(),
-        updatedAt: z.date(),
-        categoryId: z.string(),
-    }),
-    detailCategory: z.object({
-        id: z.string(),
-        name: z.string(),
-        createdAt: z.date(),
-        updatedAt: z.date(),
-        subCategoryId: z.string(),
-    }),
-});
-
-export const ImageSchema = z.object({});

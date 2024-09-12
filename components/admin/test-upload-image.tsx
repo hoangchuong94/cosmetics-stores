@@ -12,12 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Color, Category, SubCategory, DetailCategory } from '@prisma/client';
 import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import { useEdgeStore } from '@/lib/edgestore';
-import {
-    MultiImageDropzone,
-    type FileState,
-} from '@/components/multi-image-dropzone';
-import PageTitle from '@/components/page-title';
+import { MultiImageDropzone } from '@/components/multi-image-dropzone';
 import { ProductSchema } from '@/schema';
 import { FormError } from '@/components/form-error';
 import {
@@ -26,6 +21,7 @@ import {
     NumericInputField,
     SelectField,
 } from '@/components/custom-field-create-product-form';
+import { useImageUploader } from '@/hooks/use-upload-images';
 
 interface CreateProductFormProps {
     colors: Color[];
@@ -34,28 +30,20 @@ interface CreateProductFormProps {
     detailCategories: DetailCategory[];
 }
 
-interface UploadedImageResponse {
-    url: string;
-    thumbnailUrl: string | null;
-    size: number;
-    uploadedAt: Date;
-    metadata: Record<string, any>;
-    path: {
-        type: string;
-    };
-    pathOrder: string[];
-}
-
 const CreateProductForm = ({
     colors,
     categories,
     subCategories,
     detailCategories,
 }: CreateProductFormProps) => {
-    const [imagesFileState, setImagesFileState] = useState<FileState[]>([]);
+    const {
+        imagesFileState,
+        setImagesFileState,
+        uploadImages,
+        error,
+        setError,
+    } = useImageUploader();
     const [isPending, startTransition] = useTransition();
-    const { edgestore } = useEdgeStore();
-    const [error, setError] = useState<string | undefined>('');
 
     const form = useForm<z.infer<typeof ProductSchema>>({
         resolver: zodResolver(ProductSchema),
@@ -96,80 +84,19 @@ const CreateProductForm = ({
             : [];
     }, [selectedSubCategory, detailCategories]);
 
-    const updateFileProgress = useCallback(
-        (key: string, progress: FileState['progress']) => {
-            setImagesFileState((fileStates) => {
-                const newFileStates = structuredClone(fileStates);
-                const fileState = newFileStates.find(
-                    (fileState) => fileState.key === key,
-                );
-                if (fileState) {
-                    fileState.progress = progress;
-                }
-                return newFileStates;
-            });
-        },
-        [],
-    );
-
     const onSubmit = useCallback(
         async (values: z.infer<typeof ProductSchema>) => {
             startTransition(async () => {
                 try {
-                    if (imagesFileState.length > 0) {
-                        const uploadPromises = imagesFileState.map(
-                            (fileState) => {
-                                if (fileState.file instanceof File) {
-                                    return edgestore.publicImages.upload({
-                                        file: fileState.file,
-                                        input: { type: 'product' },
-                                        onProgressChange: async (progress) => {
-                                            updateFileProgress(
-                                                fileState.key,
-                                                progress,
-                                            );
-                                            if (progress === 100) {
-                                                await new Promise((resolve) =>
-                                                    setTimeout(resolve, 1000),
-                                                );
-                                                updateFileProgress(
-                                                    fileState.key,
-                                                    'COMPLETE',
-                                                );
-                                            }
-                                        },
-                                    });
-                                }
-                                return Promise.resolve(null);
-                            },
-                        );
+                    const imageUrls = await uploadImages();
 
-                        const uploadResults =
-                            await Promise.allSettled(uploadPromises);
-
-                        const imageUrls = uploadResults
-                            .filter(
-                                (result) =>
-                                    result.status === 'fulfilled' &&
-                                    result.value !== null,
-                            )
-                            .map(
-                                (result) =>
-                                    (
-                                        result as PromiseFulfilledResult<UploadedImageResponse>
-                                    ).value.url,
-                            );
-
-                        if (imageUrls.length > 0) {
-                            const finalValues = {
-                                ...values,
-                                images: imageUrls,
-                                thumbnail: imageUrls[0],
-                            };
-                            console.log(finalValues);
-                        } else {
-                            setError('No images were uploaded!');
-                        }
+                    if (imageUrls.length > 0) {
+                        const finalValues = {
+                            ...values,
+                            images: imageUrls,
+                            thumbnail: imageUrls[0],
+                        };
+                        console.log(finalValues);
                     } else {
                         setError('No images were uploaded!');
                     }
@@ -179,7 +106,7 @@ const CreateProductForm = ({
                 }
             });
         },
-        [imagesFileState, edgestore, updateFileProgress],
+        [uploadImages, setError],
     );
 
     useEffect(() => {
@@ -271,7 +198,6 @@ const CreateProductForm = ({
                     />
                     <div>
                         <MultiImageDropzone
-                            className="w-[200px]"
                             value={imagesFileState}
                             dropzoneOptions={{ maxFiles: 6 }}
                             onChange={(files) => {
