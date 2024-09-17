@@ -38,7 +38,6 @@ const PopoverCheckbox = <T,>({
     disabled = false,
 }: PopoverCheckboxProps<T>) => {
     const [open, setOpen] = React.useState(false);
-
     const handleSelect = (item: T) => {
         if (disabled) return;
 

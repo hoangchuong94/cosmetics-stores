@@ -1,60 +1,104 @@
-import { useState, useCallback } from 'react';
+// useImageUploader.ts
+import { useState } from 'react';
 import { useEdgeStore } from '@/lib/edgestore';
-import type { FileState } from '@/components/multi-image-dropzone';
+import { type FileState } from '@/components/multi-image-dropzone';
 
-export const useImageUploader = () => {
-    const [imagesFileState, setImagesFileState] = useState<FileState[]>([]);
-    const [error, setError] = useState<string | undefined>('');
+interface UploadResponse {
+    url: string;
+    thumbnailUrl: string | null;
+    size: number;
+    uploadedAt: Date;
+    metadata: Record<string, never>;
+    path: { type: string };
+    pathOrder: 'type'[];
+}
+
+export function useImageUploader() {
+    const [fileStates, setFileStates] = useState<FileState[]>([]);
     const { edgestore } = useEdgeStore();
 
-    const updateFileProgress = useCallback(
-        (key: string, progress: FileState['progress']) => {
-            setImagesFileState((prevState) =>
-                prevState.map((fileState) =>
-                    fileState.key === key && fileState.progress !== progress
-                        ? { ...fileState, progress }
-                        : fileState,
-                ),
-            );
-        },
-        [],
-    );
+    const updateFileProgress = (
+        key: string,
+        progress: FileState['progress'],
+    ) => {
+        setFileStates((prevState) =>
+            prevState.map((fileState) =>
+                fileState.key === key && fileState.progress !== progress
+                    ? { ...fileState, progress }
+                    : fileState,
+            ),
+        );
+    };
 
-    const uploadImages = useCallback(async () => {
-        if (!imagesFileState.length) {
-            setError('No images to upload!');
-            return [];
-        }
+    const handleUpload = async (addedFiles: FileState[]): Promise<string[]> => {
+        addedFiles.forEach((item) => console.log('addedFiles', item));
         try {
-            const uploadPromises = imagesFileState.map(async (fileState) => {
-                if (!(fileState.file instanceof File))
-                    throw new Error(`Invalid file: ${fileState.key}`);
+            setFileStates((prev) => [...prev, ...addedFiles]);
 
-                const result = await edgestore.publicImages.upload({
-                    file: fileState.file,
-                    input: { type: 'product' },
-                    onProgressChange: (progress) =>
-                        updateFileProgress(fileState.key, progress),
-                });
-                updateFileProgress(fileState.key, 'COMPLETE');
-                return result.url;
-            });
+            const uploadResults = await Promise.allSettled(
+                addedFiles.map(async (fileState) => {
+                    if (!(fileState.file instanceof File))
+                        throw new Error(`Invalid file: ${fileState.key}`);
 
-            const imageUrls = await Promise.all(uploadPromises);
+                    try {
+                        const res = await edgestore.publicImages.upload({
+                            file: fileState.file,
+                            input: { type: 'product' },
+                            onProgressChange: async (progress) => {
+                                updateFileProgress(fileState.key, progress);
+                                if (progress === 100) {
+                                    await new Promise((resolve) =>
+                                        setTimeout(resolve, 1000),
+                                    );
+                                    updateFileProgress(
+                                        fileState.key,
+                                        'COMPLETE',
+                                    );
+                                }
+                            },
+                        });
+                        return res;
+                    } catch (error) {
+                        updateFileProgress(fileState.key, 'ERROR');
+                    }
+                }),
+            );
 
-            return imageUrls;
-        } catch (err) {
-            console.error('Upload failed:', err);
-            setError('Failed to upload all images. Please try again.');
+            const allSuccess = uploadResults.every(
+                (result): result is PromiseFulfilledResult<UploadResponse> =>
+                    result.status === 'fulfilled',
+            );
+
+            if (allSuccess) {
+                const imageUrls = uploadResults
+                    .filter(
+                        (
+                            result,
+                        ): result is PromiseFulfilledResult<UploadResponse> =>
+                            result.status === 'fulfilled',
+                    )
+                    .map((result) => result.value.thumbnailUrl)
+                    .filter((url): url is string => url !== null); // Lọc bỏ giá trị null
+
+                // console.log('Uploaded image URLs:', imageUrls);
+                return imageUrls; // Trả về URLs nếu tất cả đều thành công
+            } else {
+                return []; // Trả về mảng rỗng nếu có lỗi
+            }
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                console.error('Error uploading files:', err.message);
+                console.error('Stack trace:', err.stack);
+            } else {
+                console.error('Unknown error:', err);
+            }
             return [];
         }
-    }, [imagesFileState, edgestore, updateFileProgress]);
+    };
 
     return {
-        imagesFileState,
-        setImagesFileState,
-        uploadImages,
-        error,
-        setError,
+        fileStates,
+        setFileStates,
+        handleUpload,
     };
-};
+}

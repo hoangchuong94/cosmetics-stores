@@ -12,16 +12,17 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Color, Category, SubCategory, DetailCategory } from '@prisma/client';
 import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import { MultiImageDropzone } from '@/components/multi-image-dropzone';
 import { ProductSchema } from '@/schema';
-import { FormError } from '@/components/form-error';
 import {
     CheckboxField,
     InputField,
     NumericInputField,
     SelectField,
-} from '@/components/custom-field-create-product-form';
-import { useImageUploader } from '@/hooks/use-upload-images';
+} from '@/components/custom-field';
+import { useFilteredCategories } from '@/hooks/use-filtered-categories';
+
+import UploadThumbnail from '@/components/upload-thumbnail';
+import UploadMultipleImages from '@/components/upload-images';
 
 interface CreateProductFormProps {
     colors: Color[];
@@ -36,15 +37,9 @@ const CreateProductForm = ({
     subCategories,
     detailCategories,
 }: CreateProductFormProps) => {
-    const {
-        imagesFileState,
-        setImagesFileState,
-        uploadImages,
-        error,
-        setError,
-    } = useImageUploader();
     const [isPending, startTransition] = useTransition();
-
+    const [fileThumbnail, setFileThumbnail] = useState<File>();
+    const [urlsImage, setUrlsImage] = useState<string[]>([]);
     const form = useForm<z.infer<typeof ProductSchema>>({
         resolver: zodResolver(ProductSchema),
         defaultValues: {
@@ -54,7 +49,7 @@ const CreateProductForm = ({
             price: 0,
             quantity: 0,
             capacity: 0,
-            thumbnail: '',
+            thumbnailUrl: '',
             colors: [],
             images: [],
             category: undefined,
@@ -63,94 +58,66 @@ const CreateProductForm = ({
         },
     });
 
+    console.log(`urlsImage :  ${urlsImage}`);
+
     const { watch, resetField, handleSubmit, control } = form;
 
     const selectedCategory = watch('category');
     const selectedSubCategory = watch('subCategory');
 
-    const filteredSubCategories = useMemo(() => {
-        return selectedCategory
-            ? subCategories.filter(
-                  (subCat) => subCat.categoryId === selectedCategory.id,
-              )
-            : [];
-    }, [selectedCategory, subCategories]);
+    const { filteredSubCategories, filteredDetailCategories } =
+        useFilteredCategories(
+            selectedCategory,
+            selectedSubCategory,
+            subCategories,
+            detailCategories,
+            resetField,
+        );
 
-    const filteredDetailCategories = useMemo(() => {
-        return selectedSubCategory
-            ? detailCategories.filter(
-                  (detailCat) =>
-                      detailCat.subCategoryId === selectedSubCategory.id,
-              )
-            : [];
-    }, [selectedSubCategory, detailCategories]);
-
-    const onSubmit = useCallback(
-        async (values: z.infer<typeof ProductSchema>) => {
-            startTransition(async () => {
-                const imageUrls = await uploadImages();
-
-                if (imageUrls) {
-                    const finalValues = {
-                        ...values,
-                        images: imageUrls,
-                        thumbnail: imageUrls[0],
-                    };
-                    console.log(finalValues);
-                }
-            });
-        },
-        [uploadImages],
-    );
-
-    useEffect(() => {
-        resetField('subCategory');
-        resetField('detailCategory');
-    }, [selectedCategory, resetField]);
-
-    useEffect(() => {
-        resetField('detailCategory');
-    }, [selectedSubCategory, resetField]);
+    const onSubmit = async (values: z.infer<typeof ProductSchema>) => {
+        startTransition(async () => {
+            console.log(values);
+        });
+    };
 
     return (
-        <div className="p-4">
+        <div className="min-h-full bg-slate-100 p-4">
             <Form {...form}>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                     <div className="grid grid-cols-2 gap-2">
                         <InputField
                             control={control}
+                            className="bg-white"
                             name="name"
                             label="Name"
                             placeholder="Enter your product name"
                         />
                         <InputField
                             control={control}
+                            className="bg-white"
                             name="type"
                             label="Type"
                             placeholder="Enter your product type"
                         />
                     </div>
-                    <InputField
-                        control={control}
-                        name="description"
-                        label="Description"
-                        placeholder="Enter your product description"
-                        type="text-aria"
-                    />
+
                     <div className="grid grid-cols-3 gap-2">
                         <NumericInputField
+                            className="bg-white"
                             control={control}
                             name="price"
                             label="Price"
                             placeholder="Enter your product price"
                         />
                         <NumericInputField
+                            className="bg-white"
                             control={control}
                             name="quantity"
                             label="Quantity"
                             placeholder="Enter your product quantity"
                         />
                         <NumericInputField
+                            className="bg-white"
                             control={control}
                             name="capacity"
                             label="Capacity"
@@ -182,6 +149,7 @@ const CreateProductForm = ({
                             disabled={!selectedSubCategory}
                         />
                     </div>
+
                     <CheckboxField
                         control={control}
                         name="colors"
@@ -190,24 +158,26 @@ const CreateProductForm = ({
                         getItemKey={(color) => color.id}
                         renderItem={(color) => color.name}
                     />
-                    <div>
-                        <MultiImageDropzone
-                            value={imagesFileState}
-                            dropzoneOptions={{ maxFiles: 6 }}
-                            onChange={(files) => {
-                                setError('');
-                                setImagesFileState(files);
-                            }}
-                            onFilesAdded={async (addedFiles) => {
-                                setError('');
-                                setImagesFileState((prevFiles) => [
-                                    ...prevFiles,
-                                    ...addedFiles,
-                                ]);
-                            }}
-                        />
+
+                    <div className="flex flex-row space-x-2">
+                        <UploadThumbnail />
+                        <div className="w-full">
+                            <InputField
+                                className="h-[202px] bg-white"
+                                control={control}
+                                name="description"
+                                label="Description"
+                                placeholder="Enter your product description"
+                                type="text-aria"
+                            />
+                        </div>
                     </div>
-                    <FormError message={error} />
+
+                    <UploadMultipleImages
+                        urlsImage={urlsImage}
+                        setUrlsImage={setUrlsImage}
+                    />
+
                     <Button disabled={isPending}>
                         Create Product
                         {isPending && (

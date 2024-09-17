@@ -78,6 +78,7 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
         } = useDropzone({
             accept: { 'image/*': [] },
             multiple: false,
+            maxSize: 100000,
             disabled,
             onDrop: (acceptedFiles) => {
                 const file = acceptedFiles[0];
@@ -117,7 +118,7 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
                 const { errors } = fileRejections[0];
                 if (errors[0]?.code === 'file-too-large') {
                     return ERROR_MESSAGES.fileTooLarge(
-                        dropzoneOptions?.maxSize ?? 0,
+                        dropzoneOptions?.maxSize ?? 100000,
                     );
                 } else if (errors[0]?.code === 'file-invalid-type') {
                     return ERROR_MESSAGES.fileInvalidType();
@@ -191,7 +192,7 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
                 </div>
 
                 {/* Error Text */}
-                <div className="mt-1 text-xs text-red-500">{errorMessage}</div>
+                <div className="mt-2 text-xs text-red-500">{errorMessage}</div>
             </div>
         );
     },

@@ -39,11 +39,18 @@ const edgeStoreRouter = es.router({
                 type: z.enum(['product', 'profile']),
             }),
         )
-        .path(({ input }) => [{ type: input.type }]),
-
+        .path(({ input }) => [{ type: input.type }])
+        .beforeUpload(({ ctx, input, fileInfo }) => {
+            console.log('beforeUpload', ctx, input, fileInfo);
+            return true;
+        })
+        .beforeDelete(({ ctx, fileInfo }) => {
+            console.log('beforeDelete', ctx, fileInfo);
+            return true;
+        }),
     publicFiles: es
         .fileBucket({
-            maxSize: 1024 * 1024 * 10, // 10MB
+            maxSize: 1024 * 1024 * 10,
             accept: ['image/jpeg', 'image/png'],
         })
         .path(({ ctx }) => [{ owner: ctx.userId }])
@@ -53,17 +60,17 @@ const edgeStoreRouter = es.router({
                     userId: { path: 'owner' },
                 },
                 {
-                    userRole: { eq: 'admin' },
+                    userRole: { eq: 'ADMIN' },
                 },
             ],
         })
         .beforeUpload(({ ctx, input, fileInfo }) => {
             console.log('beforeUpload', ctx, input, fileInfo);
-            return true; // allow upload
+            return true;
         })
         .beforeDelete(({ ctx, fileInfo }) => {
             console.log('beforeDelete', ctx, fileInfo);
-            return true; // allow delete
+            return true;
         }),
 });
 const handler = createEdgeStoreNextHandler({
@@ -71,7 +78,5 @@ const handler = createEdgeStoreNextHandler({
     createContext,
 });
 export { handler as GET, handler as POST };
-/**
- * This type is used to create the type-safe client for the frontend.
- */
+
 export type EdgeStoreRouter = typeof edgeStoreRouter;

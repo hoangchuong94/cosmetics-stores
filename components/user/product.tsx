@@ -10,7 +10,6 @@ interface ProductProps {
 }
 
 export default function Product({ product }: ProductProps) {
-    console.log(product);
     return (
         <Card className="rounded-none border border-none shadow-none">
             <CardContent className="p-0">

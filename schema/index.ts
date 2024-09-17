@@ -87,7 +87,7 @@ export const ProductSchema = z.object({
         .positive('Price must be a positive number')
         .int('Quantity must be an integer'),
 
-    thumbnail: z.string({
+    thumbnailUrl: z.string({
         required_error: 'Type product description is required',
     }),
 
@@ -110,32 +110,26 @@ export const ProductSchema = z.object({
 
     images: z.array(z.string()),
 
-    category: z
-        .object({
-            id: z.string(),
-            name: z.string(),
-            createdAt: z.date(),
-            updatedAt: z.date(),
-        })
-        .nullable(),
+    category: z.object({
+        id: z.string(),
+        name: z.string(),
+        createdAt: z.date(),
+        updatedAt: z.date(),
+    }),
 
-    subCategory: z
-        .object({
-            id: z.string(),
-            name: z.string(),
-            createdAt: z.date(),
-            updatedAt: z.date(),
-            categoryId: z.string(),
-        })
-        .nullable(),
+    subCategory: z.object({
+        id: z.string(),
+        name: z.string(),
+        createdAt: z.date(),
+        updatedAt: z.date(),
+        categoryId: z.string(),
+    }),
 
-    detailCategory: z
-        .object({
-            id: z.string(),
-            name: z.string(),
-            createdAt: z.date(),
-            updatedAt: z.date(),
-            subCategoryId: z.string(),
-        })
-        .nullable(),
+    detailCategory: z.object({
+        id: z.string(),
+        name: z.string(),
+        createdAt: z.date(),
+        updatedAt: z.date(),
+        subCategoryId: z.string(),
+    }),
 });

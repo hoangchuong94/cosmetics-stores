@@ -21,7 +21,7 @@ import {
     InputField,
     NumericInputField,
     SelectField,
-} from '@/components/custom-field-create-product-form';
+} from '@/components/custom-field';
 
 interface CreateProductFormProps {
     colors: Color[];
@@ -40,7 +40,6 @@ const CreateProductForm = ({
     subCategories,
     detailCategories,
 }: CreateProductFormProps) => {
-    const [thumbnailFile, setThumbnailFile] = React.useState<FileState>();
     const [imagesFileState, setImagesFileState] = React.useState<FileState[]>(
         [],
     );
@@ -57,7 +56,7 @@ const CreateProductForm = ({
             price: 0,
             quantity: 0,
             capacity: 0,
-            thumbnail: '',
+            thumbnailUrl: '',
             colors: [],
             images: [],
             category: undefined,
