@@ -1,4 +1,3 @@
-// useImageUploader.ts
 import { useState } from 'react';
 import { useEdgeStore } from '@/lib/edgestore';
 import { type FileState } from '@/components/multi-image-dropzone';
@@ -78,12 +77,11 @@ export function useImageUploader() {
                             result.status === 'fulfilled',
                     )
                     .map((result) => result.value.thumbnailUrl)
-                    .filter((url): url is string => url !== null); // Lọc bỏ giá trị null
+                    .filter((url): url is string => url !== null);
 
-                // console.log('Uploaded image URLs:', imageUrls);
-                return imageUrls; // Trả về URLs nếu tất cả đều thành công
+                return imageUrls;
             } else {
-                return []; // Trả về mảng rỗng nếu có lỗi
+                return [];
             }
         } catch (err: unknown) {
             if (err instanceof Error) {
