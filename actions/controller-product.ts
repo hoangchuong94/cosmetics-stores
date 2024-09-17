@@ -71,7 +71,7 @@ export const createProduct = async (values: z.infer<typeof ProductSchema>) => {
                 price: values.price,
                 quantity: values.quantity,
                 capacity: values.capacity,
-                thumbnail: values.thumbnail,
+                thumbnail: values.thumbnailUrl,
                 detailCategories: {
                     create: {
                         detailCategory: {
