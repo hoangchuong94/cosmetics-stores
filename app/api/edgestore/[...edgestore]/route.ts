@@ -41,8 +41,11 @@ const edgeStoreRouter = es.router({
         )
         .path(({ input }) => [{ type: input.type }])
         .beforeUpload(({ ctx, input, fileInfo }) => {
-            console.log('beforeUpload', ctx, input, fileInfo);
-            return true;
+            if (ctx.userRole === 'ADMIN') {
+                console.log('beforeUpload', ctx, input, fileInfo);
+                return true;
+            }
+            return false;
         })
         .beforeDelete(({ ctx, fileInfo }) => {
             console.log('beforeDelete', ctx, fileInfo);

@@ -1,5 +1,5 @@
+'use server';
 import CreateProductForm from '@/components/admin/create-product-form';
-import TestUploadFile from '@/components/admin/test-upload-image';
 import {
     getCategories,
     getColors,
@@ -23,14 +23,7 @@ const CreateProduct = async () => {
 
         return (
             <>
-                {/* <CreateProductForm
-                    colors={colors}
-                    categories={categories}
-                    subCategories={subCategories}
-                    detailCategories={detailCategories}
-                /> */}
-
-                <TestUploadFile
+                <CreateProductForm
                     colors={colors}
                     categories={categories}
                     subCategories={subCategories}
