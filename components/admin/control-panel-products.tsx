@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import LinkHierarchy from '@/components/admin/link-hierarchy';
+import LinkHierarchy from '@/components/link-hierarchy';
 
 const ControlPanelProducts = async () => {
     return (

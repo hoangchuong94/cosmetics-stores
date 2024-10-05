@@ -27,9 +27,9 @@ import UploadImages from '@/components/upload-images';
 import UploadThumbnail from '@/components/upload-thumbnail';
 import { createProduct } from '@/actions/controller-product';
 import { useToast } from '@/hooks/use-toast';
-import LinkHierarchy from './link-hierarchy';
+import LinkHierarchy from '@/components/link-hierarchy';
 import { useImageUploader } from '@/hooks/use-upload-images';
-import LoadingSpinner from '../loading-and-stream/loading-spinner';
+import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
 
 interface CreateProductFormProps {
     colors: Color[];
@@ -249,21 +249,6 @@ const CreateProductForm = ({
                             Create Product
                             {isPending && <LoadingSpinner />}
                         </Button>
-
-                        {/* <Button
-                            className={`mt-6 w-full ${isPending && 'bg-gray-700'}`}
-                            aria-disabled={isPending}
-                            disabled={isPending}
-                            type="submit"
-                        >
-                            {isPending ? (
-                                <LoadingSpinner />
-                            ) : (
-                                <>
-                                    <p>Create Product</p>
-                                </>
-                            )}
-                        </Button> */}
                     </form>
                 </Form>
             </div>

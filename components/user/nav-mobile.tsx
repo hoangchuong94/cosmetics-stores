@@ -9,6 +9,7 @@ import { CategoryWithDetails } from '@/types';
 import { signOut } from 'next-auth/react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { CustomTypeUser } from '@/types';
+import { Button } from '@/components/ui/button';
 
 interface NavbarProps {
     categories: CategoryWithDetails[];
@@ -97,9 +98,9 @@ export default function NavMobile({ categories, user }: NavbarProps) {
                                     <li className="mx-[-20px] border border-x-0 border-y-slate-200 px-5 py-5 transition-all hover:bg-orange-200/20 hover:underline hover:underline-offset-1">
                                         <div className="flex flex-row">
                                             <LogOut className="mr-2 h-4 w-4" />
-                                            <button onClick={() => signOut()}>
+                                            <Button onClick={() => signOut()}>
                                                 Sign out
-                                            </button>
+                                            </Button>
                                         </div>
                                     </li>
                                 </ul>

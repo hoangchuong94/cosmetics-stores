@@ -15,17 +15,7 @@ const menuItems = [
             {
                 id: '1',
                 name: 'Dashboard',
-                href: '/dashboard',
-            },
-            {
-                id: '2',
-                name: 'Dashboard 1',
-                href: '/dashboard',
-            },
-            {
-                id: '3',
-                name: 'Dashboard 3',
-                href: '/dashboard',
+                href: '/dashboard/product',
             },
         ],
     },
@@ -35,16 +25,6 @@ const menuItems = [
         subMenu: [
             {
                 id: '1',
-                name: 'user',
-                href: '/user',
-            },
-            {
-                id: '2',
-                name: 'user',
-                href: '/user',
-            },
-            {
-                id: '3',
                 name: 'user',
                 href: '/user',
             },
@@ -122,7 +102,10 @@ const SideNav = async () => {
                                             key={subMenu.id}
                                             className="mx-[-20px] border border-x-0 border-y-slate-200 bg-gray-100/50 px-5 py-5 hover:bg-blue-100/60 hover:underline hover:underline-offset-4"
                                         >
-                                            <Link href={'/'} className="block">
+                                            <Link
+                                                href={subMenu.href}
+                                                className="block"
+                                            >
                                                 {subMenu.name}
                                             </Link>
                                         </li>
