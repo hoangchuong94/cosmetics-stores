@@ -108,7 +108,7 @@ export const ProductSchema = z.object({
         )
         .nonempty('At least one color must be selected'),
 
-    images: z.array(z.string()),
+    imagesUrl: z.array(z.string()),
 
     category: z.object({
         id: z.string(),

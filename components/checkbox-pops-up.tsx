@@ -79,6 +79,7 @@ const PopoverCheckbox = <T,>({
                                 {items.length > 0 ? (
                                     items.map((item) => (
                                         <CommandItem
+                                            className="cursor-pointer"
                                             key={getItemKey(item)}
                                             onSelect={() => handleSelect(item)}
                                         >

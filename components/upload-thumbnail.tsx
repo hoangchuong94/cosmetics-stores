@@ -1,13 +1,30 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import {
+    useEffect,
+    useState,
+    useCallback,
+    Dispatch,
+    SetStateAction,
+} from 'react';
 import { SingleImageDropzone } from '@/components/single-image-dropzone';
 import { useEdgeStore } from '@/lib/edgestore';
+import { FileState } from './multi-image-dropzone';
 
-export default function UploadThumbnail() {
-    const [file, setFile] = useState<File | undefined>(undefined);
+interface UploadThumbnailProps {
+    thumbnailUrl: string | undefined;
+    setThumbnailUrl: React.Dispatch<React.SetStateAction<string | undefined>>;
+    file: File | undefined;
+    setFile: Dispatch<SetStateAction<File | undefined>>;
+}
 
-    const { edgestore, state, reset } = useEdgeStore();
+export default function UploadThumbnail({
+    thumbnailUrl,
+    setThumbnailUrl,
+    file,
+    setFile,
+}: UploadThumbnailProps) {
+    const { edgestore } = useEdgeStore();
 
     const handleUploadImage = useCallback(async () => {
         if (file) {
@@ -15,10 +32,14 @@ export default function UploadThumbnail() {
                 const res = await edgestore.publicImages.upload({
                     file,
                     input: { type: 'product' },
+                    options: {
+                        temporary: true,
+                    },
                     onProgressChange: (progress) => {
                         console.log('Progress:', progress);
                     },
                 });
+                return res;
             } catch (error) {
                 console.error('Upload failed:', error);
             }
@@ -28,19 +49,22 @@ export default function UploadThumbnail() {
     useEffect(() => {
         const uploadImage = async () => {
             if (file) {
-                await handleUploadImage();
+                const thumbnailUploaded = await handleUploadImage();
+                if (thumbnailUploaded && thumbnailUploaded.url) {
+                    setThumbnailUrl(thumbnailUploaded.url);
+                }
             }
         };
         uploadImage();
-    }, [file, handleUploadImage]);
+    }, [file, handleUploadImage, setThumbnailUrl]);
 
     return (
         <div>
             <p className="mb-1 text-sm">Thumbnail :</p>
             <SingleImageDropzone
                 className="bg-white"
-                width={200}
-                height={200}
+                width={150}
+                height={150}
                 value={file}
                 onChange={(newFile) => setFile(newFile)}
             />

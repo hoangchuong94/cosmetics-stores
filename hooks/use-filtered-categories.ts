@@ -1,3 +1,4 @@
+'use client';
 import { Category, SubCategory, DetailCategory } from '@prisma/client';
 import { useEffect, useMemo } from 'react';
 

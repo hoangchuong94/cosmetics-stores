@@ -1,10 +1,11 @@
+'use client';
+
 import { useCallback, useState } from 'react';
 import { useEdgeStore } from '@/lib/edgestore';
 import { type FileState } from '@/components/multi-image-dropzone';
 
 export function useImageUploader() {
     const [fileStates, setFileStates] = useState<FileState[]>([]);
-    const [errorMessage, setErrorMessage] = useState<string | undefined>();
     const { edgestore } = useEdgeStore();
 
     const updateFileProgress = useCallback(
@@ -25,6 +26,10 @@ export function useImageUploader() {
 
     const uploadImages = useCallback(
         async (addedFiles: FileState[]) => {
+            setFileStates((prevFileStates) => [
+                ...prevFileStates,
+                ...addedFiles,
+            ]);
             const data = await Promise.all(
                 addedFiles.map(async (fileState) => {
                     if (fileState.file instanceof File) {
@@ -49,40 +54,21 @@ export function useImageUploader() {
                                 },
                             });
                             return res;
-                        } catch (err) {
+                        } catch (err: any) {
                             updateFileProgress(fileState.key, 'ERROR');
-                            console.error(
-                                `update image upload field ${fileState.key}`,
-                            );
-                            return undefined;
                         }
                     } else {
-                        console.error(`Invalid file type for ${fileState.key}`);
                         updateFileProgress(fileState.key, 'ERROR');
-                        return undefined;
                     }
                 }),
             );
-
-            const hasError = data.some((item) => item === undefined);
-            if (hasError) {
-                setErrorMessage('error images upload');
-                return [];
-            }
-
-            const urlsImageUploadAllComplete = data.filter(
-                (item) => item !== undefined && item !== null,
-            );
-
-            return urlsImageUploadAllComplete;
+            return data;
         },
         [edgestore, updateFileProgress],
     );
 
     return {
-        errorMessage,
         fileStates,
-        setErrorMessage,
         setFileStates,
         uploadImages,
         updateFileProgress,

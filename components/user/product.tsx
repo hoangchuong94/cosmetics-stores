@@ -17,7 +17,7 @@ export default function Product({ product }: ProductProps) {
                     <div className="relative min-h-96">
                         <Image
                             alt={`image product ${product.name}`}
-                            src={product.images[0].image.url}
+                            src={product.thumbnail}
                             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw"
                             fill
                             priority

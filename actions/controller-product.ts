@@ -1,5 +1,4 @@
 'use server';
-
 import prisma from '@/lib/prisma';
 import z from 'zod';
 import { ProductSchema } from '@/schema/index';
@@ -54,15 +53,17 @@ export const getDetailCategories = async () => {
 };
 
 export const createProduct = async (values: z.infer<typeof ProductSchema>) => {
-    const imagePromises = values.images.map((url) =>
-        prisma.image.create({
-            data: { url },
-        }),
-    );
-    const images = await Promise.all(imagePromises);
-    const imageIds = images.map((image) => ({ id: image.id }));
-
     try {
+        const imagePromises = values.imagesUrl.map((url) =>
+            prisma.image.create({
+                data: { url },
+            }),
+        );
+
+        const images = await Promise.all(imagePromises);
+
+        const imageIds = images.map((image) => ({ id: image.id }));
+
         const newProduct = await prisma.product.create({
             data: {
                 name: values.name,
@@ -96,8 +97,6 @@ export const createProduct = async (values: z.infer<typeof ProductSchema>) => {
         return newProduct;
     } catch (error) {
         console.error('Error creating product:', error);
-    } finally {
-        await prisma.$disconnect();
     }
 };
 

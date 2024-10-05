@@ -1,6 +1,12 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {
+    Dispatch,
+    SetStateAction,
+    useCallback,
+    useEffect,
+    useState,
+} from 'react';
 import {
     MultiImageDropzone,
     type FileState,
@@ -8,49 +14,82 @@ import {
 import { useImageUploader } from '@/hooks/use-upload-images';
 import { FormError } from '@/components/form-error';
 
+interface UploadedImage {
+    url: string;
+    thumbnailUrl: string | null;
+    size: number;
+    uploadedAt: Date;
+    metadata: Record<string, never>;
+    path: {
+        type: string;
+    };
+    pathOrder: 'type'[];
+}
+
 interface UploadImagesProps {
-    urlsImage: string[] | undefined;
-    setUrlsImage: React.Dispatch<React.SetStateAction<string[] | undefined>>;
+    imageUrls: string[];
+    setImageUrls: React.Dispatch<React.SetStateAction<string[]>>;
+    fileStates: FileState[];
+    setFileStates: Dispatch<SetStateAction<FileState[]>>;
+    uploadImages: (
+        addedFiles: FileState[],
+    ) => Promise<(UploadedImage | undefined)[]>;
+    updateFileProgress: (key: string, progress: FileState['progress']) => void;
 }
 
 export default function UploadImages({
-    urlsImage,
-    setUrlsImage,
+    imageUrls,
+    setImageUrls,
+    fileStates,
+    setFileStates,
+    uploadImages,
+    updateFileProgress,
 }: UploadImagesProps) {
-    const {
-        fileStates,
-        setFileStates,
-        uploadImages,
-        errorMessage,
-        setErrorMessage,
-    } = useImageUploader();
+    const [imageUploaded, setImageUploaded] = useState<UploadedImage[]>([]);
+    const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
-    const handleFilesAdded = useCallback(
+    const handleOnFilesAdded = useCallback(
         async (addedFiles: FileState[]) => {
-            const preFileUpload = [...fileStates, ...addedFiles];
-            setFileStates(preFileUpload);
-            console.log(fileStates);
-            const urlsImageUploader = await uploadImages(preFileUpload);
-            console.log(urlsImageUploader);
+            const imageUploader = await uploadImages(addedFiles);
+
+            const validImages = imageUploader.filter(
+                (img): img is UploadedImage =>
+                    img !== null && img !== undefined,
+            );
+
+            setImageUploaded((prev) => [...prev, ...validImages]);
         },
-        [fileStates, uploadImages, setFileStates],
+        [uploadImages, setImageUploaded],
     );
 
+    const handleOnChange = (files: FileState[]) => {
+        setFileStates(files);
+    };
+
+    useEffect(() => {
+        const hasError = fileStates.some((item) => item.progress === 'ERROR');
+        setErrorMessage(hasError ? 'Error uploading images' : undefined);
+    }, [fileStates]);
+
+    useEffect(() => {
+        if (fileStates.length === imageUploaded.length) {
+            setImageUrls(imageUploaded.map((item) => item.url));
+        }
+    }, [imageUploaded, setImageUrls, fileStates]);
+
     return (
-        <>
+        <div>
             <p className="mb-1 text-sm">Images :</p>
             <MultiImageDropzone
-                className={`${!(fileStates.length > 0) && 'h-[200px] w-[200px]'} bg-white`}
+                className={`${!(fileStates.length > 0) && 'h-[150px] w-[150px]'} bg-white`}
                 value={fileStates}
                 dropzoneOptions={{
                     maxFiles: 6,
                 }}
-                onChange={(files) => {
-                    setFileStates(files);
-                }}
-                onFilesAdded={handleFilesAdded}
+                onChange={handleOnChange}
+                onFilesAdded={handleOnFilesAdded}
             />
             <FormError message={errorMessage} />
-        </>
+        </div>
     );
 }

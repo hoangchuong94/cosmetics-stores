@@ -10,7 +10,7 @@ import {
     ToastProps,
     ToastActionElement,
 } from '@/components/ui/toast';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 export function Toaster() {
     const { toasts } = useToast();
@@ -25,8 +25,13 @@ export function Toaster() {
                 ...props
             }) {
                 return (
-                    <Toast key={id} {...props} duration={20000}>
-                        <div className="grid gap-1">
+                    <Toast
+                        key={id}
+                        {...props}
+                        duration={5000}
+                        className="bg-red-50"
+                    >
+                        <div className="grid gap-1 font-sans ">
                             {title && <ToastTitle>{title}</ToastTitle>}
                             {description && (
                                 <ToastDescription>

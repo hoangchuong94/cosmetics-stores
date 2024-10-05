@@ -29,7 +29,7 @@ type InputProps = {
     onChange?: (files: FileState[]) => void | Promise<void>;
     onFilesAdded?: (addedFiles: FileState[]) => void | Promise<void>;
     disabled?: boolean;
-    dropzoneOptions?: Omit<DropzoneOptions, 'disabled'>;
+    dropzoneOptions?: DropzoneOptions & { maxSize?: number };
 };
 
 const ERROR_MESSAGES = {
@@ -83,6 +83,16 @@ const MultiImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
             onDrop: (acceptedFiles) => {
                 const files = acceptedFiles;
                 setCustomError(undefined);
+
+                const maxSize = dropzoneOptions?.maxSize; // Lấy giá trị maxSize từ dropzoneOptions
+                if (
+                    maxSize &&
+                    acceptedFiles.some((file) => file.size > maxSize)
+                ) {
+                    setCustomError(ERROR_MESSAGES.fileTooLarge(maxSize));
+                    return;
+                }
+
                 if (
                     dropzoneOptions?.maxFiles &&
                     (value?.length ?? 0) + files.length >
@@ -281,7 +291,7 @@ const MultiImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
                     )}
                 </div>
                 {/* Error Text */}
-                <div className="mt-1 text-xs text-red-500">
+                <div className="mt-1 text-sm text-red-500">
                     {customError ?? errorMessage}
                 </div>
             </div>

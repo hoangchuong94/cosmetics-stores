@@ -83,6 +83,7 @@ export default function CustomSelect<T>({
                         <CommandGroup>
                             {items.map((item) => (
                                 <CommandItem
+                                    className="cursor-pointer"
                                     key={getKey(item)}
                                     value={getItemName(item)}
                                     onSelect={() =>
