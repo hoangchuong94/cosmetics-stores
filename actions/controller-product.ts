@@ -4,19 +4,22 @@ import z from 'zod';
 import { ProductSchema } from '@/schema/index';
 import { ProductWithDetails, CategoryWithDetails } from '@/types';
 
+const handleError = (error: unknown, message: string) => {
+    console.error(`${message}:`, error);
+    return [];
+};
+
 export const getColors = async () => {
     try {
-        const colors = await prisma.color.findMany();
-        return colors;
+        return await prisma.color.findMany();
     } catch (error) {
-        console.error('Error fetching colors:', error);
-        return [];
+        return handleError(error, 'Error fetching colors');
     }
 };
 
 export const getCategories = async (): Promise<CategoryWithDetails[]> => {
     try {
-        const categories = await prisma.category.findMany({
+        return await prisma.category.findMany({
             include: {
                 subCategories: {
                     include: {
@@ -25,30 +28,24 @@ export const getCategories = async (): Promise<CategoryWithDetails[]> => {
                 },
             },
         });
-        return categories;
     } catch (error) {
-        console.error('Error fetching colors:', error);
-        return [];
+        return handleError(error, 'Error fetching categories');
     }
 };
 
 export const getSubCategories = async () => {
     try {
-        const subCategories = await prisma.subCategory.findMany();
-        return subCategories;
+        return await prisma.subCategory.findMany();
     } catch (error) {
-        console.error('Error fetching colors:', error);
-        return [];
+        return handleError(error, 'Error fetching subCategories');
     }
 };
 
 export const getDetailCategories = async () => {
     try {
-        const detailCategories = await prisma.detailCategory.findMany();
-        return detailCategories;
+        return await prisma.detailCategory.findMany();
     } catch (error) {
-        console.error('Error fetching detailCategories:', error);
-        return [];
+        return handleError(error, 'Error fetching detailCategories');
     }
 };
 
@@ -60,9 +57,15 @@ export const createProduct = async (values: z.infer<typeof ProductSchema>) => {
             }),
         );
 
-        const images = await Promise.all(imagePromises);
+        const images = await Promise.allSettled(imagePromises);
+        const successfulImages = images
+            .filter((result) => result.status === 'fulfilled')
+            .map(
+                (result) =>
+                    (result as PromiseFulfilledResult<{ id: string }>).value,
+            );
 
-        const imageIds = images.map((image) => ({ id: image.id }));
+        const imageIds = successfulImages.map((image) => ({ id: image.id }));
 
         const newProduct = await prisma.product.create({
             data: {
@@ -96,13 +99,13 @@ export const createProduct = async (values: z.infer<typeof ProductSchema>) => {
         });
         return newProduct;
     } catch (error) {
-        console.error('Error creating product:', error);
+        handleError(error, 'Error creating product');
     }
 };
 
 export const getProducts = async (): Promise<ProductWithDetails[]> => {
     try {
-        const products = await prisma.product.findMany({
+        return await prisma.product.findMany({
             include: {
                 images: {
                     include: {
@@ -126,10 +129,7 @@ export const getProducts = async (): Promise<ProductWithDetails[]> => {
                 },
             },
         });
-
-        return products;
     } catch (error) {
-        console.error('Error fetching products:', error);
-        return [];
+        return handleError(error, 'Error fetching products');
     }
 };
