@@ -175,6 +175,7 @@ const MultiImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
                                 }
                                 width={500}
                                 height={500}
+                                priority
                             />
                             {/* Progress Bar */}
                             {typeof progress === 'number' && (

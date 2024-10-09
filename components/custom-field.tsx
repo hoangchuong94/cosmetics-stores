@@ -73,7 +73,7 @@ export const InputField = <TFieldValues extends FieldValues>({
         label={label}
         {...fieldProps}
         renderInput={(field) =>
-            type === 'text-aria' ? (
+            type === 'text-area' ? (
                 <Textarea
                     placeholder={placeholder}
                     className={className}
@@ -116,7 +116,7 @@ export const NumericInputField = <TFieldValues extends FieldValues>({
                 type="number"
                 inputMode="numeric"
                 className={className}
-                value={field.value === 0 ? '' : field.value}
+                value={(field.value === 0 ? '' : field.value) ?? ''}
                 onKeyDown={preventInvalidNumberInput}
             />
         )}

@@ -4,9 +4,16 @@ import z from 'zod';
 import { ProductSchema } from '@/schema/index';
 import { ProductWithDetails, CategoryWithDetails } from '@/types';
 
-const handleError = (error: unknown, message: string) => {
+const handleError = (
+    error: unknown,
+    message: string,
+    returnEmptyArray = true,
+) => {
     console.error(`${message}:`, error);
-    return [];
+    if (returnEmptyArray) {
+        return [];
+    }
+    throw error;
 };
 
 export const getColors = async () => {
@@ -58,6 +65,7 @@ export const createProduct = async (values: z.infer<typeof ProductSchema>) => {
         );
 
         const images = await Promise.allSettled(imagePromises);
+
         const successfulImages = images
             .filter((result) => result.status === 'fulfilled')
             .map(
@@ -79,7 +87,7 @@ export const createProduct = async (values: z.infer<typeof ProductSchema>) => {
                 detailCategories: {
                     create: {
                         detailCategory: {
-                            connect: { id: values.detailCategory!.id },
+                            connect: { id: values.detailCategory.id },
                         },
                     },
                 },
@@ -131,5 +139,42 @@ export const getProducts = async (): Promise<ProductWithDetails[]> => {
         });
     } catch (error) {
         return handleError(error, 'Error fetching products');
+    }
+};
+
+export const getProductById = async (productId: string) => {
+    try {
+        const product = await prisma.product.findUnique({
+            where: {
+                id: productId,
+            },
+            include: {
+                images: {
+                    include: {
+                        image: true,
+                    },
+                },
+                colors: {
+                    include: {
+                        color: true,
+                    },
+                },
+                detailCategories: {
+                    include: {
+                        detailCategory: true,
+                    },
+                },
+                promotions: {
+                    include: {
+                        promotion: true,
+                    },
+                },
+            },
+        });
+
+        return product;
+    } catch (error) {
+        console.error('Error retrieving product:', error);
+        throw error;
     }
 };

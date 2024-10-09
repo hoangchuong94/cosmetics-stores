@@ -16,7 +16,7 @@ export default function AuthenticationLayout({
                             src={bgAuth}
                             alt="background auth"
                             quality={100}
-                            placeholder="blur"
+                            priority
                         />
                     </div>
                     <div className="min-h-[651px] w-full md:w-6/12">

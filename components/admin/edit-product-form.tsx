@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useTransition } from 'react';
+import React, { useEffect, useState, useTransition } from 'react';
 import {
     CheckboxField,
     InputField,
@@ -23,56 +23,61 @@ import UploadImages from '@/components/upload-images';
 import UploadThumbnail from '@/components/upload-thumbnail';
 import LinkHierarchy from '@/components/link-hierarchy';
 import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
+import { ProductWithDetails } from '@/types';
+import { FileState } from '../multi-image-dropzone';
 
-interface CreateProductFormProps {
+interface ProductEdit extends ProductWithDetails {
+    subCategory: SubCategory;
+    category: Category;
+}
+
+interface EditProductFormProps {
+    product: ProductEdit;
     colors: Color[];
     categories: Category[];
     subCategories: SubCategory[];
     detailCategories: DetailCategory[];
 }
 
-const CreateAndEditProductForm = ({
+const EditProductForm = ({
+    product,
     colors,
     categories,
     subCategories,
     detailCategories,
-}: CreateProductFormProps) => {
+}: EditProductFormProps) => {
     const { toast } = useToast();
     const { edgestore } = useEdgeStore();
     const [isPending, startTransition] = useTransition();
 
     const [imageUrls, setImageUrls] = useState<string[]>([]);
-
     const [thumbnailUrl, setThumbnailUrl] = useState<string | undefined>(
         undefined,
     );
-
     const { fileStates, setFileStates, uploadImages, updateFileProgress } =
         useImageUploader();
-
     const [file, setFile] = useState<File | undefined>(undefined);
 
     const form = useForm<z.infer<typeof ProductSchema>>({
         resolver: zodResolver(ProductSchema),
         defaultValues: {
-            name: '',
-            description: '',
-            type: '',
-            price: 0,
-            quantity: 0,
-            capacity: null,
-            thumbnailUrl: '',
-            colors: [],
-            imagesUrl: [],
-            promotions: [],
-            category: undefined,
-            subCategory: undefined,
-            detailCategory: undefined,
+            name: product.name,
+            description: product.description,
+            type: product.type,
+            price: product.price,
+            quantity: product.quantity,
+            capacity: product.capacity || undefined,
+            thumbnailUrl: product.thumbnail,
+            colors: product.colors.map((item) => item.color),
+            imagesUrl: product.images.map((item) => item.image.url),
+            promotions: product.promotions.map((item) => item.promotion),
+            category: product.category,
+            subCategory: product.subCategory,
+            detailCategory: product.detailCategories[0].detailCategory,
         },
     });
 
     const { watch, resetField, handleSubmit, control } = form;
-
     const selectedCategory = watch('category');
     const selectedSubCategory = watch('subCategory');
 
@@ -87,41 +92,93 @@ const CreateAndEditProductForm = ({
 
     const onSubmit = async (values: z.infer<typeof ProductSchema>) => {
         if (imageUrls.length > 0 && thumbnailUrl !== undefined) {
-            imageUrls.forEach(async (url) => {
+            try {
+                await Promise.all(
+                    imageUrls.map((url) =>
+                        edgestore.publicFiles.confirmUpload({ url }),
+                    ),
+                );
+
                 await edgestore.publicFiles.confirmUpload({
-                    url: url,
+                    url: thumbnailUrl,
                 });
-            });
 
-            await edgestore.publicFiles.confirmUpload({
-                url: thumbnailUrl,
-            });
+                startTransition(async () => {
+                    const newProduct = {
+                        ...values,
+                        imagesUrl: imageUrls,
+                        thumbnailUrl: thumbnailUrl,
+                    };
 
-            startTransition(async () => {
-                const newProduct = {
-                    ...values,
-                    imagesUrl: imageUrls,
-                    thumbnailUrl: thumbnailUrl,
-                };
-
-                const productUploaded = await createProduct(newProduct);
-                if (productUploaded) {
+                    const productUploaded = await createProduct(newProduct);
+                    if (productUploaded) {
+                        toast({
+                            title: 'Product Created',
+                            description:
+                                'The product has been successfully created.',
+                        });
+                        form.reset();
+                        setFileStates([]);
+                        setFile(undefined);
+                    } else {
+                        throw new Error('Product creation failed.');
+                    }
+                });
+            } catch (error: unknown) {
+                if (error instanceof Error) {
                     toast({
-                        title: 'The product has been successfully created',
-                        description: 'Friday, February 10, 2023 at 5:57 PM',
+                        title: 'Error Occurred',
+                        description:
+                            error.message ||
+                            'An error occurred during the product creation process.',
                     });
-                    form.reset();
-                    setFileStates([]);
-                    setFile(undefined);
                 } else {
-                    toast({
-                        title: 'An error occurred during the product creation process',
-                        description: 'Friday, February 10, 2023 at 5:57 PM',
-                    });
+                    throw Error(
+                        'An error occurred during the product creation process.',
+                    );
                 }
+            }
+        } else {
+            toast({
+                title: 'Missing Images',
+                description:
+                    'Please ensure you have uploaded images and a thumbnail.',
             });
         }
     };
+
+    useEffect(() => {
+        if (product.images.length > 0) {
+            const initialImagesUploaded = product.images.map((item) => ({
+                file: item.image.url,
+                key: item.image.id,
+                progress: 'PENDING',
+            })) as FileState[];
+
+            setFileStates(initialImagesUploaded);
+        }
+    }, [product.images, setFileStates]);
+
+    useEffect(() => {
+        const loadImageFromUrl = async () => {
+            if (product.thumbnail) {
+                try {
+                    const response = await fetch(product.thumbnail);
+                    const blob = await response.blob();
+
+                    const currentFile = new File([blob], 'thumbnail.jpg', {
+                        type: blob.type,
+                    });
+
+                    setFile(currentFile);
+                } catch (error) {
+                    console.error('Error loading image:', error);
+                }
+            }
+        };
+
+        loadImageFromUrl();
+    }, [product.thumbnail]);
 
     return (
         <div className="flex min-h-full w-full flex-col items-center justify-center bg-slate-100 p-4">
@@ -224,23 +281,26 @@ const CreateAndEditProductForm = ({
                                     name="description"
                                     label="Description"
                                     placeholder="Enter your product description"
-                                    type="text-aria"
+                                    type="text-area"
                                 />
                             </div>
                         </div>
 
                         <UploadImages
+                            uploadImages={uploadImages}
+                            setImageUrls={setImageUrls}
+                            imageUrls={imageUrls}
                             fileStates={fileStates}
                             setFileStates={setFileStates}
                             updateFileProgress={updateFileProgress}
-                            uploadImages={uploadImages}
-                            imageUrls={imageUrls}
-                            setImageUrls={setImageUrls}
                         />
 
-                        <Button disabled={isPending} className="w-full">
-                            Create Product
-                            {isPending && <LoadingSpinner />}
+                        <Button
+                            type="submit"
+                            className="mt-4"
+                            disabled={isPending}
+                        >
+                            {isPending ? <LoadingSpinner /> : 'Submit'}
                         </Button>
                     </form>
                 </Form>
@@ -249,4 +309,4 @@ const CreateAndEditProductForm = ({
     );
 };
 
-export default CreateAndEditProductForm;
+export default EditProductForm;

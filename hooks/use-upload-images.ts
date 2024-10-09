@@ -62,6 +62,7 @@ export function useImageUploader() {
                     }
                 }),
             );
+            data.forEach((item) => console.log(item));
             return data;
         },
         [edgestore, updateFileProgress],

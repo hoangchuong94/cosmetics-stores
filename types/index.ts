@@ -23,13 +23,6 @@ export type ProductWithDetails = Product & {
     }[];
 };
 
-// export type ProductWithDetails = Product & {
-//     detailCategories: CategoryWithDetails[];
-//     colors: Color[];
-//     images: Image[];
-//     promotions: Promotion[];
-// };
-
 export type CategoryWithDetails = Category & {
     subCategories: SubCategoryWithDetails[];
 };

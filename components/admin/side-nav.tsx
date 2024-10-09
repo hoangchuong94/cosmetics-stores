@@ -1,6 +1,5 @@
 import React from 'react';
-import { Home, BarChart2, Settings } from 'lucide-react';
-import lgoImage from '@/public/static/logo-retina.png';
+import logoImage from '@/public/static/logo-retina.png';
 import Logo from '@/components/logo';
 import AccordionWrapped from '@/components/accordion-wrapper';
 import Link from 'next/link';
@@ -14,7 +13,7 @@ const menuItems = [
         subMenu: [
             {
                 id: '1',
-                name: 'Dashboard',
+                name: 'product',
                 href: '/dashboard/product',
             },
         ],
@@ -84,7 +83,7 @@ const SideNav = async () => {
                         <Logo
                             alt="logo header"
                             href="/"
-                            urlStatic={lgoImage}
+                            urlStatic={logoImage}
                             className="light-logo h-auto max-w-24"
                         />
                     </div>

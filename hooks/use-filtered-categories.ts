@@ -1,13 +1,14 @@
 'use client';
 import { Category, SubCategory, DetailCategory } from '@prisma/client';
 import { useEffect, useMemo } from 'react';
+import { UseFormResetField } from 'react-hook-form';
 
 export const useFilteredCategories = (
     selectedCategory: Category | undefined,
     selectedSubCategory: SubCategory | undefined,
     subCategories: SubCategory[],
     detailCategories: DetailCategory[],
-    resetField: any,
+    resetField: UseFormResetField<any>,
 ) => {
     const filteredSubCategories = useMemo(() => {
         return selectedCategory
@@ -27,12 +28,16 @@ export const useFilteredCategories = (
     }, [selectedSubCategory, detailCategories]);
 
     useEffect(() => {
-        resetField('subCategory');
-        resetField('detailCategory');
+        if (selectedCategory) {
+            resetField('subCategory');
+            resetField('detailCategory');
+        }
     }, [selectedCategory, resetField]);
 
     useEffect(() => {
-        resetField('detailCategory');
+        if (selectedSubCategory) {
+            resetField('detailCategory');
+        }
     }, [selectedSubCategory, resetField]);
 
     return { filteredSubCategories, filteredDetailCategories };

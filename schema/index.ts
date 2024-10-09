@@ -76,25 +76,26 @@ export const ProductSchema = z.object({
         .max(150, 'Product description must be less than 150 characters'),
 
     type: z
-        .string({ required_error: 'Type product description is required' })
-        .min(1, 'Type product description is required')
-        .max(50, 'Type product description must be less than 50 characters'),
+        .string({ required_error: 'Type product is required' })
+        .min(1, 'Type product is required')
+        .max(50, 'Type product must be less than 50 characters'),
 
     price: z.coerce.number().positive('Price must be a positive number'),
 
     quantity: z.coerce
         .number()
-        .positive('Price must be a positive number')
+        .positive('Quantity must be a positive number')
         .int('Quantity must be an integer'),
 
     thumbnailUrl: z.string({
-        required_error: 'Type product description is required',
+        required_error: 'ThumbnailUrl product is required',
     }),
 
     capacity: z.coerce
         .number()
-        .positive('Price must be a positive number')
-        .int('Quantity must be an integer'),
+        .positive('Capacity must be a positive number')
+        .int('Capacity must be an integer')
+        .nullable(),
 
     colors: z
         .array(
@@ -107,6 +108,18 @@ export const ProductSchema = z.object({
             }),
         )
         .nonempty('At least one color must be selected'),
+
+    promotions: z.array(
+        z.object({
+            id: z.string(),
+            name: z.string(),
+            description: z.string(),
+            startDay: z.date(),
+            endDay: z.date().nullable(),
+            createdAt: z.date(),
+            updatedAt: z.date(),
+        }),
+    ),
 
     imagesUrl: z.array(z.string()),
 
