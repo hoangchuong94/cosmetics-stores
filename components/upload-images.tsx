@@ -11,20 +11,8 @@ import {
     MultiImageDropzone,
     type FileState,
 } from '@/components/multi-image-dropzone';
-import { useImageUploader } from '@/hooks/use-upload-images';
 import { FormError } from '@/components/form-error';
-
-interface UploadedImage {
-    url: string;
-    thumbnailUrl: string | null;
-    size: number;
-    uploadedAt: Date;
-    metadata: Record<string, never>;
-    path: {
-        type: string;
-    };
-    pathOrder: 'type'[];
-}
+import { UploadedImage } from '@/types';
 
 interface UploadImagesProps {
     imageUrls: string[];
@@ -34,7 +22,6 @@ interface UploadImagesProps {
     uploadImages: (
         addedFiles: FileState[],
     ) => Promise<(UploadedImage | undefined)[]>;
-    updateFileProgress: (key: string, progress: FileState['progress']) => void;
 }
 
 export default function UploadImages({
@@ -43,23 +30,32 @@ export default function UploadImages({
     fileStates,
     setFileStates,
     uploadImages,
-    updateFileProgress,
 }: UploadImagesProps) {
     const [imageUploaded, setImageUploaded] = useState<UploadedImage[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
     const handleOnFilesAdded = useCallback(
         async (addedFiles: FileState[]) => {
-            const imageUploader = await uploadImages(addedFiles);
+            setFileStates((prevFileStates) => [
+                ...prevFileStates,
+                ...addedFiles,
+            ]);
 
-            const validImages = imageUploader.filter(
-                (img): img is UploadedImage =>
-                    img !== null && img !== undefined,
-            );
+            try {
+                const imageUploader = await uploadImages(addedFiles);
 
-            setImageUploaded((prev) => [...prev, ...validImages]);
+                const validImages = imageUploader.filter(
+                    (img): img is UploadedImage =>
+                        img !== null && img !== undefined,
+                );
+
+                setImageUploaded((prev) => [...prev, ...validImages]);
+            } catch (error) {
+                console.error('Failed to upload images:', error);
+                setErrorMessage('Failed to upload images. Please try again.');
+            }
         },
-        [uploadImages, setImageUploaded],
+        [uploadImages, setImageUploaded, setFileStates],
     );
 
     const handleOnChange = (files: FileState[]) => {

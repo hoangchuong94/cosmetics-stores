@@ -38,3 +38,15 @@ export interface CustomTypeUser {
     image: string;
     role: string;
 }
+
+export interface UploadedImage {
+    url: string;
+    thumbnailUrl: string | null;
+    size: number;
+    uploadedAt: Date;
+    metadata: Record<string, never>;
+    path: {
+        type: string;
+    };
+    pathOrder: 'type'[];
+}

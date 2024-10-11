@@ -128,10 +128,10 @@ export const columns: ColumnDef<ProductWithDetails>[] = [
                         <DropdownMenuItem asChild>
                             <Link
                                 href={{
-                                    pathname: `/dashboard/product/edit/${product.id}`,
+                                    pathname: `/dashboard/product/update/${product.id}`,
                                 }}
                             >
-                                Edit
+                                Update
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />

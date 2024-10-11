@@ -1,6 +1,6 @@
 'use server';
 import CreateProductForm from '@/components/admin/create-product-form';
-import EditProductForm from '@/components/admin/edit-product-form';
+import UpdateProductForm from '@/components/admin/update-product-form';
 import { Category, Color, DetailCategory, SubCategory } from '@prisma/client';
 import {
     getCategories,
@@ -41,13 +41,13 @@ const page = async ({ params }: { params: { crud: string[] } }) => {
                 />
             );
 
-        case 'edit': {
+        case 'update': {
             if (!idProduct) {
-                return <div>Product ID is required for editing.</div>;
+                return <div>Product ID is required for updating.</div>;
             }
 
-            const product = await getProductById(idProduct);
-            if (!product) {
+            const currentProduct = await getProductById(idProduct);
+            if (!currentProduct) {
                 return (
                     <div className="flex h-full items-center justify-center">
                         Product not found. Please check the ID.
@@ -55,7 +55,8 @@ const page = async ({ params }: { params: { crud: string[] } }) => {
                 );
             }
 
-            const detailCategory = product.detailCategories[0].detailCategory;
+            const detailCategory =
+                currentProduct.detailCategories[0].detailCategory;
 
             const subCategory = subCategories.find(
                 (item) => item.id === detailCategory.subCategoryId,
@@ -74,15 +75,15 @@ const page = async ({ params }: { params: { crud: string[] } }) => {
                 );
             }
 
-            const productEditById = {
-                ...product,
+            const product = {
+                ...currentProduct,
                 subCategory: subCategory,
                 category: category,
             };
 
             return (
-                <EditProductForm
-                    product={productEditById}
+                <UpdateProductForm
+                    product={product}
                     colors={colors}
                     categories={categories}
                     subCategories={subCategories}

@@ -58,7 +58,7 @@ export const getDetailCategories = async () => {
 
 export const createProduct = async (values: z.infer<typeof ProductSchema>) => {
     try {
-        const imagePromises = values.imagesUrl.map((url) =>
+        const imagePromises = values.imageUrls.map((url) =>
             prisma.image.create({
                 data: { url },
             }),
@@ -108,6 +108,84 @@ export const createProduct = async (values: z.infer<typeof ProductSchema>) => {
         return newProduct;
     } catch (error) {
         handleError(error, 'Error creating product');
+    }
+};
+
+export const updateProduct = async (
+    productId: string,
+    values: z.infer<typeof ProductSchema>,
+) => {
+    try {
+        const imagePromises = values.imageUrls.map((url) =>
+            prisma.image.create({
+                data: { url },
+            }),
+        );
+
+        const images = await Promise.allSettled(imagePromises);
+
+        const successfulImages = images
+            .filter((result) => result.status === 'fulfilled')
+            .map(
+                (result) =>
+                    (result as PromiseFulfilledResult<{ id: string }>).value,
+            );
+
+        const imageIds = successfulImages.map((image) => ({ id: image.id }));
+
+        const updatedProduct = await prisma.product.update({
+            where: { id: productId },
+            data: {
+                name: values.name,
+                description: values.description,
+                type: values.type,
+                price: values.price,
+                quantity: values.quantity,
+                capacity: values.capacity,
+                thumbnail: values.thumbnailUrl,
+
+                detailCategories: {
+                    upsert: {
+                        where: {
+                            productId_detailCategoryId: {
+                                productId,
+                                detailCategoryId: values.detailCategory.id,
+                            },
+                        },
+                        update: {
+                            detailCategory: {
+                                connect: { id: values.detailCategory.id },
+                            },
+                        },
+                        create: {
+                            detailCategory: {
+                                connect: { id: values.detailCategory.id },
+                            },
+                        },
+                    },
+                },
+
+                images: {
+                    deleteMany: {},
+                    create: imageIds.map((imageId) => ({
+                        image: { connect: imageId },
+                    })),
+                },
+
+                colors: {
+                    deleteMany: {},
+                    create: values.colors.map((color) => ({
+                        color: {
+                            connect: { id: color.id },
+                        },
+                    })),
+                },
+            },
+        });
+
+        return updatedProduct;
+    } catch (error) {
+        handleError(error, 'Error updating product');
     }
 };
 

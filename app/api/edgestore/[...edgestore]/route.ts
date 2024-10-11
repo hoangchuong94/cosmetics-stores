@@ -32,7 +32,7 @@ const es = initEdgeStore.context<Context>().create();
 const edgeStoreRouter = es.router({
     publicImages: es
         .imageBucket({
-            // maxSize: 10 * 1024,
+            maxSize: 10 * 1024,
             accept: ['image/jpeg', 'image/png'],
         })
         .input(

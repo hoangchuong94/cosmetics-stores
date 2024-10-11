@@ -18,6 +18,7 @@ import CustomSelect from '@/components/custom-select';
 import { Textarea } from '@/components/ui/textarea';
 import { useMemo, useCallback } from 'react';
 
+// GenericField component to wrap form fields
 interface GenericFieldProps<TFieldValues extends FieldValues> {
     label: string;
     renderInput: (
@@ -72,23 +73,15 @@ export const InputField = <TFieldValues extends FieldValues>({
     <GenericField
         label={label}
         {...fieldProps}
-        renderInput={(field) =>
-            type === 'text-area' ? (
-                <Textarea
-                    placeholder={placeholder}
-                    className={className}
-                    {...field}
-                />
-            ) : (
-                <Input
-                    {...field}
-                    value={field.value ?? ''}
-                    placeholder={placeholder}
-                    type={type}
-                    className={className}
-                />
-            )
-        }
+        renderInput={(field) => (
+            <Input
+                {...field}
+                value={field.value ?? ''}
+                placeholder={placeholder}
+                type={type}
+                className={className}
+            />
+        )}
     />
 );
 
@@ -118,6 +111,33 @@ export const NumericInputField = <TFieldValues extends FieldValues>({
                 className={className}
                 value={(field.value === 0 ? '' : field.value) ?? ''}
                 onKeyDown={preventInvalidNumberInput}
+            />
+        )}
+    />
+);
+
+// TextAreaField component using GenericField
+interface TextAreaFieldProps<TFieldValues extends FieldValues>
+    extends UseControllerProps<TFieldValues> {
+    className?: string;
+    label: string;
+    placeholder: string;
+}
+
+export const TextAreaField = <TFieldValues extends FieldValues>({
+    className,
+    label,
+    placeholder,
+    ...fieldProps
+}: TextAreaFieldProps<TFieldValues>) => (
+    <GenericField
+        label={label}
+        {...fieldProps}
+        renderInput={(field) => (
+            <Textarea
+                placeholder={placeholder}
+                className={className}
+                {...field}
             />
         )}
     />

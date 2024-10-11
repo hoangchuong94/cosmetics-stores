@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { SingleImageDropzone } from '@/components/single-image-dropzone';
 import { useEdgeStore } from '@/lib/edgestore';
+import { FormError } from './form-error';
 
 interface UploadThumbnailProps {
     thumbnailUrl: string | undefined;
@@ -24,10 +25,13 @@ export default function UploadThumbnail({
     setFile,
 }: UploadThumbnailProps) {
     const { edgestore } = useEdgeStore();
-    const handleUploadImage = useCallback(async () => {
-        if (file) {
-            try {
-                if (!file.name.includes('https')) {
+    const [errorMessage, setErrorMessage] = useState<string | undefined>();
+    const [statusUploaded, setStatusUploaded] = useState<boolean>(false);
+
+    const handleUploadThumbnail = useCallback(
+        async (file: File) => {
+            if (!statusUploaded) {
+                try {
                     const res = await edgestore.publicImages.upload({
                         file,
                         input: { type: 'product' },
@@ -35,39 +39,51 @@ export default function UploadThumbnail({
                             temporary: true,
                         },
                         onProgressChange: (progress) => {
-                            console.log('Progress:', progress);
+                            if (progress === 100) {
+                                console.log(progress);
+                                setStatusUploaded(true);
+                            }
                         },
                     });
                     return res;
+                } catch (error: unknown) {
+                    console.error('Upload failed:', error);
+                    setErrorMessage('Thumbnail image failed to upload');
                 }
-            } catch (error) {
-                console.error('Upload failed:', error);
             }
-        }
-    }, [file, edgestore]);
+        },
+        [edgestore, statusUploaded],
+    );
 
     useEffect(() => {
         const uploadImage = async () => {
-            if (file && thumbnailUrl === undefined) {
-                const thumbnailUploaded = await handleUploadImage();
+            if (file && file instanceof File) {
+                const thumbnailUploaded = await handleUploadThumbnail(file);
                 if (thumbnailUploaded && thumbnailUploaded.url) {
                     setThumbnailUrl(thumbnailUploaded.url);
                 }
             }
         };
         uploadImage();
-    }, [file, handleUploadImage, setThumbnailUrl, thumbnailUrl]);
+    }, [file, thumbnailUrl, handleUploadThumbnail, setThumbnailUrl]);
 
     return (
-        <div>
-            <p className="mb-1 text-sm">Thumbnail :</p>
-            <SingleImageDropzone
-                className="bg-white"
-                width={200}
-                height={150}
-                value={file}
-                onChange={(newFile) => setFile(newFile)}
-            />
-        </div>
+        <>
+            <p className="text-sm">Thumbnail :</p>
+            <div className="flex min-w-full items-center justify-center rounded-md bg-white shadow-sm">
+                <SingleImageDropzone
+                    className="mt-2 bg-white"
+                    width={200}
+                    height={200}
+                    value={file}
+                    onChange={(newFile) => {
+                        setStatusUploaded(false);
+                        setFile(newFile);
+                        setErrorMessage(undefined);
+                    }}
+                />
+            </div>
+            <p className="mt-3 text-xs text-red-600">{errorMessage}</p>
+        </>
     );
 }

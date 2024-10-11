@@ -121,7 +121,7 @@ export const ProductSchema = z.object({
         }),
     ),
 
-    imagesUrl: z.array(z.string()),
+    imageUrls: z.array(z.string()),
 
     category: z.object({
         id: z.string(),

@@ -5,6 +5,7 @@ import {
     InputField,
     NumericInputField,
     SelectField,
+    TextAreaField,
 } from '@/components/custom-field';
 import * as z from 'zod';
 import { useToast } from '@/hooks/use-toast';
@@ -31,7 +32,7 @@ interface CreateProductFormProps {
     detailCategories: DetailCategory[];
 }
 
-const CreateAndEditProductForm = ({
+const CreateProductForm = ({
     colors,
     categories,
     subCategories,
@@ -47,8 +48,7 @@ const CreateAndEditProductForm = ({
         undefined,
     );
 
-    const { fileStates, setFileStates, uploadImages, updateFileProgress } =
-        useImageUploader();
+    const { fileStates, setFileStates, uploadImages } = useImageUploader();
 
     const [file, setFile] = useState<File | undefined>(undefined);
 
@@ -63,7 +63,7 @@ const CreateAndEditProductForm = ({
             capacity: null,
             thumbnailUrl: '',
             colors: [],
-            imagesUrl: [],
+            imageUrls: [],
             promotions: [],
             category: undefined,
             subCategory: undefined,
@@ -84,41 +84,60 @@ const CreateAndEditProductForm = ({
             detailCategories,
             resetField,
         );
+    const confirmUploadImages = async (urls: string[], edgestore: any) => {
+        const confirmPromises = urls.map(async (item) => {
+            try {
+                await edgestore.publicImages.confirmUpload({
+                    url: item,
+                });
+            } catch (error) {
+                console.error(error);
+            }
+        });
+
+        await Promise.all(confirmPromises);
+    };
 
     const onSubmit = async (values: z.infer<typeof ProductSchema>) => {
-        if (imageUrls.length > 0 && thumbnailUrl !== undefined) {
-            imageUrls.forEach(async (url) => {
-                await edgestore.publicFiles.confirmUpload({
-                    url: url,
+        try {
+            if (imageUrls.length > 0 && thumbnailUrl !== undefined) {
+                startTransition(async () => {
+                    await confirmUploadImages(
+                        [...imageUrls, thumbnailUrl],
+                        edgestore,
+                    );
+                    const newProduct = {
+                        ...values,
+                        imageUrls,
+                        thumbnailUrl,
+                    };
+
+                    const productUploaded = await createProduct(newProduct);
+                    const now = new Date();
+                    const formattedDate = new Intl.DateTimeFormat('en-US', {
+                        dateStyle: 'long',
+                        timeStyle: 'short',
+                    }).format(now);
+                    if (productUploaded) {
+                        toast({
+                            title: 'The product has been successfully created',
+                            description: formattedDate,
+                        });
+                        form.reset();
+                        setFileStates([]);
+                        setFile(undefined);
+                    } else {
+                        toast({
+                            title: 'An error occurred during the product creation process',
+                            description: formattedDate,
+                        });
+                    }
                 });
-            });
-
-            await edgestore.publicFiles.confirmUpload({
-                url: thumbnailUrl,
-            });
-
-            startTransition(async () => {
-                const newProduct = {
-                    ...values,
-                    imagesUrl: imageUrls,
-                    thumbnailUrl: thumbnailUrl,
-                };
-
-                const productUploaded = await createProduct(newProduct);
-                if (productUploaded) {
-                    toast({
-                        title: 'The product has been successfully created',
-                        description: 'Friday, February 10, 2023 at 5:57 PM',
-                    });
-                    form.reset();
-                    setFileStates([]);
-                    setFile(undefined);
-                } else {
-                    toast({
-                        title: 'An error occurred during the product creation process',
-                        description: 'Friday, February 10, 2023 at 5:57 PM',
-                    });
-                }
+            }
+        } catch (error) {
+            toast({
+                title: 'Upload Error',
+                description: 'Failed to upload product. Please try again.',
             });
         }
     };
@@ -210,37 +229,32 @@ const CreateAndEditProductForm = ({
                             renderItem={(color) => color.name}
                         />
 
-                        <div className="flex flex-row justify-center space-x-2">
-                            <UploadThumbnail
-                                file={file}
-                                setFile={setFile}
-                                thumbnailUrl={thumbnailUrl}
-                                setThumbnailUrl={setThumbnailUrl}
-                            />
-                            <div className="w-full">
-                                <InputField
-                                    className="h-[154px] bg-white"
-                                    control={control}
-                                    name="description"
-                                    label="Description"
-                                    placeholder="Enter your product description"
-                                    type="text-aria"
-                                />
-                            </div>
-                        </div>
+                        <TextAreaField
+                            className="h-[154px] bg-white"
+                            control={control}
+                            name="description"
+                            label="Description"
+                            placeholder="Enter your product description"
+                        />
+
+                        <UploadThumbnail
+                            file={file}
+                            setFile={setFile}
+                            thumbnailUrl={thumbnailUrl}
+                            setThumbnailUrl={setThumbnailUrl}
+                        />
 
                         <UploadImages
                             fileStates={fileStates}
                             setFileStates={setFileStates}
-                            updateFileProgress={updateFileProgress}
                             uploadImages={uploadImages}
                             imageUrls={imageUrls}
                             setImageUrls={setImageUrls}
                         />
 
                         <Button disabled={isPending} className="w-full">
-                            Create Product
                             {isPending && <LoadingSpinner />}
+                            Create Product
                         </Button>
                     </form>
                 </Form>
@@ -249,4 +263,4 @@ const CreateAndEditProductForm = ({
     );
 };
 
-export default CreateAndEditProductForm;
+export default CreateProductForm;

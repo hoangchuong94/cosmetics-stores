@@ -26,10 +26,6 @@ export function useImageUploader() {
 
     const uploadImages = useCallback(
         async (addedFiles: FileState[]) => {
-            setFileStates((prevFileStates) => [
-                ...prevFileStates,
-                ...addedFiles,
-            ]);
             const data = await Promise.all(
                 addedFiles.map(async (fileState) => {
                     if (fileState.file instanceof File) {
@@ -62,7 +58,6 @@ export function useImageUploader() {
                     }
                 }),
             );
-            data.forEach((item) => console.log(item));
             return data;
         },
         [edgestore, updateFileProgress],
@@ -72,6 +67,5 @@ export function useImageUploader() {
         fileStates,
         setFileStates,
         uploadImages,
-        updateFileProgress,
     };
 }
