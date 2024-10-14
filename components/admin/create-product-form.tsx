@@ -50,7 +50,9 @@ const CreateProductForm = ({
 
     const { fileStates, setFileStates, uploadImages } = useImageUploader();
 
-    const [file, setFile] = useState<File | undefined>(undefined);
+    const [thumbnailFile, setThumbnailFile] = useState<
+        File | string | undefined
+    >(undefined);
 
     const form = useForm<z.infer<typeof ProductSchema>>({
         resolver: zodResolver(ProductSchema),
@@ -126,7 +128,7 @@ const CreateProductForm = ({
                         });
                         form.reset();
                         setFileStates([]);
-                        setFile(undefined);
+                        setThumbnailFile(undefined);
                     } else {
                         toast({
                             title: 'An error occurred during the product creation process',
@@ -239,8 +241,8 @@ const CreateProductForm = ({
                         />
 
                         <UploadThumbnail
-                            file={file}
-                            setFile={setFile}
+                            thumbnailFile={thumbnailFile}
+                            setThumbnailFile={setThumbnailFile}
                             thumbnailUrl={thumbnailUrl}
                             setThumbnailUrl={setThumbnailUrl}
                         />

@@ -2,6 +2,7 @@
 import { notFound } from 'next/navigation';
 
 import UpdateProductForm from '@/components/admin/update-product-form';
+import UpdateProduct from '@/components/admin/update-product';
 import CreateProductForm from '@/components/admin/create-product-form';
 
 import {
@@ -100,15 +101,7 @@ const page = async ({ params }: { params: { crud: string[] } }) => {
                 category: category,
             };
 
-            return (
-                <UpdateProductForm
-                    product={product}
-                    colors={colors}
-                    categories={categories}
-                    subCategories={subCategories}
-                    detailCategories={detailCategories}
-                />
-            );
+            return <UpdateProduct product={product} />;
         }
 
         default:

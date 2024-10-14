@@ -1,5 +1,25 @@
 import { z } from 'zod';
 
+// export const UpdateProductSchema = z.object({
+//     thumbnailUrl: z.union([
+//         z.string({ required_error: 'Thumbnail is required' }),
+
+//         z
+//             .instanceof(File)
+//             .refine((file) => file.type.startsWith('image/'), {
+//                 message: 'Thumbnail must be an image file.',
+//             })
+//             .refine((file) => file.size <= 1_000_000, {
+//                 message: 'Thumbnail size must be less than or equal to 1MB.',
+//             }),
+//     ]),
+// });
+export const UpdateProductSchema = z.object({
+    thumbnailUrl: z
+        .string({ required_error: 'Thumbnail is required' })
+        .min(1, 'Thumbnail is required'),
+});
+
 export const LoginSchema = z.object({
     email: z
         .string({ required_error: 'Email is required' })

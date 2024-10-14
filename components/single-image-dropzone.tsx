@@ -22,7 +22,7 @@ type InputProps = {
     height: number;
     className?: string;
     value?: File | string;
-    onChange?: (file?: File) => void | Promise<void>;
+    onChange?: (file?: File | string) => void | Promise<void>;
     disabled?: boolean;
     dropzoneOptions?: Omit<DropzoneOptions, 'disabled'>;
 };
@@ -155,7 +155,6 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
                             alt={acceptedFiles[0]?.name || ''}
                             width={500}
                             height={500}
-                            priority
                         />
                     ) : (
                         // Upload Icon
