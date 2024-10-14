@@ -8,11 +8,11 @@ import { auth } from '@/auth';
 import Link from 'next/link';
 import Navbar from '@/components/user/nav-bar';
 import NavMobile from '@/components/user/nav-mobile';
-import { getCategories } from '@/actions/controller-product';
+import { fetchCategories } from '@/data/fetch-data';
 import { CustomTypeUser } from '@/types';
 
 export default async function Header() {
-    const categories = await getCategories();
+    const categories = await fetchCategories();
     const session = await auth();
     const user: CustomTypeUser | undefined = session?.user;
 

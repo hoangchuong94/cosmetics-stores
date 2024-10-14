@@ -82,13 +82,13 @@ model SubCategory {
 }
 
 model DetailCategory {
-  id                String        @id @default(cuid())
-  name              String        
-  createdAt         DateTime      @default(now()) @map(name: "created_at")
-  updatedAt         DateTime      @updatedAt @map(name: "updated_at")
-  subCategoryId     String        @map("sub_category_id")
-  subCategory       SubCategory   @relation(fields: [subCategoryId], references: [id])
-  products          ProductDetailCategory[]
+  id            String     @id @default(cuid())
+  name          String
+  createdAt     DateTime   @default(now()) @map(name: "created_at")
+  updatedAt     DateTime   @updatedAt @map(name: "updated_at")
+  subCategoryId String     @map("sub_category_id")
+  subCategory   SubCategory @relation(fields: [subCategoryId], references: [id])
+  products      Product[]  // Một DetailCategory có thể có nhiều Product
 
   @@map("detail_categories")
 }
@@ -100,38 +100,18 @@ model Product {
   type              String
   price             Float
   quantity          Int
-  capacity          Int?
+  capacity          Int
   thumbnail         String
   createdAt         DateTime      @default(now()) @map(name: "created_at")
   updatedAt         DateTime      @updatedAt @map(name: "updated_at")
-  detailCategories  ProductDetailCategory[]
+  detailCategoryId  String        @map("detail_category_id")
+  detailCategory    DetailCategory @relation(fields: [detailCategoryId], references: [id])
   images            ProductImage[]
   colors            ProductColor[]
   promotions        ProductPromotion[]
 
   @@map("products")
   @@unique([name, price])
-}
-
-model ProductDetailCategory {
-  productId        String
-  detailCategoryId String
-  product          Product       @relation(fields: [productId], references: [id])
-  detailCategory   DetailCategory @relation(fields: [detailCategoryId], references: [id])
-  
-  @@id([productId, detailCategoryId])
-  @@map("product_detail_categories")
-}
-
-
-model Image {
-  id                String        @id @default(cuid())
-  url               String
-  createdAt         DateTime      @default(now()) @map(name: "created_at")
-  updatedAt         DateTime      @updatedAt @map(name: "updated_at")
-  products          ProductImage[]
-  
-  @@map("images")
 }
 
 model Color {
@@ -145,12 +125,35 @@ model Color {
   @@map("colors")
 }
 
+model ProductColor {
+  productId String
+  colorId   String
+  product   Product @relation(fields: [productId], references: [id])
+  color     Color   @relation(fields: [colorId], references: [id])
+
+  @@id([productId, colorId])
+  @@map("product_colors")
+}
+
+
+model Image {
+  id                String        @id @default(cuid())
+  url               String
+  createdAt         DateTime      @default(now()) @map(name: "created_at")
+  updatedAt         DateTime      @updatedAt @map(name: "updated_at")
+  products          ProductImage[]
+  
+  @@map("images")
+}
+
+
+
 model Promotion {
   id                String        @id @default(cuid())
   name              String
   description       String
   startDay          DateTime      @default(now()) @map(name: "start_day")
-  endDay            DateTime?
+  endDay            DateTime
   createdAt         DateTime      @default(now()) @map(name: "created_at")
   updatedAt         DateTime      @updatedAt @map(name: "updated_at")
   products          ProductPromotion[]
@@ -170,15 +173,6 @@ model ProductImage {
   @@map("product_images")
 }
 
-model ProductColor {
-  productId String
-  colorId   String
-  product   Product @relation(fields: [productId], references: [id])
-  color     Color   @relation(fields: [colorId], references: [id])
-
-  @@id([productId, colorId])
-  @@map("product_colors")
-}
 
 model ProductPromotion {
   productId   String

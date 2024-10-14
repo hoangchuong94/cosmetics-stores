@@ -61,3 +61,24 @@ export const listCategory = [
         ],
     },
 ];
+
+export const listPromotions = [
+    {
+        name: 'Giảm giá mùa hè',
+        description: 'Khuyến mãi lớn cho mùa hè với giảm giá lên đến 50%!',
+        startDay: new Date('2024-06-01'),
+        endDay: new Date('2024-08-31'),
+    },
+    {
+        name: 'Khuyến mãi Tết',
+        description: 'Giảm giá đặc biệt cho dịp Tết Nguyên Đán.',
+        startDay: new Date('2024-01-10'),
+        endDay: new Date('2024-01-25'),
+    },
+    {
+        name: 'Khuyến mãi Black Friday',
+        description: 'Giảm giá cực sốc trong ngày Black Friday.',
+        startDay: new Date('2024-11-24'),
+        endDay: new Date('2024-11-26'),
+    },
+];

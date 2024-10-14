@@ -5,11 +5,12 @@ import Supplier from '@/components/user/supplier';
 import OverviewComment from '@/components/user/overview-comment';
 import GiftProduct from '@/components/user/gift-product';
 import ShippingInformation from '@/components/user/shipping-information';
-import { getProducts } from '@/actions/controller-product';
+import { fetchAllProduct } from '@/data/fetch-data';
 import ProductList from '@/components/user/product-list';
 
 export default async function HomePage() {
-    const products = await getProducts();
+    const products = await fetchAllProduct();
+
     return (
         <main>
             <div className="px-5 pt-24">

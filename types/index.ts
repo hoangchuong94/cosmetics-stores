@@ -9,18 +9,10 @@ import {
 } from '@prisma/client';
 
 export type ProductWithDetails = Product & {
-    images: {
-        image: Image;
-    }[];
-    colors: {
-        color: Color;
-    }[];
-    detailCategories: {
-        detailCategory: DetailCategory;
-    }[];
-    promotions: {
-        promotion: Promotion;
-    }[];
+    images: { image: Image }[];
+    colors: { color: Color }[];
+    promotions: { promotion: Promotion }[];
+    detailCategory: DetailCategory;
 };
 
 export type CategoryWithDetails = Category & {
@@ -28,7 +20,11 @@ export type CategoryWithDetails = Category & {
 };
 
 export type SubCategoryWithDetails = SubCategory & {
-    detailCategories: DetailCategory[];
+    detailCategories: DetailCategoryWithProducts[];
+};
+
+export type DetailCategoryWithProducts = DetailCategory & {
+    products: Product[];
 };
 
 export interface CustomTypeUser {

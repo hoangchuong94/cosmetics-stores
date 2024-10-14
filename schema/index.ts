@@ -109,17 +109,19 @@ export const ProductSchema = z.object({
         )
         .nonempty('At least one color must be selected'),
 
-    promotions: z.array(
-        z.object({
-            id: z.string(),
-            name: z.string(),
-            description: z.string(),
-            startDay: z.date(),
-            endDay: z.date().nullable(),
-            createdAt: z.date(),
-            updatedAt: z.date(),
-        }),
-    ),
+    promotions: z
+        .array(
+            z.object({
+                id: z.string(),
+                name: z.string(),
+                description: z.string(),
+                startDay: z.date(),
+                endDay: z.date().nullable(),
+                createdAt: z.date(),
+                updatedAt: z.date(),
+            }),
+        )
+        .optional(),
 
     imageUrls: z.array(z.string()),
 

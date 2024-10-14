@@ -77,7 +77,7 @@ export default function UploadImages({
         <div>
             <p className="mb-1 text-sm">Images :</p>
             <MultiImageDropzone
-                className={`${!(fileStates.length > 0) && 'h-[150px] w-[150px]'} bg-white`}
+                className={`${!(fileStates.length > 0) && 'h-[200px] w-[200px]'} bg-white`}
                 value={fileStates}
                 dropzoneOptions={{
                     maxFiles: 6,

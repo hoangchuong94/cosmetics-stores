@@ -1,10 +1,20 @@
-import ControlPanelProducts from '@/components/admin/control-panel-products';
-import { getProducts } from '@/actions/controller-product';
+import ProductManagement from '@/components/admin/product-management';
+import { fetchAllProduct } from '@/data/fetch-data';
 
-const Products = async () => {
-    const listProduct = await getProducts();
+const ProductManagementPage = async () => {
+    const listProduct = await fetchAllProduct();
 
-    return <ControlPanelProducts listProduct={listProduct} />;
+    return (
+        <>
+            {listProduct ? (
+                <ProductManagement listProduct={listProduct} />
+            ) : (
+                <div className="flex h-full items-center justify-center text-red-500">
+                    An error occurred. Please try again later
+                </div>
+            )}
+        </>
+    );
 };
 
-export default Products;
+export default ProductManagementPage;

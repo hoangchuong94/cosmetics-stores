@@ -1,15 +1,17 @@
 'use server';
-import CreateProductForm from '@/components/admin/create-product-form';
-import UpdateProductForm from '@/components/admin/update-product-form';
-import { Category, Color, DetailCategory, SubCategory } from '@prisma/client';
-import {
-    getCategories,
-    getColors,
-    getDetailCategories,
-    getSubCategories,
-    getProductById,
-} from '@/actions/controller-product';
 import { notFound } from 'next/navigation';
+
+import UpdateProductForm from '@/components/admin/update-product-form';
+import CreateProductForm from '@/components/admin/create-product-form';
+
+import {
+    fetchCategories,
+    fetchColors,
+    fetchSubCategories,
+    fetchDetailCategories,
+} from '@/data/fetch-data';
+
+import { fetchProductById } from '@/data/fetch-data';
 
 const page = async ({ params }: { params: { crud: string[] } }) => {
     const action = params.crud[0];
@@ -17,14 +19,32 @@ const page = async ({ params }: { params: { crud: string[] } }) => {
 
     const [colors, categories, subCategories, detailCategories] =
         await Promise.all([
-            getColors(),
-            getCategories(),
-            getSubCategories(),
-            getDetailCategories(),
+            fetchColors(),
+            fetchCategories(),
+            fetchSubCategories(),
+            fetchDetailCategories(),
         ]);
 
     if (!colors || !categories || !subCategories || !detailCategories) {
-        return <div>Error loading data. Please try again later.</div>;
+        return (
+            <div className="flex h-screen items-center justify-center">
+                Error loading data. Please try again later.
+            </div>
+        );
+    }
+
+    if (
+        colors.length === 0 ||
+        categories.length === 0 ||
+        subCategories.length === 0 ||
+        detailCategories.length === 0
+    ) {
+        return (
+            <div className="flex h-screen items-center justify-center">
+                Please add color, category, detail category, sub category before
+                creating products
+            </div>
+        );
     }
 
     switch (action) {
@@ -46,7 +66,7 @@ const page = async ({ params }: { params: { crud: string[] } }) => {
                 return <div>Product ID is required for updating.</div>;
             }
 
-            const currentProduct = await getProductById(idProduct);
+            const currentProduct = await fetchProductById(idProduct);
             if (!currentProduct) {
                 return (
                     <div className="flex h-full items-center justify-center">
@@ -55,8 +75,7 @@ const page = async ({ params }: { params: { crud: string[] } }) => {
                 );
             }
 
-            const detailCategory =
-                currentProduct.detailCategories[0].detailCategory;
+            const detailCategory = currentProduct.detailCategory;
 
             const subCategory = subCategories.find(
                 (item) => item.id === detailCategory.subCategoryId,

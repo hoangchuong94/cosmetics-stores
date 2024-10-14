@@ -46,11 +46,15 @@ export const GenericField = <TFieldValues extends FieldValues>({
 
 // Prevent invalid input for numeric fields
 const preventInvalidNumberInput = (
-    e: React.KeyboardEvent<HTMLInputElement>,
+    event: React.KeyboardEvent<HTMLInputElement>,
 ) => {
-    const invalidChars = ['e', 'E', '+', '-'];
-    if (invalidChars.includes(e.key)) {
-        e.preventDefault();
+    const invalidChars = ['e', 'E', '+', '-', '0'];
+    if (event.currentTarget.value === '' && event.key === '0') {
+        event.preventDefault();
+    } else if (event.currentTarget.value === '' && event.key === '.') {
+        event.preventDefault();
+    } else if (invalidChars.includes(event.key)) {
+        event.preventDefault();
     }
 };
 

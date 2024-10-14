@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
 import { ProductSchema } from '@/schema';
 
 import { useFilteredCategories } from '@/hooks/use-filtered-categories';
-import { createProduct } from '@/actions/controller-product';
+import { createProduct } from '@/actions/product-crud';
 import { useImageUploader } from '@/hooks/use-upload-images';
 import UploadImages from '@/components/upload-images';
 import UploadThumbnail from '@/components/upload-thumbnail';
@@ -54,13 +54,14 @@ const CreateProductForm = ({
 
     const form = useForm<z.infer<typeof ProductSchema>>({
         resolver: zodResolver(ProductSchema),
+        mode: 'onChange',
         defaultValues: {
             name: '',
             description: '',
             type: '',
             price: 0,
             quantity: 0,
-            capacity: null,
+            capacity: 0,
             thumbnailUrl: '',
             colors: [],
             imageUrls: [],
@@ -71,7 +72,7 @@ const CreateProductForm = ({
         },
     });
 
-    const { watch, resetField, handleSubmit, control } = form;
+    const { watch, resetField, handleSubmit, control, formState } = form;
 
     const selectedCategory = watch('category');
     const selectedSubCategory = watch('subCategory');
@@ -102,10 +103,6 @@ const CreateProductForm = ({
         try {
             if (imageUrls.length > 0 && thumbnailUrl !== undefined) {
                 startTransition(async () => {
-                    await confirmUploadImages(
-                        [...imageUrls, thumbnailUrl],
-                        edgestore,
-                    );
                     const newProduct = {
                         ...values,
                         imageUrls,
@@ -119,6 +116,10 @@ const CreateProductForm = ({
                         timeStyle: 'short',
                     }).format(now);
                     if (productUploaded) {
+                        await confirmUploadImages(
+                            [...imageUrls, thumbnailUrl],
+                            edgestore,
+                        );
                         toast({
                             title: 'The product has been successfully created',
                             description: formattedDate,
@@ -252,7 +253,15 @@ const CreateProductForm = ({
                             setImageUrls={setImageUrls}
                         />
 
-                        <Button disabled={isPending} className="w-full">
+                        <Button
+                            disabled={
+                                !formState.isValid ||
+                                thumbnailUrl === '' ||
+                                imageUrls.length === 0 ||
+                                isPending
+                            }
+                            className="w-full"
+                        >
                             {isPending && <LoadingSpinner />}
                             Create Product
                         </Button>

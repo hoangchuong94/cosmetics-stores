@@ -28,7 +28,7 @@ import {
 } from '@/components/multi-image-dropzone';
 import { FormError } from '@/components/form-error';
 import { SingleImageDropzone } from '../single-image-dropzone';
-import { updateProduct } from '@/actions/controller-product';
+// import { updateProduct } from '@/actions/product-crud';
 
 interface ProductUpdate extends ProductWithDetails {
     subCategory: SubCategory;
@@ -52,7 +52,6 @@ const UpdateProductForm = ({
 }: UpdateProductFormProps) => {
     const { toast } = useToast();
     const { edgestore } = useEdgeStore();
-    const [isUploading, setIsUploading] = useState(false);
     const [isPending, startTransition] = useTransition();
     const { fileStates, setFileStates, uploadImages } = useImageUploader();
     const [fileThumbnail, setFileThumbnail] = useState<File | undefined>();
@@ -70,14 +69,14 @@ const UpdateProductForm = ({
             type: product.type,
             price: product.price,
             quantity: product.quantity,
-            capacity: product.capacity || undefined,
+            capacity: product.capacity,
             thumbnailUrl: product.thumbnail,
             colors: product.colors.map((item) => item.color),
             imageUrls: product.images.map((item) => item.image.url),
             promotions: product.promotions.map((item) => item.promotion),
             category: product.category,
             subCategory: product.subCategory,
-            detailCategory: product.detailCategories[0].detailCategory,
+            detailCategory: product.detailCategory,
         },
     });
 
@@ -101,34 +100,29 @@ const UpdateProductForm = ({
     const createFileFromUrl = async (url: string, fileName: string) => {
         const response = await fetch(url);
         const blob = await response.blob();
-        const file = new File([blob], fileName, { type: blob.type });
-        return file;
+        return new File([blob], fileName, { type: blob.type });
     };
 
     const handleUpdateThumbnail = useCallback(
         async (file: File) => {
-            if (file) {
-                try {
-                    const res = await edgestore.publicImages.upload({
-                        file,
-                        input: { type: 'product' },
-                        options: {
-                            temporary: true,
-                        },
-                        onProgressChange: (progress) => {
-                            console.log(progress);
-                        },
-                    });
-                    return res.url;
-                } catch (error: unknown) {
-                    console.error('Upload failed:', error);
-                    setErrorMessageUpdateThumbnail(
-                        'Thumbnail image failed to upload',
-                    );
-                    return null;
-                }
-            } else {
+            if (!file) {
                 setErrorMessageUpdateThumbnail('Invalid file error');
+                return null;
+            }
+
+            try {
+                const res = await edgestore.publicImages.upload({
+                    file,
+                    input: { type: 'product' },
+                    options: { temporary: true },
+                    onProgressChange: (progress) => console.log(progress),
+                });
+                return res.url;
+            } catch (error: unknown) {
+                console.error('Upload failed:', error);
+                setErrorMessageUpdateThumbnail(
+                    'Thumbnail image failed to upload',
+                );
                 return null;
             }
         },
@@ -136,37 +130,19 @@ const UpdateProductForm = ({
     );
 
     const handleUpdateImages = async (files: FileState[]) => {
-        try {
-            const imageUploader = await uploadImages(files);
-            const validImages = imageUploader.filter(
-                (img): img is UploadedImage =>
-                    img !== null && img !== undefined,
-            );
-            if (validImages.length === files.length) {
-                return validImages.map((item) => item?.url);
-            } else {
-                return null;
-            }
-        } catch (error) {
-            setErrorMessageUploadImages(
-                'Update images error . please try again',
-            );
-            return null;
-        }
+        const imageUploader = await uploadImages(files);
+        const validImages = imageUploader.filter(
+            (img): img is UploadedImage => img !== null && img !== undefined,
+        );
+        return validImages.length === files.length
+            ? validImages.map((item) => item?.url)
+            : undefined;
     };
 
-    const handleDeleteImage = async (urls: string[], edgestore: any) => {
-        const deletePromises = urls.map(async (item) => {
-            try {
-                await edgestore.publicImages.delete({
-                    url: item,
-                });
-            } catch (error) {
-                console.error(error);
-            }
-        });
-
-        await Promise.all(deletePromises);
+    const confirmUploadImages = async (urls: string[], edgestore: any) => {
+        await Promise.all(
+            urls.map((url) => edgestore.publicImages.confirmUpload({ url })),
+        );
     };
 
     useEffect(() => {
@@ -181,20 +157,18 @@ const UpdateProductForm = ({
             if (product.images.length > 0) {
                 const initialImagesUploaded = await Promise.all(
                     product.images.map(async (item) => {
-                        const fileName = item.image.url.split('/').pop();
+                        const fileName = item.image.url.split('/').pop()!;
                         const file = await createFileFromUrl(
                             item.image.url,
-                            fileName!,
+                            fileName,
                         );
-
                         return {
-                            file: file,
+                            file,
                             key: item.image.id,
                             progress: 'PENDING',
                         } as FileState;
                     }),
                 );
-
                 setFileStates(initialImagesUploaded);
             }
         };
@@ -203,86 +177,90 @@ const UpdateProductForm = ({
 
     useEffect(() => {
         const loadThumbnailFromUrl = async () => {
-            try {
-                if (product.thumbnail) {
-                    const fileName = product.thumbnail.split('/').pop();
-                    const currentThumbnail = await createFileFromUrl(
-                        product.thumbnail,
-                        fileName!,
-                    );
-
-                    setFileThumbnail(currentThumbnail);
-                }
-            } catch (error) {
-                console.error('Error loading thumbnail:', error);
+            if (product.thumbnail) {
+                const fileName = product.thumbnail.split('/').pop()!;
+                const currentThumbnail = await createFileFromUrl(
+                    product.thumbnail,
+                    fileName,
+                );
+                setFileThumbnail(currentThumbnail);
             }
         };
-
         loadThumbnailFromUrl();
     }, [product.thumbnail]);
 
-    const onSubmit = async (values: z.infer<typeof ProductSchema>) => {
+    const handleDeleteImage = async (urls: string[]) => {
         try {
-            setIsUploading(true);
-            if (fileStates.length > 0 && fileThumbnail !== undefined) {
-                const updateImageUrls = await handleUpdateImages(fileStates);
-                const updateThumbnailUrls =
-                    await handleUpdateThumbnail(fileThumbnail);
-                if (updateImageUrls && updateThumbnailUrls) {
-                    await handleDeleteImage(
-                        [
-                            ...product.images.map((item) => item.image.url),
-                            product.thumbnail,
-                        ],
-                        edgestore,
-                    );
-
-                    startTransition(async () => {
-                        const newProduct = {
-                            ...values,
-                            imageUrls: updateImageUrls,
-                            thumbnailUrl: updateThumbnailUrls,
-                        };
-
-                        const productUploaded = await updateProduct(
-                            product.id,
-                            newProduct,
-                        );
-                        const now = new Date();
-                        const formattedDate = new Intl.DateTimeFormat('en-US', {
-                            dateStyle: 'long',
-                            timeStyle: 'short',
-                        }).format(now);
-                        if (productUploaded) {
-                            const uploadPromises = updateImageUrls.map((url) =>
-                                edgestore.publicImages.confirmUpload({ url }),
-                            );
-                            await Promise.all(uploadPromises);
-
-                            await edgestore.publicImages.confirmUpload({
-                                url: updateThumbnailUrls,
-                            });
-                            toast({
-                                title: 'The product has been successfully update',
-                                description: formattedDate,
-                            });
-                        } else {
-                            toast({
-                                title: 'An error occurred during the product updating process',
-                                description: formattedDate,
-                            });
-                        }
-                    });
-                }
-            }
+            await Promise.all(
+                urls.map((url) => edgestore.publicImages.delete({ url })),
+            );
+            return true;
         } catch (error) {
-            toast({
-                title: 'Update Error',
-                description: 'Failed to update product. Please try again.',
-            });
-        } finally {
-            setIsUploading(false);
+            return false;
         }
+    };
+
+    const onSubmit = async (values: z.infer<typeof ProductSchema>) => {
+        if (fileStates.length === 0) {
+            setErrorMessageUploadImages('Please upload at least one image.');
+            return;
+        }
+
+        if (fileThumbnail === undefined) {
+            setErrorMessageUploadImages('Please upload a thumbnail image.');
+            return;
+        }
+        const [updateImageUrls, updateThumbnailUrls] = await Promise.all([
+            handleUpdateImages(fileStates),
+            handleUpdateThumbnail(fileThumbnail),
+        ]);
+
+        if (!updateImageUrls || !updateThumbnailUrls) {
+            setErrorMessageUploadImages('Upload error. Please try again');
+            return;
+        }
+
+        // startTransition(async () => {
+        //     try {
+        //         const deleteImage = await handleDeleteImage([
+        //             ...product.images.map((item) => item.image.url),
+        //             product.thumbnail,
+        //         ]);
+
+        //         console.log(deleteImage);
+
+        //         const newProduct = {
+        //             ...values,
+        //             imageUrls: updateImageUrls,
+        //             thumbnailUrl: updateThumbnailUrls,
+        //         };
+
+        //         const productUploaded = await updateProduct(
+        //             product.id,
+        //             newProduct,
+        //         );
+
+        //         if (productUploaded) {
+        //             await confirmUploadImages(
+        //                 [...updateImageUrls, updateThumbnailUrls],
+        //                 edgestore,
+        //             );
+        //             toast({
+        //                 title: 'The product has been successfully updated',
+        //                 description: new Date().toLocaleString(),
+        //             });
+        //         } else {
+        //             toast({
+        //                 title: 'An error occurred during the product updating process',
+        //             });
+        //         }
+        //     } catch (error) {
+        //         toast({
+        //             title: 'Update Error',
+        //             description: 'Failed to update product. Please try again.',
+        //         });
+        //     }
+        // });
     };
 
     return (
@@ -414,16 +392,9 @@ const UpdateProductForm = ({
                             <FormError message={errorMessageUploadImages} />
                         </div>
 
-                        <Button
-                            type="submit"
-                            className="w-full"
-                            disabled={isUploading || isPending}
-                        >
-                            {isPending || isUploading ? (
-                                <LoadingSpinner />
-                            ) : (
-                                'Update Product'
-                            )}
+                        <Button disabled={isPending} className="w-full">
+                            {isPending && <LoadingSpinner />}
+                            Update Product
                         </Button>
                     </form>
                 </Form>

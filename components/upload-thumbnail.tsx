@@ -40,7 +40,6 @@ export default function UploadThumbnail({
                         },
                         onProgressChange: (progress) => {
                             if (progress === 100) {
-                                console.log(progress);
                                 setStatusUploaded(true);
                             }
                         },

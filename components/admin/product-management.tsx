@@ -19,7 +19,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { DataTableColumnHeader } from '../data-table/data-table-column-header';
 import TagList from '@/components/tag-list';
 
-interface ControlPanelProductsProps {
+interface ProductManagementProps {
     listProduct: ProductWithDetails[];
 }
 
@@ -85,10 +85,13 @@ export const columns: ColumnDef<ProductWithDetails>[] = [
         },
         cell: ({ row }) => {
             const product = row.original;
-            const colors = product.colors.map((item) => item.color);
+            const colors = product.colors.map((item) => item);
 
             return (
-                <TagList tagList={colors} renderItem={(color) => color.name} />
+                <TagList
+                    tagList={colors}
+                    renderItem={(item) => item.color.name}
+                />
             );
         },
     },
@@ -143,7 +146,7 @@ export const columns: ColumnDef<ProductWithDetails>[] = [
     },
 ];
 
-const ControlPanelProducts = ({ listProduct }: ControlPanelProductsProps) => {
+const ProductManagement = ({ listProduct }: ProductManagementProps) => {
     return (
         <div className="w-full p-10">
             <LinkHierarchy />
@@ -161,4 +164,4 @@ const ControlPanelProducts = ({ listProduct }: ControlPanelProductsProps) => {
     );
 };
 
-export default ControlPanelProducts;
+export default ProductManagement;
