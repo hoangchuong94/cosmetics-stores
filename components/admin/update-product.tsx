@@ -21,7 +21,7 @@ import LinkHierarchy from '@/components/link-hierarchy';
 import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
 import { ProductWithDetails } from '@/types';
 import { SingleImageDropzone } from '@/components/upload-image/single-image-dropzone';
-import UploadThumbnail from '@/components/upload-image/upload-thumbnail';
+import UploadImage from '@/components/upload-image/upload-image';
 interface ProductUpdate extends ProductWithDetails {
     subCategory: SubCategory;
     category: Category;
@@ -33,8 +33,6 @@ interface UpdateProductProps {
 
 const UpdateProduct = ({ product }: UpdateProductProps) => {
     const [isPending, startTransition] = useTransition();
-    const [errorMessageUpdateThumbnail, setErrorMessageUpdateThumbnail] =
-        useState<string | undefined>();
 
     const form = useForm<z.infer<typeof UpdateProductSchema>>({
         resolver: zodResolver(UpdateProductSchema),
@@ -72,13 +70,10 @@ const UpdateProduct = ({ product }: UpdateProductProps) => {
                                     <FormItem>
                                         <FormLabel>Thumbnail :</FormLabel>
                                         <FormControl>
-                                            <UploadThumbnail
+                                            <UploadImage
                                                 file={thumbnailFile}
                                                 setFile={setThumbnailFile}
                                                 setUrl={field.onChange}
-                                                setErrorMessage={
-                                                    setErrorMessageUpdateThumbnail
-                                                }
                                             />
                                         </FormControl>
                                         <FormMessage />

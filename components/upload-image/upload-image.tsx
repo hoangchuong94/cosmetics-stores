@@ -10,21 +10,20 @@ import {
 import { SingleImageDropzone } from '@/components/upload-image/single-image-dropzone';
 import { useEdgeStore } from '@/lib/edgestore';
 
-interface UploadThumbnailProps {
+interface UploadImageProps {
     file: File | string | undefined;
     setFile: Dispatch<SetStateAction<File | string | undefined>>;
     setUrl: Dispatch<React.SetStateAction<string | undefined>>;
-    setErrorMessage: Dispatch<SetStateAction<string | undefined>>;
 }
 
-export default function UploadThumbnail({
+export default function UploadImage({
     file,
     setFile,
     setUrl,
-    setErrorMessage,
-}: UploadThumbnailProps) {
+}: UploadImageProps) {
     const { edgestore } = useEdgeStore();
     const [isAutoUpdate, setIsAutoUpdate] = useState<boolean>(true);
+    const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
     const handleUpload = useCallback(
         async (file: File) => {
@@ -86,6 +85,7 @@ export default function UploadThumbnail({
                         setIsAutoUpdate(true);
                     }}
                 />
+                <p className="text-xs text-red-500">{errorMessage}</p>
             </div>
         </>
     );
