@@ -25,10 +25,9 @@ import { ProductWithDetails, UploadedImage } from '@/types';
 import {
     FileState,
     MultiImageDropzone,
-} from '@/components/multi-image-dropzone';
+} from '@/components/upload-image/multi-image-dropzone';
 import { FormError } from '@/components/form-error';
-import { SingleImageDropzone } from '../single-image-dropzone';
-// import { updateProduct } from '@/actions/product-crud';
+import { SingleImageDropzone } from '@/components/upload-image/single-image-dropzone';
 
 interface ProductUpdate extends ProductWithDetails {
     subCategory: SubCategory;
@@ -54,7 +53,9 @@ const UpdateProductForm = ({
     const { edgestore } = useEdgeStore();
     const [isPending, startTransition] = useTransition();
     const { fileStates, setFileStates, uploadImages } = useImageUploader();
-    const [fileThumbnail, setFileThumbnail] = useState<File | undefined>();
+    const [fileThumbnail, setFileThumbnail] = useState<
+        File | string | undefined
+    >();
     const [errorMessageUpdateThumbnail, setErrorMessageUpdateThumbnail] =
         useState<string | undefined>();
     const [errorMessageUploadImages, setErrorMessageUploadImages] = useState<
@@ -104,8 +105,8 @@ const UpdateProductForm = ({
     };
 
     const handleUpdateThumbnail = useCallback(
-        async (file: File) => {
-            if (!file) {
+        async (file: File | string) => {
+            if (!file || !(file instanceof File)) {
                 setErrorMessageUpdateThumbnail('Invalid file error');
                 return null;
             }

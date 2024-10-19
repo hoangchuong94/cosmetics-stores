@@ -20,8 +20,8 @@ import { ProductSchema } from '@/schema';
 import { useFilteredCategories } from '@/hooks/use-filtered-categories';
 import { createProduct } from '@/actions/product-crud';
 import { useImageUploader } from '@/hooks/use-upload-images';
-import UploadImages from '@/components/upload-images';
-import UploadThumbnail from '@/components/upload-thumbnail';
+import UploadImages from '@/components/upload-image/upload-images';
+import UploadThumbnail from '@/components/upload-image/upload-thumbnail';
 import LinkHierarchy from '@/components/link-hierarchy';
 import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
 
@@ -240,12 +240,12 @@ const CreateProductForm = ({
                             placeholder="Enter your product description"
                         />
 
-                        <UploadThumbnail
+                        {/* <UploadThumbnail
                             thumbnailFile={thumbnailFile}
                             setThumbnailFile={setThumbnailFile}
                             thumbnailUrl={thumbnailUrl}
                             setThumbnailUrl={setThumbnailUrl}
-                        />
+                        /> */}
 
                         <UploadImages
                             fileStates={fileStates}

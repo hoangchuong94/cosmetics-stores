@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react';
 import { useEdgeStore } from '@/lib/edgestore';
-import { type FileState } from '@/components/multi-image-dropzone';
+import { type FileState } from '@/components/upload-image/multi-image-dropzone';
 
 export function useImageUploader() {
     const [fileStates, setFileStates] = useState<FileState[]>([]);

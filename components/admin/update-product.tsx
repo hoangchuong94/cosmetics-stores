@@ -1,5 +1,5 @@
 'use client';
-import React, { useTransition } from 'react';
+import React, { useState, useTransition } from 'react';
 
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
@@ -20,8 +20,8 @@ import { Input } from '@/components/ui/input';
 import LinkHierarchy from '@/components/link-hierarchy';
 import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
 import { ProductWithDetails } from '@/types';
-import { SingleImageDropzone } from '../single-image-dropzone';
-import UploadThumbnail from '../upload-thumbnail';
+import { SingleImageDropzone } from '@/components/upload-image/single-image-dropzone';
+import UploadThumbnail from '@/components/upload-image/upload-thumbnail';
 interface ProductUpdate extends ProductWithDetails {
     subCategory: SubCategory;
     category: Category;
@@ -33,6 +33,8 @@ interface UpdateProductProps {
 
 const UpdateProduct = ({ product }: UpdateProductProps) => {
     const [isPending, startTransition] = useTransition();
+    const [errorMessageUpdateThumbnail, setErrorMessageUpdateThumbnail] =
+        useState<string | undefined>();
 
     const form = useForm<z.infer<typeof UpdateProductSchema>>({
         resolver: zodResolver(UpdateProductSchema),
@@ -70,29 +72,12 @@ const UpdateProduct = ({ product }: UpdateProductProps) => {
                                     <FormItem>
                                         <FormLabel>Thumbnail :</FormLabel>
                                         <FormControl>
-                                            {/* <SingleImageDropzone
-                                                className="mt-2 bg-white"
-                                                width={200}
-                                                height={200}
-                                                value={thumbnailUrl}
-                                                onChange={(thumbnailUrl) => {
-                                                    setThumbnailUrl(
-                                                        thumbnailUrl,
-                                                    );
-                                                    field.onChange(
-                                                        thumbnailUrl,
-                                                    );
-                                                }}
-                                            /> */}
-
                                             <UploadThumbnail
-                                                thumbnailFile={thumbnailFile}
-                                                setThumbnailFile={
-                                                    setThumbnailFile
-                                                }
-                                                thumbnailUrl={field.value}
-                                                setThumbnailUrl={(file) =>
-                                                    field.onChange(file)
+                                                file={thumbnailFile}
+                                                setFile={setThumbnailFile}
+                                                setUrl={field.onChange}
+                                                setErrorMessage={
+                                                    setErrorMessageUpdateThumbnail
                                                 }
                                             />
                                         </FormControl>

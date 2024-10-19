@@ -37,7 +37,7 @@ const edgeStoreRouter = es.router({
         })
         .input(
             z.object({
-                type: z.enum(['product', 'profile']),
+                type: z.enum(['product', 'thumbnail', 'profile']),
             }),
         )
         .path(({ input }) => [{ type: input.type }])

@@ -10,7 +10,7 @@ import React, {
 import {
     MultiImageDropzone,
     type FileState,
-} from '@/components/multi-image-dropzone';
+} from '@/components/upload-image/multi-image-dropzone';
 import { FormError } from '@/components/form-error';
 import { UploadedImage } from '@/types';
 
