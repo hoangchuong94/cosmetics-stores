@@ -1,3 +1,4 @@
+import { FileState } from '@/components/upload-image/multi-image-dropzone';
 import {
     Category,
     SubCategory,
@@ -45,4 +46,9 @@ export interface UploadedImage {
         type: string;
     };
     pathOrder: 'type'[];
+}
+
+export interface Thumbnail {
+    urlConfirm: string;
+    file: File | string | undefined;
 }

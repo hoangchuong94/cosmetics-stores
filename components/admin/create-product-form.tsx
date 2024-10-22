@@ -241,19 +241,17 @@ const CreateProductForm = ({
                         />
 
                         {/* <UploadThumbnail
-                            thumbnailFile={thumbnailFile}
-                            setThumbnailFile={setThumbnailFile}
-                            thumbnailUrl={thumbnailUrl}
-                            setThumbnailUrl={setThumbnailUrl}
-                        /> */}
+                            file={thumbnailFile}
+                            setFile={setThumbnailFile}
+                            setUrl={setThumbnailUrl}
+                        />
 
                         <UploadImages
                             fileStates={fileStates}
                             setFileStates={setFileStates}
                             uploadImages={uploadImages}
-                            imageUrls={imageUrls}
                             setImageUrls={setImageUrls}
-                        />
+                        /> */}
 
                         <Button
                             disabled={

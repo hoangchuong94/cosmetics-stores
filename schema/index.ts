@@ -1,23 +1,50 @@
 import { z } from 'zod';
 
 // export const UpdateProductSchema = z.object({
-//     thumbnailUrl: z.union([
-//         z.string({ required_error: 'Thumbnail is required' }),
-
-//         z
-//             .instanceof(File)
-//             .refine((file) => file.type.startsWith('image/'), {
-//                 message: 'Thumbnail must be an image file.',
-//             })
-//             .refine((file) => file.size <= 1_000_000, {
-//                 message: 'Thumbnail size must be less than or equal to 1MB.',
-//             }),
-//     ]),
+//     thumbnailUrl: z
+//         .string({ required_error: 'Thumbnail is required' })
+//         .min(1, 'Thumbnail is required'),
+//     imageUrls: z
+//         .array(z.string({ required_error: 'image is required' }))
+//         .min(1, 'image is required'),
 // });
+
+// export const UpdateProductSchema = z.object({
+//     thumbnail: z
+//         .object({
+//             urlConfirm: z.string().optional(),
+//             file: z.instanceof(File).optional(),
+//         })
+//         .superRefine((data, ctx) => {
+//             const { urlConfirm, file } = data;
+
+//             // Kiểm tra nếu cả hai đều là undefined hoặc null
+//             if (!urlConfirm && !file) {
+//                 ctx.addIssue({
+//                     path: ['urlConfirm'],
+//                     code: z.ZodIssueCode.custom,
+//                     message: 'Either a URL or a file is required.',
+//                 });
+//                 ctx.addIssue({
+//                     path: ['file'],
+//                     code: z.ZodIssueCode.custom,
+//                     message: 'Either a URL or a file is required.',
+//                 });
+//             }
+//         }),
+// });
+
+export const FileStateSchema = z.object({
+    file: z.union([z.instanceof(File), z.string()]),
+    key: z.string(),
+    progress: z.union([z.enum(['PENDING', 'COMPLETE', 'ERROR']), z.number()]),
+});
+
 export const UpdateProductSchema = z.object({
-    thumbnailUrl: z
-        .string({ required_error: 'Thumbnail is required' })
-        .min(1, 'Thumbnail is required'),
+    images: z.object({
+        urlsConfirm: z.array(z.string()),
+        fileStates: z.array(FileStateSchema),
+    }),
 });
 
 export const LoginSchema = z.object({
@@ -114,8 +141,7 @@ export const ProductSchema = z.object({
     capacity: z.coerce
         .number()
         .positive('Capacity must be a positive number')
-        .int('Capacity must be an integer')
-        .nullable(),
+        .int('Capacity must be an integer'),
 
     colors: z
         .array(

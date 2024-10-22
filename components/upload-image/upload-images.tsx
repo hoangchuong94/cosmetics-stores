@@ -31,7 +31,6 @@ export default function UploadImages({
     setFileStates,
     uploadImages,
 }: UploadImagesProps) {
-    const [imageUploaded, setImageUploaded] = useState<UploadedImage[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
     const handleOnFilesAdded = useCallback(
@@ -48,17 +47,27 @@ export default function UploadImages({
                     (img): img is UploadedImage =>
                         img !== null && img !== undefined,
                 );
-
-                setImageUploaded((prev) => [...prev, ...validImages]);
+                const imageUrlsUploaded = validImages.map((item) => item.url);
+                setImageUrls((prev) => [...prev, ...imageUrlsUploaded]);
             } catch (error) {
                 console.error('Failed to upload images:', error);
                 setErrorMessage('Failed to upload images. Please try again.');
             }
         },
-        [uploadImages, setImageUploaded, setFileStates],
+        [uploadImages, setImageUrls, setFileStates],
     );
 
     const handleOnChange = (files: FileState[]) => {
+        const listFilename = files.map((item) => {
+            if (item.file instanceof File) {
+                return item.file.name;
+            }
+        });
+        const imageUrlsAfterChange = imageUrls.filter((url) => {
+            const imageName = url.split('/').pop();
+            return listFilename.includes(imageName);
+        });
+        setImageUrls(imageUrlsAfterChange);
         setFileStates(files);
     };
 
@@ -66,12 +75,6 @@ export default function UploadImages({
         const hasError = fileStates.some((item) => item.progress === 'ERROR');
         setErrorMessage(hasError ? 'Error uploading images' : undefined);
     }, [fileStates]);
-
-    useEffect(() => {
-        if (fileStates.length === imageUploaded.length) {
-            setImageUrls(imageUploaded.map((item) => item.url));
-        }
-    }, [imageUploaded, setImageUrls, fileStates]);
 
     return (
         <div>
