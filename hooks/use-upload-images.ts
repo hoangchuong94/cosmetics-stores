@@ -42,6 +42,7 @@ export function useImageUploader() {
                                         await new Promise((resolve) =>
                                             setTimeout(resolve, 1000),
                                         );
+                                        console.log(progress);
                                         updateFileProgress(
                                             fileState.key,
                                             'COMPLETE',

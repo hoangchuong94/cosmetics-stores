@@ -37,8 +37,15 @@ import { z } from 'zod';
 export const FileStateSchema = z.object({
     file: z.union([z.instanceof(File), z.string()]),
     key: z.string(),
-    progress: z.union([z.enum(['PENDING', 'COMPLETE', 'ERROR']), z.number()]),
+    progress: z.union([
+        z.literal('PENDING'),
+        z.literal('COMPLETE'),
+        z.literal('ERROR'),
+        z.number(),
+    ]),
 });
+
+export const FileStateArraySchema = z.array(FileStateSchema);
 
 export const UpdateProductSchema = z.object({
     images: z.object({

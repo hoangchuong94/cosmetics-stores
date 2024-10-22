@@ -43,28 +43,12 @@ const UpdateProduct = ({ product }: UpdateProductProps) => {
     const [isPending, startTransition] = useTransition();
     const { fileStates, setFileStates, uploadImages } = useImageUploader();
 
-    const loadImagesForUrls = () => {
-        if (product.images.length > 0) {
-            const initialImagesUploaded = product.images.map((item) => {
-                const fileState: FileState = {
-                    file: item.image.url,
-                    key: item.image.id,
-                    progress: 'PENDING',
-                };
-                return fileState;
-            });
-
-            return initialImagesUploaded;
-        }
-        return [];
-    };
-
     const form = useForm<z.infer<typeof UpdateProductSchema>>({
         resolver: zodResolver(UpdateProductSchema),
         defaultValues: {
             images: {
                 urlsConfirm: product.images.map((item) => item.image.url),
-                fileStates: loadImagesForUrls(),
+                fileStates: [],
             },
         },
     });
@@ -93,14 +77,14 @@ const UpdateProduct = ({ product }: UpdateProductProps) => {
             onChange(object);
         }
     };
+    console.log(fileStates);
 
     const handleOnFilesAdded = async (
         addedFiles: FileState[],
         onChange: (...event: any[]) => void,
     ) => {
-        // setFileStates((prevFileStates) => [...prevFileStates, ...addedFiles]);
+        setFileStates((prevFileStates) => [...prevFileStates, ...addedFiles]);
         const imageUploader = await uploadImages(addedFiles);
-        console.log(addedFiles);
         // try {
         //     const imageUploader = await uploadImages(addedFiles);
         //     const validImages = imageUploader.filter(
@@ -124,6 +108,28 @@ const UpdateProduct = ({ product }: UpdateProductProps) => {
         });
     };
 
+    useEffect(() => {
+        const loadImagesForUrls = () => {
+            if (product.images.length > 0) {
+                const initialImagesUploaded = product.images.map((item) => {
+                    const fileState: FileState = {
+                        file: item.image.url,
+                        key: item.image.id,
+                        progress: 'COMPLETE',
+                    };
+                    return fileState;
+                });
+
+                return initialImagesUploaded;
+            }
+            return [];
+        };
+
+        const files = loadImagesForUrls();
+        setFileStates(files);
+        form.setValue('images.fileStates', files);
+    }, [setFileStates, product.images, form]);
+
     return (
         <div className="flex min-h-full w-full flex-col items-start justify-start bg-slate-100 p-4">
             <div className="mb-6 w-full">
@@ -139,6 +145,7 @@ const UpdateProduct = ({ product }: UpdateProductProps) => {
                             control={form.control}
                             name="images"
                             render={({ field }) => {
+                                console.log(field.value.fileStates);
                                 return (
                                     <FormItem>
                                         <FormLabel>Thumbnail :</FormLabel>
@@ -149,20 +156,20 @@ const UpdateProduct = ({ product }: UpdateProductProps) => {
                                                 dropzoneOptions={{
                                                     maxFiles: 6,
                                                 }}
-                                                onChange={(filesAdd) =>
+                                                onChange={(addedFiles) => {
                                                     handleOnChange(
-                                                        filesAdd,
+                                                        addedFiles,
                                                         field.onChange,
-                                                    )
-                                                }
-                                                onFilesAdded={(filesAdd) => {
+                                                    );
+                                                }}
+                                                onFilesAdded={(addedFiles) => {
                                                     // const files = [
                                                     //     ...field.value
                                                     //         .fileStates,
                                                     //     ...filesAdd,
                                                     // ];
                                                     handleOnFilesAdded(
-                                                        filesAdd,
+                                                        addedFiles,
                                                         field.onChange,
                                                     );
                                                 }}
