@@ -1,12 +1,8 @@
 'use client';
-import React, { useEffect, useTransition } from 'react';
-
-import * as z from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Category, SubCategory } from '@prisma/client';
-import { Button } from '@/components/ui/button';
-import { UpdateProductSchema } from '@/schema';
+import {
+    MultiImageDropzone,
+    FileState,
+} from '@/components/edgestore/multi-image-dropzone';
 import {
     Form,
     FormControl,
@@ -15,24 +11,21 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
-
+import * as z from 'zod';
+import { useForm } from 'react-hook-form';
+import React, { useEffect, useState, useTransition } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Category, SubCategory } from '@prisma/client';
+import { Button } from '@/components/ui/button';
+import { ImageSchema } from '@/schema';
 import LinkHierarchy from '@/components/link-hierarchy';
 import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
-import { ProductWithDetails, UploadedImage } from '@/types';
-import {
-    MultiImageDropzone,
-    FileState,
-} from '@/components/upload-image/multi-image-dropzone';
-import { useImageUploader } from '@/hooks/use-upload-images';
+import { ProductWithDetails } from '@/types';
+import UploadImages from '@/components/edgestore/uploader-images';
 
 interface ProductUpdate extends ProductWithDetails {
     subCategory: SubCategory;
     category: Category;
-}
-
-interface ImagesType {
-    urlsConfirm: string[];
-    fileStates: FileState[];
 }
 
 interface UpdateProductProps {
@@ -41,94 +34,33 @@ interface UpdateProductProps {
 
 const UpdateProduct = ({ product }: UpdateProductProps) => {
     const [isPending, startTransition] = useTransition();
-    const { fileStates, setFileStates, uploadImages } = useImageUploader();
 
-    const form = useForm<z.infer<typeof UpdateProductSchema>>({
-        resolver: zodResolver(UpdateProductSchema),
+    const initialFileStates: FileState[] = product.images.map((item) => ({
+        file: item.image.url,
+        key: item.image.id,
+        progress: 'COMPLETE',
+    }));
+
+    const initialUrls = product.images.map((item) => item.image.url);
+
+    const [urls, setUrls] = useState<string[]>(initialUrls);
+
+    const form = useForm<z.infer<typeof ImageSchema>>({
+        resolver: zodResolver(ImageSchema),
         defaultValues: {
-            images: {
-                urlsConfirm: product.images.map((item) => item.image.url),
-                fileStates: [],
-            },
+            images: initialFileStates,
         },
     });
 
-    const handleOnChange = (
-        filesAdd: FileState[],
-        onChange: (...event: any[]) => void,
-    ) => {
-        if (filesAdd) {
-            const urlFilesAdd = filesAdd.reduce<string[]>((acc, item) => {
-                if (typeof item.file === 'string') {
-                    acc.push(item.file);
-                }
-                return acc;
-            }, []);
-            const object: ImagesType = {
-                urlsConfirm: urlFilesAdd,
-                fileStates: filesAdd,
-            };
-            onChange(object);
-        } else {
-            const object: ImagesType = {
-                urlsConfirm: [],
-                fileStates: [],
-            };
-            onChange(object);
-        }
-    };
-    console.log(fileStates);
+    console.log(urls);
 
-    const handleOnFilesAdded = async (
-        addedFiles: FileState[],
-        onChange: (...event: any[]) => void,
-    ) => {
-        setFileStates((prevFileStates) => [...prevFileStates, ...addedFiles]);
-        const imageUploader = await uploadImages(addedFiles);
-        // try {
-        //     const imageUploader = await uploadImages(addedFiles);
-        //     const validImages = imageUploader.filter(
-        //         (img): img is UploadedImage =>
-        //             img !== null && img !== undefined,
-        //     );
-        //     const imageUrlsUploaded = validImages.map((item) => item.url);
-        //     const object: ImagesType = {
-        //         urlsConfirm: imageUrlsUploaded,
-        //         fileStates: fileStates,
-        //     };
-        //     console.log(object);
-        // } catch (error) {
-        //     console.error('Failed to upload images:', error);
-        // }
-    };
-
-    const onSubmit = async (values: z.infer<typeof UpdateProductSchema>) => {
+    const onSubmit = async (values: z.infer<typeof ImageSchema>) => {
         startTransition(async () => {
-            console.log(values);
+            console.log('Form submitted with values:', {
+                ...values,
+            });
         });
     };
-
-    useEffect(() => {
-        const loadImagesForUrls = () => {
-            if (product.images.length > 0) {
-                const initialImagesUploaded = product.images.map((item) => {
-                    const fileState: FileState = {
-                        file: item.image.url,
-                        key: item.image.id,
-                        progress: 'COMPLETE',
-                    };
-                    return fileState;
-                });
-
-                return initialImagesUploaded;
-            }
-            return [];
-        };
-
-        const files = loadImagesForUrls();
-        setFileStates(files);
-        form.setValue('images.fileStates', files);
-    }, [setFileStates, product.images, form]);
 
     return (
         <div className="flex min-h-full w-full flex-col items-start justify-start bg-slate-100 p-4">
@@ -145,34 +77,14 @@ const UpdateProduct = ({ product }: UpdateProductProps) => {
                             control={form.control}
                             name="images"
                             render={({ field }) => {
-                                console.log(field.value.fileStates);
                                 return (
                                     <FormItem>
-                                        <FormLabel>Thumbnail :</FormLabel>
+                                        <FormLabel>Images</FormLabel>
                                         <FormControl>
-                                            <MultiImageDropzone
-                                                className={`${!(field.value.fileStates.length > 0) && 'h-[200px] w-[200px]'} bg-white`}
-                                                value={field.value.fileStates}
-                                                dropzoneOptions={{
-                                                    maxFiles: 6,
-                                                }}
-                                                onChange={(addedFiles) => {
-                                                    handleOnChange(
-                                                        addedFiles,
-                                                        field.onChange,
-                                                    );
-                                                }}
-                                                onFilesAdded={(addedFiles) => {
-                                                    // const files = [
-                                                    //     ...field.value
-                                                    //         .fileStates,
-                                                    //     ...filesAdd,
-                                                    // ];
-                                                    handleOnFilesAdded(
-                                                        addedFiles,
-                                                        field.onChange,
-                                                    );
-                                                }}
+                                            <UploadImages
+                                                setUrls={setUrls}
+                                                initialFileStates={field.value}
+                                                onChange={field.onChange}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -180,7 +92,6 @@ const UpdateProduct = ({ product }: UpdateProductProps) => {
                                 );
                             }}
                         />
-
                         <Button disabled={isPending}>
                             {isPending && <LoadingSpinner />}
                             Update Product

@@ -13,12 +13,12 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import CheckboxPopsUp from '@/components/checkbox-pops-up';
+import CheckboxPopsUp from '@/components/custom-checkbox';
 import CustomSelect from '@/components/custom-select';
 import { Textarea } from '@/components/ui/textarea';
 import { useMemo, useCallback } from 'react';
+import UploadImage from '@/components/edgestore/uploader-image';
 
-// GenericField component to wrap form fields
 interface GenericFieldProps<TFieldValues extends FieldValues> {
     label: string;
     renderInput: (
@@ -44,7 +44,6 @@ export const GenericField = <TFieldValues extends FieldValues>({
     />
 );
 
-// Prevent invalid input for numeric fields
 const preventInvalidNumberInput = (
     event: React.KeyboardEvent<HTMLInputElement>,
 ) => {
@@ -58,7 +57,6 @@ const preventInvalidNumberInput = (
     }
 };
 
-// InputField component using GenericField
 interface InputFieldProps<TFieldValues extends FieldValues>
     extends UseControllerProps<TFieldValues> {
     className?: string;
@@ -89,7 +87,6 @@ export const InputField = <TFieldValues extends FieldValues>({
     />
 );
 
-// NumericInputField component using GenericField
 interface NumericInputFieldProps<TFieldValues extends FieldValues>
     extends UseControllerProps<TFieldValues> {
     className?: string;
@@ -120,7 +117,6 @@ export const NumericInputField = <TFieldValues extends FieldValues>({
     />
 );
 
-// TextAreaField component using GenericField
 interface TextAreaFieldProps<TFieldValues extends FieldValues>
     extends UseControllerProps<TFieldValues> {
     className?: string;
@@ -147,7 +143,6 @@ export const TextAreaField = <TFieldValues extends FieldValues>({
     />
 );
 
-// SelectField component using GenericField
 interface SelectFieldProps<TFieldValues extends FieldValues, TItem>
     extends UseControllerProps<TFieldValues> {
     label: string;
@@ -192,7 +187,6 @@ export const SelectField = <TFieldValues extends FieldValues, TItem>({
     );
 };
 
-// CheckboxField component using GenericField
 interface CheckboxFieldProps<TFieldValues extends FieldValues, TItem>
     extends UseControllerProps<TFieldValues> {
     label: string;
@@ -233,3 +227,30 @@ export const CheckboxField = <TFieldValues extends FieldValues, TItem>({
         />
     );
 };
+
+interface ImageFieldProps<TFieldValues extends FieldValues>
+    extends UseControllerProps<TFieldValues> {
+    className?: string;
+    label: string;
+    setUploadThumbnailUrl: React.Dispatch<
+        React.SetStateAction<string | undefined>
+    >;
+}
+
+export const ImageField = <TFieldValues extends FieldValues>({
+    label,
+    setUploadThumbnailUrl,
+    ...fieldProps
+}: ImageFieldProps<TFieldValues>) => (
+    <GenericField
+        label={label}
+        {...fieldProps}
+        renderInput={(field) => (
+            <UploadImage
+                file={field.value as File | string}
+                onChange={field.onChange}
+                setUploadThumbnailUrl={setUploadThumbnailUrl}
+            />
+        )}
+    />
+);

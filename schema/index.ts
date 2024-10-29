@@ -1,58 +1,29 @@
 import { z } from 'zod';
 
-// export const UpdateProductSchema = z.object({
-//     thumbnailUrl: z
-//         .string({ required_error: 'Thumbnail is required' })
-//         .min(1, 'Thumbnail is required'),
-//     imageUrls: z
-//         .array(z.string({ required_error: 'image is required' }))
-//         .min(1, 'image is required'),
-// });
-
-// export const UpdateProductSchema = z.object({
-//     thumbnail: z
-//         .object({
-//             urlConfirm: z.string().optional(),
-//             file: z.instanceof(File).optional(),
-//         })
-//         .superRefine((data, ctx) => {
-//             const { urlConfirm, file } = data;
-
-//             // Kiểm tra nếu cả hai đều là undefined hoặc null
-//             if (!urlConfirm && !file) {
-//                 ctx.addIssue({
-//                     path: ['urlConfirm'],
-//                     code: z.ZodIssueCode.custom,
-//                     message: 'Either a URL or a file is required.',
-//                 });
-//                 ctx.addIssue({
-//                     path: ['file'],
-//                     code: z.ZodIssueCode.custom,
-//                     message: 'Either a URL or a file is required.',
-//                 });
-//             }
-//         }),
-// });
-
-export const FileStateSchema = z.object({
-    file: z.union([z.instanceof(File), z.string()]),
-    key: z.string(),
-    progress: z.union([
-        z.literal('PENDING'),
-        z.literal('COMPLETE'),
-        z.literal('ERROR'),
-        z.number(),
-    ]),
+export const ImageSchema = z.object({
+    images: z
+        .array(
+            z.object({
+                file: z.union([z.instanceof(File), z.string()]),
+                key: z.string(),
+                progress: z.union([
+                    z.literal('PENDING'),
+                    z.literal('COMPLETE'),
+                    z.literal('ERROR'),
+                    z.number(),
+                ]),
+            }),
+        )
+        .min(1, 'Images is required')
+        .refine((arr) => arr.every((item) => item.progress !== 'ERROR'), {
+            message: 'Please check images uploader ',
+        }),
 });
 
-export const FileStateArraySchema = z.array(FileStateSchema);
-
-export const UpdateProductSchema = z.object({
-    images: z.object({
-        urlsConfirm: z.array(z.string()),
-        fileStates: z.array(FileStateSchema),
-    }),
-});
+export const ThumbnailSchema = z.union([
+    z.instanceof(File),
+    z.string().min(1, { message: 'Thumbnail is required' }),
+]);
 
 export const LoginSchema = z.object({
     email: z
@@ -141,10 +112,6 @@ export const ProductSchema = z.object({
         .positive('Quantity must be a positive number')
         .int('Quantity must be an integer'),
 
-    thumbnailUrl: z.string({
-        required_error: 'ThumbnailUrl product is required',
-    }),
-
     capacity: z.coerce
         .number()
         .positive('Capacity must be a positive number')
@@ -175,6 +142,8 @@ export const ProductSchema = z.object({
             }),
         )
         .optional(),
+
+    thumbnailFile: ThumbnailSchema,
 
     imageUrls: z.array(z.string()),
 

@@ -1,61 +1,64 @@
 'use server';
 import prisma from '@/lib/prisma';
-import { ProductWithDetails, CategoryWithDetails } from '@/types';
-import { Color } from '@prisma/client';
+import { ProductWithDetails, DataToCreateAndUpdateProducts } from '@/types';
 
 const handleError = (
     error: unknown,
     message: string,
     returnEmptyArray = true,
 ) => {
-    console.error(`${message}:`, error);
+    let err = '';
+
+    if (error instanceof Error) {
+        err = error.message;
+        console.error(`${message}:`, err);
+    } else {
+        err = message;
+        console.error(`${message}:`, err);
+    }
+
     if (returnEmptyArray) {
         return [];
     }
     throw error;
 };
 
-export const fetchColors = async (): Promise<Color[] | null> => {
+export const fetchDataToCreateAndUpdateProducts = async (): Promise<
+    DataToCreateAndUpdateProducts | never[]
+> => {
     try {
-        return await prisma.color.findMany();
+        const [colors, categories, subCategories, detailCategories] =
+            await Promise.all([
+                prisma.color.findMany(),
+                prisma.category.findMany({}),
+                prisma.subCategory.findMany(),
+                prisma.detailCategory.findMany(),
+            ]);
+
+        return {
+            colors,
+            categories,
+            subCategories,
+            detailCategories,
+        };
     } catch (error) {
-        return handleError(error, 'Error fetching colors');
+        return handleError(
+            error,
+            'Error fetching all data create and update product',
+            false,
+        );
     }
 };
-
-export const fetchCategories = async (): Promise<CategoryWithDetails[]> => {
+export const fetchCategories = async () => {
     try {
-        return await prisma.category.findMany({
-            include: {
-                subCategories: {
-                    include: {
-                        detailCategories: {
-                            include: {
-                                products: true,
-                            },
-                        },
-                    },
-                },
-            },
-        });
+        const listCategory = prisma.category.findMany({});
+        return listCategory;
     } catch (error) {
-        return handleError(error, 'Error fetching categories');
-    }
-};
-
-export const fetchSubCategories = async () => {
-    try {
-        return await prisma.subCategory.findMany();
-    } catch (error) {
-        return handleError(error, 'Error fetching subCategories');
-    }
-};
-
-export const fetchDetailCategories = async () => {
-    try {
-        return await prisma.detailCategory.findMany();
-    } catch (error) {
-        return handleError(error, 'Error fetching detailCategories');
+        return handleError(
+            error,
+            'Error fetching all data create and update product',
+            false,
+        );
     }
 };
 

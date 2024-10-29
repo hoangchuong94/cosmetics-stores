@@ -25,9 +25,9 @@ import { ProductWithDetails, UploadedImage } from '@/types';
 import {
     FileState,
     MultiImageDropzone,
-} from '@/components/upload-image/multi-image-dropzone';
+} from '@/components/edgestore/multi-image-dropzone';
 import { FormError } from '@/components/form-error';
-import { SingleImageDropzone } from '@/components/upload-image/single-image-dropzone';
+import { SingleImageDropzone } from '@/components/edgestore/single-image-dropzone';
 
 interface ProductUpdate extends ProductWithDetails {
     subCategory: SubCategory;
@@ -71,7 +71,7 @@ const UpdateProductForm = ({
             price: product.price,
             quantity: product.quantity,
             capacity: product.capacity,
-            thumbnailUrl: product.thumbnail,
+            thumbnailFile: product.thumbnail,
             colors: product.colors.map((item) => item.color),
             imageUrls: product.images.map((item) => item.image.url),
             promotions: product.promotions.map((item) => item.promotion),

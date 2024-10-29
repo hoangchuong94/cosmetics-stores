@@ -1,18 +1,26 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { SingleImageDropzone } from '@/components/upload-image/single-image-dropzone';
+import { SingleImageDropzone } from '@/components/edgestore/single-image-dropzone';
 import { useEdgeStore } from '@/lib/edgestore';
+import { Progress } from '@/components/ui/progress';
 
 interface UploadImageProps {
-    file: File | string | undefined;
+    file: File | string;
     onChange: (...event: any[]) => void;
+    setUploadThumbnailUrl: React.Dispatch<
+        React.SetStateAction<string | undefined>
+    >;
 }
 
-export default function UploadImage({ file, onChange }: UploadImageProps) {
+export default function UploadImage({
+    file,
+    setUploadThumbnailUrl,
+    onChange,
+}: UploadImageProps) {
     const { edgestore } = useEdgeStore();
     const [isAutoUpdate, setIsAutoUpdate] = useState<boolean>(true);
-
+    const [process, setProgress] = useState<number>(0);
     const handleUpload = useCallback(
         async (file: File) => {
             try {
@@ -23,7 +31,7 @@ export default function UploadImage({ file, onChange }: UploadImageProps) {
                         temporary: true,
                     },
                     onProgressChange: (progress) => {
-                        console.log(`Upload Progress: ${progress}%`);
+                        setProgress(progress);
                     },
                 });
                 return res;
@@ -42,20 +50,17 @@ export default function UploadImage({ file, onChange }: UploadImageProps) {
             if (isAutoUpdate && file instanceof File) {
                 const imageUploaded = await handleUpload(file);
                 if (imageUploaded) {
-                    // onChange({
-                    //     urlConfirm: imageUploaded.url,
-                    //     file,
-                    // });
+                    setUploadThumbnailUrl(imageUploaded.url);
                 }
+                // chưa xử lý lỗi chi tiết khi edgestore bị failed
             }
-
             return;
         };
         uploadImage();
-    }, [file, onChange, isAutoUpdate, handleUpload]);
+    }, [file, isAutoUpdate, handleUpload, setUploadThumbnailUrl]);
 
     return (
-        <div className="flex min-w-full items-center justify-center rounded-md bg-white shadow-sm">
+        <div className="flex w-auto flex-col items-center justify-center rounded-md bg-white py-2 shadow-sm">
             <SingleImageDropzone
                 className="mt-2 bg-white"
                 width={200}
@@ -63,12 +68,11 @@ export default function UploadImage({ file, onChange }: UploadImageProps) {
                 value={file}
                 onChange={(fileAdd) => {
                     setIsAutoUpdate(true);
-                    onChange({
-                        urlConfirm: undefined,
-                        file: fileAdd,
-                    });
+                    setProgress(0);
+                    !fileAdd ? onChange('') : onChange(fileAdd);
                 }}
             />
+            <Progress className="h-3 w-[200px]" value={process} />
         </div>
     );
 }

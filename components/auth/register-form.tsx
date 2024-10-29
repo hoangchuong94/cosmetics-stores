@@ -14,6 +14,7 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
+import { InputField } from '@/components/custom-field';
 import { Button } from '@/components/ui/button';
 import { FormError } from '@/components/form-error';
 import { FormSuccess } from '@/components/form-success';
@@ -68,86 +69,44 @@ export default function RegisterForm() {
                     className="space-y-6"
                 >
                     <div className="space-y-4">
-                        <FormField
+                        <InputField
                             control={form.control}
+                            className="border border-gray-800"
                             name="name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Name</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="border border-gray-800"
-                                            {...field}
-                                            disabled={isPending}
-                                            placeholder="Enter your name"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                            label="Name"
+                            placeholder="Enter your name"
                         />
-                        <FormField
+                        <InputField
                             control={form.control}
+                            className="border border-gray-800"
                             name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="border border-gray-800"
-                                            {...field}
-                                            disabled={isPending}
-                                            placeholder="Enter your email address"
-                                            type="email"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                            label="Email"
+                            placeholder="Enter your email"
                         />
-                        <FormField
+                        <InputField
                             control={form.control}
+                            className="border border-gray-800"
                             name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Password</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="border border-gray-800"
-                                            {...field}
-                                            disabled={isPending}
-                                            placeholder="Enter your password"
-                                            type="password"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                            label="Password"
+                            placeholder="Enter your password"
+                            type="password"
                         />
-                        <FormField
+
+                        <InputField
                             control={form.control}
+                            className="border border-gray-800"
                             name="passwordConfirm"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Password Confirm</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="border border-gray-800"
-                                            {...field}
-                                            disabled={isPending}
-                                            placeholder="Enter your password confirmation"
-                                            type="password"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                            label="Password Confirm"
+                            placeholder="Enter your passwordConfirm"
+                            type="password"
                         />
                     </div>
+
                     <FormError message={error} />
                     <FormSuccess message={success} />
+
                     <Button
-                        className={`mt-6 w-full ${isPending && 'bg-gray-700'}`}
+                        className="mt-6 w-full"
                         aria-disabled={isPending}
                         disabled={isPending}
                         type="submit"

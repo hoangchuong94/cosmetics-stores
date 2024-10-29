@@ -37,7 +37,6 @@ export default function CustomSelect<T>({
     disabled = false,
 }: CustomSelectProps<T>) {
     const [open, setOpen] = React.useState(false);
-
     const selectedItemName = React.useMemo(
         () => (value ? getItemName(value) : 'Select item'),
         [value, getItemName],
@@ -45,6 +44,7 @@ export default function CustomSelect<T>({
 
     const handleSelect = React.useCallback(
         (currentValue: string) => {
+            console.log(currentValue);
             const selectedItem = items.find(
                 (item) => getItemName(item) === currentValue,
             );

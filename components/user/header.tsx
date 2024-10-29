@@ -24,7 +24,7 @@ export default async function Header() {
                 urlStatic={logo}
                 className="mr-3 h-auto w-24"
             />
-            <Navbar categories={categories} />
+            {/* <Navbar categories={categories} /> */}
             <div className="flex h-full items-center justify-between">
                 <ShoppingCard />
                 <div className="hidden md:block">
@@ -38,7 +38,7 @@ export default async function Header() {
                         </>
                     )}
                 </div>
-                <NavMobile categories={categories} user={user} />
+                {/* <NavMobile categories={categories} user={user} /> */}
             </div>
         </header>
     );

@@ -1,4 +1,4 @@
-import { FileState } from '@/components/upload-image/multi-image-dropzone';
+import { FileState } from '@/components/edgestore/multi-image-dropzone';
 import {
     Category,
     SubCategory,
@@ -8,6 +8,17 @@ import {
     Image,
     Promotion,
 } from '@prisma/client';
+
+export type DataToCreateAndUpdateProducts = {
+    colors: Color[];
+    categories: Category[];
+    subCategories: SubCategory[];
+    detailCategories: DetailCategory[];
+};
+
+export type ProductCreate = Product & {
+    dataToCreateAndUpdateProducts: DataToCreateAndUpdateProducts;
+};
 
 export type ProductWithDetails = Product & {
     images: { image: Image }[];
@@ -21,11 +32,7 @@ export type CategoryWithDetails = Category & {
 };
 
 export type SubCategoryWithDetails = SubCategory & {
-    detailCategories: DetailCategoryWithProducts[];
-};
-
-export type DetailCategoryWithProducts = DetailCategory & {
-    products: Product[];
+    detailCategories: DetailCategory[];
 };
 
 export interface CustomTypeUser {
@@ -46,9 +53,4 @@ export interface UploadedImage {
         type: string;
     };
     pathOrder: 'type'[];
-}
-
-export interface Thumbnail {
-    urlConfirm: string;
-    file: File | string | undefined;
 }

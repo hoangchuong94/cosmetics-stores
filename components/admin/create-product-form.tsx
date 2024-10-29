@@ -2,12 +2,14 @@
 import React, { useState, useTransition } from 'react';
 import {
     CheckboxField,
+    ImageField,
     InputField,
     NumericInputField,
     SelectField,
     TextAreaField,
 } from '@/components/custom-field';
 import * as z from 'zod';
+import prisma from '@/lib/prisma';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
 import { useEdgeStore } from '@/lib/edgestore';
@@ -20,8 +22,8 @@ import { ProductSchema } from '@/schema';
 import { useFilteredCategories } from '@/hooks/use-filtered-categories';
 import { createProduct } from '@/actions/product-crud';
 import { useImageUploader } from '@/hooks/use-upload-images';
-import UploadImages from '@/components/upload-image/upload-images';
-import UploadThumbnail from '@/components/upload-image/upload-image';
+import UploadImages from '@/components/edgestore/uploader-images';
+import UploadThumbnail from '@/components/edgestore/uploader-image';
 import LinkHierarchy from '@/components/link-hierarchy';
 import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
 
@@ -44,15 +46,11 @@ const CreateProductForm = ({
 
     const [imageUrls, setImageUrls] = useState<string[]>([]);
 
-    const [thumbnailUrl, setThumbnailUrl] = useState<string | undefined>(
-        undefined,
-    );
+    const [uploadThumbnailUrl, setUploadThumbnailUrl] = useState<
+        string | undefined
+    >(undefined);
 
     const { fileStates, setFileStates, uploadImages } = useImageUploader();
-
-    const [thumbnailFile, setThumbnailFile] = useState<
-        File | string | undefined
-    >(undefined);
 
     const form = useForm<z.infer<typeof ProductSchema>>({
         resolver: zodResolver(ProductSchema),
@@ -64,7 +62,7 @@ const CreateProductForm = ({
             price: 0,
             quantity: 0,
             capacity: 0,
-            thumbnailUrl: '',
+            thumbnailFile: '',
             colors: [],
             imageUrls: [],
             promotions: [],
@@ -87,6 +85,58 @@ const CreateProductForm = ({
             detailCategories,
             resetField,
         );
+
+    const onSubmit = async (values: z.infer<typeof ProductSchema>) => {
+        const now = new Date();
+        const formattedDate = new Intl.DateTimeFormat('en-US', {
+            dateStyle: 'long',
+            timeStyle: 'short',
+        }).format(now);
+
+        if (imageUrls.length === 0 || !uploadThumbnailUrl) {
+            toast({
+                title: 'upload images failed',
+                description: formattedDate,
+            });
+        } else {
+            startTransition(async () => {
+                try {
+                    const newProduct = {
+                        ...values,
+                        uploadThumbnailUrl,
+                        imageUrls,
+                    };
+
+                    const product = await createProduct(newProduct);
+
+                    if (!product) {
+                        throw new Error('Product creation failed');
+                    }
+
+                    await confirmUploadImages(
+                        [...imageUrls, uploadThumbnailUrl],
+                        edgestore,
+                    );
+
+                    toast({
+                        title: 'The product has been successfully created',
+                        description: formattedDate,
+                    });
+
+                    form.reset();
+
+                    setFileStates([]);
+                } catch (error) {
+                    console.error(error);
+                    toast({
+                        title: 'An error occurred during the product creation process',
+                        description: formattedDate,
+                    });
+                }
+            });
+        }
+    };
+
     const confirmUploadImages = async (urls: string[], edgestore: any) => {
         const confirmPromises = urls.map(async (item) => {
             try {
@@ -99,50 +149,6 @@ const CreateProductForm = ({
         });
 
         await Promise.all(confirmPromises);
-    };
-
-    const onSubmit = async (values: z.infer<typeof ProductSchema>) => {
-        try {
-            if (imageUrls.length > 0 && thumbnailUrl !== undefined) {
-                startTransition(async () => {
-                    const newProduct = {
-                        ...values,
-                        imageUrls,
-                        thumbnailUrl,
-                    };
-
-                    const productUploaded = await createProduct(newProduct);
-                    const now = new Date();
-                    const formattedDate = new Intl.DateTimeFormat('en-US', {
-                        dateStyle: 'long',
-                        timeStyle: 'short',
-                    }).format(now);
-                    if (productUploaded) {
-                        await confirmUploadImages(
-                            [...imageUrls, thumbnailUrl],
-                            edgestore,
-                        );
-                        toast({
-                            title: 'The product has been successfully created',
-                            description: formattedDate,
-                        });
-                        form.reset();
-                        setFileStates([]);
-                        setThumbnailFile(undefined);
-                    } else {
-                        toast({
-                            title: 'An error occurred during the product creation process',
-                            description: formattedDate,
-                        });
-                    }
-                });
-            }
-        } catch (error) {
-            toast({
-                title: 'Upload Error',
-                description: 'Failed to upload product. Please try again.',
-            });
-        }
     };
 
     return (
@@ -240,24 +246,24 @@ const CreateProductForm = ({
                             placeholder="Enter your product description"
                         />
 
-                        {/* <UploadThumbnail
-                            file={thumbnailFile}
-                            setFile={setThumbnailFile}
-                            setUrl={setThumbnailUrl}
-                        /> */}
+                        <ImageField
+                            control={form.control}
+                            name="thumbnailFile"
+                            label="Thumbnail"
+                            setUploadThumbnailUrl={setUploadThumbnailUrl}
+                        />
 
-                        <UploadImages
+                        {/* <UploadImages
                             fileStates={fileStates}
                             setFileStates={setFileStates}
                             uploadImages={uploadImages}
                             imageUrls={imageUrls}
                             setImageUrls={setImageUrls}
-                        />
+                        /> */}
 
                         <Button
                             disabled={
                                 !formState.isValid ||
-                                thumbnailUrl === '' ||
                                 imageUrls.length === 0 ||
                                 isPending
                             }

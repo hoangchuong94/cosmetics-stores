@@ -1,31 +1,25 @@
 'use client';
 import { useState, useTransition } from 'react';
-import { signIn } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { signIn } from 'next-auth/react';
 
-import { ArrowRight } from 'lucide-react';
 import githubIcon from '/public/icon/github-icon.svg';
 import googleIcon from '/public/icon/google-icon.svg';
 
-import { authenticate } from '@/actions/auth';
+import { ArrowRight } from 'lucide-react';
+import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
+import { authenticate } from '@/actions/auth';
 import { LoginSchema } from '@/schema/index';
 import { FormError } from '@/components/form-error';
 import { FormSuccess } from '@/components/form-success';
+import { InputField } from '@/components/custom-field';
 import AuthCardWrapper from '@/components/auth-card-wrapper';
 import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
 
@@ -77,68 +71,41 @@ export default function LoginForm() {
 
     return (
         <AuthCardWrapper
-            className="h-full md:rounded-l-none md:rounded-r-3xl"
+            className="flex h-full min-w-full flex-col justify-center md:rounded-l-none md:rounded-r-3xl"
             headerLabel="Login"
             footerLabel="Do not have an account ? "
             footerHref="/register"
         >
             <Form {...form}>
-                <form
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-2"
-                >
+                <form onSubmit={form.handleSubmit(onSubmit)}>
                     <div className="space-y-4">
-                        <FormField
+                        <InputField
                             control={form.control}
+                            className="border border-gray-800"
                             name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="border border-gray-800"
-                                            {...field}
-                                            disabled={isPending}
-                                            placeholder="Enter your email address"
-                                            type="email"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                            label="Email"
+                            placeholder="Enter your email address"
+                            type="email"
                         />
-                        <FormField
+                        <InputField
                             control={form.control}
+                            className="border border-gray-800"
                             name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Password</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="border border-gray-800"
-                                            {...field}
-                                            disabled={isPending}
-                                            placeholder="Enter your password"
-                                            type="password"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                            label="Password"
+                            placeholder="Enter your password"
+                            type="password"
                         />
                     </div>
 
-                    <div>
-                        <Link
-                            href="/forgot-password"
-                            className="float-right mb-4 mt-2 text-sm text-blue-500 hover:text-blue-700"
-                        >
-                            Forgot password?
-                        </Link>
-                    </div>
+                    <Link
+                        href="/forgot-password"
+                        className="float-right block py-4 text-sm text-blue-500 hover:text-blue-700"
+                    >
+                        You forgot password ?
+                    </Link>
 
                     <Button
-                        className={`mt-6 w-full ${isPending && 'bg-gray-700'}`}
+                        className="w-full"
                         aria-disabled={isPending}
                         disabled={isPending}
                         type="submit"
@@ -159,13 +126,15 @@ export default function LoginForm() {
             <FormSuccess message={success} />
 
             <div className="my-3 flex items-center justify-center">
-                <span className="w-full border  border-b-black"></span>
+                <span className="w-full border border-b-black"></span>
                 <p className="mx-1">OR</p>
                 <span className="w-full border border-b-black"></span>
             </div>
+
             <div className="grid grid-cols-2 gap-2">
                 <Button
-                    className="flex w-full justify-center border-2 border-solid border-b-gray-50 bg-slate-50/55 py-8 hover:bg-slate-300  hover:transition-all active:bg-slate-100"
+                    className="h-16"
+                    variant={'outline'}
                     onClick={() => signInProvider('google')}
                 >
                     <Image
@@ -177,7 +146,8 @@ export default function LoginForm() {
                     />
                 </Button>
                 <Button
-                    className="flex w-full justify-center border-2 border-solid border-b-gray-50 bg-slate-50/55 py-8 hover:bg-slate-300  hover:transition-all active:bg-slate-100"
+                    className="h-16"
+                    variant={'outline'}
                     onClick={() => signInProvider('github')}
                 >
                     <Image

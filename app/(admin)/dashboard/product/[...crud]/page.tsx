@@ -5,34 +5,22 @@ import UpdateProductForm from '@/components/admin/update-product-form';
 import UpdateProduct from '@/components/admin/update-product';
 import CreateProductForm from '@/components/admin/create-product-form';
 
-import {
-    fetchCategories,
-    fetchColors,
-    fetchSubCategories,
-    fetchDetailCategories,
-} from '@/data/fetch-data';
+import { fetchDataToCreateAndUpdateProducts } from '@/data/fetch-data';
 
 import { fetchProductById } from '@/data/fetch-data';
 
 const page = async ({ params }: { params: { crud: string[] } }) => {
-    const action = params.crud[0];
-    const idProduct = params.crud[1];
+    const result = await fetchDataToCreateAndUpdateProducts();
 
-    const [colors, categories, subCategories, detailCategories] =
-        await Promise.all([
-            fetchColors(),
-            fetchCategories(),
-            fetchSubCategories(),
-            fetchDetailCategories(),
-        ]);
-
-    if (!colors || !categories || !subCategories || !detailCategories) {
+    if (Array.isArray(result)) {
         return (
             <div className="flex h-screen items-center justify-center">
                 Error loading data. Please try again later.
             </div>
         );
     }
+
+    const { colors, categories, subCategories, detailCategories } = result;
 
     if (
         colors.length === 0 ||
@@ -47,6 +35,9 @@ const page = async ({ params }: { params: { crud: string[] } }) => {
             </div>
         );
     }
+
+    const action = params.crud[0];
+    const idProduct = params.crud[1];
 
     switch (action) {
         case 'create':
