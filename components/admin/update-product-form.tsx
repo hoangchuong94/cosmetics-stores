@@ -62,6 +62,12 @@ const UpdateProductForm = ({
         string | undefined
     >();
 
+    const initialFileStates: FileState[] = product.images.map((item) => ({
+        file: item.image.url,
+        key: item.image.id,
+        progress: 'COMPLETE',
+    }));
+
     const form = useForm<z.infer<typeof ProductSchema>>({
         resolver: zodResolver(ProductSchema),
         defaultValues: {
@@ -73,7 +79,7 @@ const UpdateProductForm = ({
             capacity: product.capacity,
             thumbnailFile: product.thumbnail,
             colors: product.colors.map((item) => item.color),
-            imageUrls: product.images.map((item) => item.image.url),
+            imageFiles: initialFileStates,
             promotions: product.promotions.map((item) => item.promotion),
             category: product.category,
             subCategory: product.subCategory,

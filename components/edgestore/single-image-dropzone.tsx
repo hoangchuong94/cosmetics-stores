@@ -1,5 +1,4 @@
 'use client';
-
 import { formatFileSize } from '@edgestore/react/utils';
 import { UploadCloudIcon, X } from 'lucide-react';
 import Image from 'next/image';
@@ -57,16 +56,13 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
     ) => {
         const imageUrl = React.useMemo(() => {
             if (typeof value === 'string') {
-                // in case an url is passed in, use it to display the image
                 return value;
             } else if (value) {
-                // in case a file is passed in, create a base64 url to display the image
                 return URL.createObjectURL(value);
             }
             return null;
         }, [value]);
 
-        // dropzone configuration
         const {
             getRootProps,
             getInputProps,
@@ -78,7 +74,6 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
         } = useDropzone({
             accept: { 'image/*': [] },
             multiple: false,
-            maxSize: 100000,
             disabled,
             onDrop: (acceptedFiles) => {
                 const file = acceptedFiles[0];
@@ -89,7 +84,6 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
             ...dropzoneOptions,
         });
 
-        // styling
         const dropZoneClassName = React.useMemo(
             () =>
                 twMerge(
@@ -112,7 +106,6 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
             ],
         );
 
-        // error validation messages
         const errorMessage = React.useMemo(() => {
             if (fileRejections[0]) {
                 const { errors } = fileRejections[0];
@@ -144,11 +137,8 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
                         },
                     })}
                 >
-                    {/* Main File Input */}
                     <input ref={ref} {...getInputProps()} />
-
                     {imageUrl ? (
-                        // Image Preview
                         <Image
                             className="h-full w-full rounded-md object-cover"
                             src={imageUrl}
@@ -157,7 +147,6 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
                             height={500}
                         />
                     ) : (
-                        // Upload Icon
                         <div className="flex flex-col items-center justify-center text-xs text-gray-400">
                             <UploadCloudIcon className="mb-2 h-7 w-7" />
                             <div className="text-gray-400">
@@ -170,8 +159,6 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
                             </div>
                         </div>
                     )}
-
-                    {/* Remove Image Icon */}
                     {imageUrl && !disabled && (
                         <div
                             className="group absolute right-0 top-0 -translate-y-1/4 translate-x-1/4 transform"
@@ -190,13 +177,12 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
                         </div>
                     )}
                 </div>
-
-                {/* Error Text */}
                 <div className="mt-2 text-xs text-red-500">{errorMessage}</div>
             </div>
         );
     },
 );
+
 SingleImageDropzone.displayName = 'SingleImageDropzone';
 
 const Button = React.forwardRef<
@@ -206,11 +192,8 @@ const Button = React.forwardRef<
     return (
         <button
             className={twMerge(
-                // base
                 'focus-visible:ring-ring inline-flex cursor-pointer items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50',
-                // color
                 'border border-gray-400 text-gray-400 shadow hover:bg-gray-100 hover:text-gray-500 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-700',
-                // size
                 'h-6 rounded-md px-2 text-xs',
                 className,
             )}
@@ -219,6 +202,7 @@ const Button = React.forwardRef<
         />
     );
 });
+
 Button.displayName = 'Button';
 
 export { SingleImageDropzone };

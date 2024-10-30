@@ -99,7 +99,6 @@ export const columns: ColumnDef<ProductWithDetails>[] = [
     {
         id: 'actions',
         header: ({ column }) => {
-            const product = column;
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>

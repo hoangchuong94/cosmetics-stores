@@ -44,7 +44,6 @@ export default function CustomSelect<T>({
 
     const handleSelect = React.useCallback(
         (currentValue: string) => {
-            console.log(currentValue);
             const selectedItem = items.find(
                 (item) => getItemName(item) === currentValue,
             );

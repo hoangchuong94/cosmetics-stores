@@ -17,7 +17,7 @@ import React, { useEffect, useState, useTransition } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Category, SubCategory } from '@prisma/client';
 import { Button } from '@/components/ui/button';
-import { ImageSchema } from '@/schema';
+import { Image } from '@/schema';
 import LinkHierarchy from '@/components/link-hierarchy';
 import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
 import { ProductWithDetails } from '@/types';
@@ -45,8 +45,8 @@ const UpdateProduct = ({ product }: UpdateProductProps) => {
 
     const [urls, setUrls] = useState<string[]>(initialUrls);
 
-    const form = useForm<z.infer<typeof ImageSchema>>({
-        resolver: zodResolver(ImageSchema),
+    const form = useForm<z.infer<typeof Image>>({
+        resolver: zodResolver(Image),
         defaultValues: {
             images: initialFileStates,
         },
@@ -54,7 +54,7 @@ const UpdateProduct = ({ product }: UpdateProductProps) => {
 
     console.log(urls);
 
-    const onSubmit = async (values: z.infer<typeof ImageSchema>) => {
+    const onSubmit = async (values: z.infer<typeof Image>) => {
         startTransition(async () => {
             console.log('Form submitted with values:', {
                 ...values,
@@ -77,6 +77,7 @@ const UpdateProduct = ({ product }: UpdateProductProps) => {
                             control={form.control}
                             name="images"
                             render={({ field }) => {
+                                console.log(field.value);
                                 return (
                                     <FormItem>
                                         <FormLabel>Images</FormLabel>

@@ -1,6 +1,6 @@
 'use server';
 import prisma from '@/lib/prisma';
-import { ProductWithDetails, DataToCreateAndUpdateProducts } from '@/types';
+import { ProductWithDetails, DataToCreateAndUpdateProduct } from '@/types';
 
 const handleError = (
     error: unknown,
@@ -24,7 +24,7 @@ const handleError = (
 };
 
 export const fetchDataToCreateAndUpdateProducts = async (): Promise<
-    DataToCreateAndUpdateProducts | never[]
+    DataToCreateAndUpdateProduct | never[]
 > => {
     try {
         const [colors, categories, subCategories, detailCategories] =

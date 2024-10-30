@@ -1,12 +1,9 @@
 'use server';
 import { notFound } from 'next/navigation';
 
-import UpdateProductForm from '@/components/admin/update-product-form';
 import UpdateProduct from '@/components/admin/update-product';
 import CreateProductForm from '@/components/admin/create-product-form';
-
 import { fetchDataToCreateAndUpdateProducts } from '@/data/fetch-data';
-
 import { fetchProductById } from '@/data/fetch-data';
 
 const page = async ({ params }: { params: { crud: string[] } }) => {

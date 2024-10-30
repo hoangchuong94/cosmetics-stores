@@ -32,8 +32,8 @@ const es = initEdgeStore.context<Context>().create();
 const edgeStoreRouter = es.router({
     publicImages: es
         .imageBucket({
-            maxSize: 10 * 1024,
             accept: ['image/jpeg', 'image/png'],
+            maxSize: 1 * 1024 * 1024,
         })
         .input(
             z.object({
@@ -48,7 +48,10 @@ const edgeStoreRouter = es.router({
             return false;
         })
         .beforeDelete(({ ctx, fileInfo }) => {
-            return true;
+            if (ctx.userRole === 'ADMIN') {
+                return true;
+            }
+            return false;
         }),
     publicFiles: es
         .fileBucket({

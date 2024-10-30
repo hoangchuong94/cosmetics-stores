@@ -12,7 +12,11 @@ import { Minus, Plus } from 'lucide-react';
 import product from '@/public/products/product-12-a.jpg';
 import { Button } from '@/components/ui/button';
 
-export default function ProductDetail({ params }: { params: { id: string } }) {
+export default function ProductDetailPage({
+    params,
+}: {
+    params: { id: string };
+}) {
     const [quantity, setQuantity] = useState(1);
     const [selectedOption, setSelectedOption] = useState('');
     return (

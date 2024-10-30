@@ -3,13 +3,13 @@ import React, { useState, useTransition } from 'react';
 import {
     CheckboxField,
     ImageField,
+    ImagesField,
     InputField,
     NumericInputField,
     SelectField,
     TextAreaField,
 } from '@/components/custom-field';
 import * as z from 'zod';
-import prisma from '@/lib/prisma';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
 import { useEdgeStore } from '@/lib/edgestore';
@@ -18,12 +18,7 @@ import { Color, Category, SubCategory, DetailCategory } from '@prisma/client';
 import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { ProductSchema } from '@/schema';
-
 import { useFilteredCategories } from '@/hooks/use-filtered-categories';
-import { createProduct } from '@/actions/product-crud';
-import { useImageUploader } from '@/hooks/use-upload-images';
-import UploadImages from '@/components/edgestore/uploader-images';
-import UploadThumbnail from '@/components/edgestore/uploader-image';
 import LinkHierarchy from '@/components/link-hierarchy';
 import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
 
@@ -43,14 +38,10 @@ const CreateProductForm = ({
     const { toast } = useToast();
     const { edgestore } = useEdgeStore();
     const [isPending, startTransition] = useTransition();
-
-    const [imageUrls, setImageUrls] = useState<string[]>([]);
-
+    const [uploadImageUrls, setUploadImageUrls] = useState<string[]>([]);
     const [uploadThumbnailUrl, setUploadThumbnailUrl] = useState<
         string | undefined
     >(undefined);
-
-    const { fileStates, setFileStates, uploadImages } = useImageUploader();
 
     const form = useForm<z.infer<typeof ProductSchema>>({
         resolver: zodResolver(ProductSchema),
@@ -59,13 +50,13 @@ const CreateProductForm = ({
             name: '',
             description: '',
             type: '',
+            thumbnailFile: '',
             price: 0,
             quantity: 0,
             capacity: 0,
-            thumbnailFile: '',
             colors: [],
-            imageUrls: [],
             promotions: [],
+            imageFiles: [],
             category: undefined,
             subCategory: undefined,
             detailCategory: undefined,
@@ -93,7 +84,7 @@ const CreateProductForm = ({
             timeStyle: 'short',
         }).format(now);
 
-        if (imageUrls.length === 0 || !uploadThumbnailUrl) {
+        if (uploadImageUrls.length === 0 || !uploadThumbnailUrl) {
             toast({
                 title: 'upload images failed',
                 description: formattedDate,
@@ -101,31 +92,21 @@ const CreateProductForm = ({
         } else {
             startTransition(async () => {
                 try {
-                    const newProduct = {
-                        ...values,
-                        uploadThumbnailUrl,
-                        imageUrls,
-                    };
-
-                    const product = await createProduct(newProduct);
-
-                    if (!product) {
-                        throw new Error('Product creation failed');
-                    }
-
-                    await confirmUploadImages(
-                        [...imageUrls, uploadThumbnailUrl],
-                        edgestore,
-                    );
-
-                    toast({
-                        title: 'The product has been successfully created',
-                        description: formattedDate,
-                    });
-
-                    form.reset();
-
-                    setFileStates([]);
+                    console.log(values);
+                    // const { thumbnailFile, imageFiles, ...newProduct } = values;
+                    // const productDetail : ProductDetail = await createProduct(newProduct);
+                    // if (!product) {
+                    //     throw new Error('Product creation failed');
+                    // }
+                    // await confirmUploadImages(
+                    //     [...uploadImageUrls, uploadThumbnailUrl],
+                    //     edgestore,
+                    // );
+                    // toast({
+                    //     title: 'The product has been successfully created',
+                    //     description: formattedDate,
+                    // });
+                    // form.reset();
                 } catch (error) {
                     console.error(error);
                     toast({
@@ -136,6 +117,8 @@ const CreateProductForm = ({
             });
         }
     };
+
+    console.log(uploadImageUrls);
 
     const confirmUploadImages = async (urls: string[], edgestore: any) => {
         const confirmPromises = urls.map(async (item) => {
@@ -250,23 +233,18 @@ const CreateProductForm = ({
                             control={form.control}
                             name="thumbnailFile"
                             label="Thumbnail"
-                            setUploadThumbnailUrl={setUploadThumbnailUrl}
+                            setUrl={setUploadThumbnailUrl}
                         />
 
-                        {/* <UploadImages
-                            fileStates={fileStates}
-                            setFileStates={setFileStates}
-                            uploadImages={uploadImages}
-                            imageUrls={imageUrls}
-                            setImageUrls={setImageUrls}
-                        /> */}
+                        <ImagesField
+                            control={form.control}
+                            name="imageFiles"
+                            label="Images"
+                            setUrls={setUploadImageUrls}
+                        />
 
                         <Button
-                            disabled={
-                                !formState.isValid ||
-                                imageUrls.length === 0 ||
-                                isPending
-                            }
+                            disabled={!formState.isValid || isPending}
                             className="w-full"
                         >
                             {isPending && <LoadingSpinner />}

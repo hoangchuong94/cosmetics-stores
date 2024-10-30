@@ -18,6 +18,8 @@ import CustomSelect from '@/components/custom-select';
 import { Textarea } from '@/components/ui/textarea';
 import { useMemo, useCallback } from 'react';
 import UploadImage from '@/components/edgestore/uploader-image';
+import UploadImages from '@/components/edgestore/uploader-images';
+import { type FileState } from '@/components/edgestore/multi-image-dropzone';
 
 interface GenericFieldProps<TFieldValues extends FieldValues> {
     label: string;
@@ -232,14 +234,12 @@ interface ImageFieldProps<TFieldValues extends FieldValues>
     extends UseControllerProps<TFieldValues> {
     className?: string;
     label: string;
-    setUploadThumbnailUrl: React.Dispatch<
-        React.SetStateAction<string | undefined>
-    >;
+    setUrl: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 export const ImageField = <TFieldValues extends FieldValues>({
     label,
-    setUploadThumbnailUrl,
+    setUrl,
     ...fieldProps
 }: ImageFieldProps<TFieldValues>) => (
     <GenericField
@@ -249,7 +249,34 @@ export const ImageField = <TFieldValues extends FieldValues>({
             <UploadImage
                 file={field.value as File | string}
                 onChange={field.onChange}
-                setUploadThumbnailUrl={setUploadThumbnailUrl}
+                setUrl={setUrl}
+            />
+        )}
+    />
+);
+
+interface ImagesFieldProps<TFieldValues extends FieldValues>
+    extends UseControllerProps<TFieldValues> {
+    className?: string;
+    label: string;
+    setUrls: React.Dispatch<React.SetStateAction<string[]>>;
+    initialFileStates?: FileState[];
+}
+
+export const ImagesField = <TFieldValues extends FieldValues>({
+    label,
+    initialFileStates,
+    setUrls,
+    ...fieldProps
+}: ImagesFieldProps<TFieldValues>) => (
+    <GenericField
+        label={label}
+        {...fieldProps}
+        renderInput={(field) => (
+            <UploadImages
+                setUrls={setUrls}
+                onChange={field.onChange}
+                initialFileStates={initialFileStates}
             />
         )}
     />

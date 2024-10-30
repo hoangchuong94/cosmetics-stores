@@ -9,15 +9,11 @@ import {
     Promotion,
 } from '@prisma/client';
 
-export type DataToCreateAndUpdateProducts = {
+export type DataToCreateAndUpdateProduct = {
     colors: Color[];
     categories: Category[];
     subCategories: SubCategory[];
     detailCategories: DetailCategory[];
-};
-
-export type ProductCreate = Product & {
-    dataToCreateAndUpdateProducts: DataToCreateAndUpdateProducts;
 };
 
 export type ProductWithDetails = Product & {
