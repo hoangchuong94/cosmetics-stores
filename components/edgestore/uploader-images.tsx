@@ -10,13 +10,13 @@ import { useEdgeStore } from '@/lib/edgestore';
 
 interface UploadImagesProps {
     setUrls: React.Dispatch<React.SetStateAction<string[]>>;
-    initialFileStates?: FileState[];
+    initialFileStates: FileState[];
     onChange: (...event: any[]) => void;
 }
 
 export default function UploadImages({
     setUrls,
-    initialFileStates = [],
+    initialFileStates,
     onChange,
 }: UploadImagesProps) {
     const { edgestore } = useEdgeStore();
@@ -38,8 +38,6 @@ export default function UploadImages({
         },
         [setFileStates],
     );
-
-    console.log(fileStates);
 
     const uploadImages = useCallback(
         async (addedFiles: FileState[]) => {
@@ -80,6 +78,18 @@ export default function UploadImages({
         [edgestore, updateFileProgress],
     );
 
+    const handleOnChange = (files: FileState[]) => {
+        const urlChange = fileStates.reduce<string[]>((acc, item) => {
+            if (typeof item.file === 'string' && item.progress === 'COMPLETE') {
+                acc.push(item.file);
+            }
+            console.log(acc);
+            return acc;
+        }, []);
+        setUrls(urlChange);
+        setFileStates(files);
+    };
+
     const handleOnFilesAdded = useCallback(
         async (addedFiles: FileState[]) => {
             setFileStates((prevFileStates) => [
@@ -105,29 +115,26 @@ export default function UploadImages({
 
     useEffect(() => {
         if (fileStates.length > 0) {
-            const urlChange = fileStates.reduce<string[]>((acc, item) => {
-                if (
-                    typeof item.file === 'string' &&
-                    item.progress === 'COMPLETE'
-                ) {
-                    acc.push(item.file);
-                }
-                return acc;
-            }, []);
-            setUrls(urlChange);
             onChange(fileStates);
         }
-    }, [fileStates, setUrls, onChange]);
+    }, [fileStates, onChange]);
+
+    useEffect(() => {
+        //reset form
+        if (initialFileStates.length === 0) {
+            setFileStates([]);
+        }
+    }, [setFileStates, initialFileStates]);
 
     return (
         <MultiImageDropzone
-            className="bg-white"
+            className="h-[200px] w-[200px] bg-white"
             value={fileStates}
             dropzoneOptions={{
                 maxFiles: 6,
                 maxSize: 1000000,
             }}
-            onChange={setFileStates}
+            onChange={handleOnChange}
             onFilesAdded={handleOnFilesAdded}
         />
     );

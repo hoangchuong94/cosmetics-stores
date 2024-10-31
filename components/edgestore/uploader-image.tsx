@@ -68,7 +68,7 @@ export default function UploadImage({
                     maxSize: 1000000,
                 }}
             />
-            <Progress className="h-2 w-[200px]" value={progress} />
+            <Progress className="h-2 w-[200px]" value={!file ? 0 : progress} />
         </div>
     );
 }

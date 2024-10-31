@@ -260,12 +260,10 @@ interface ImagesFieldProps<TFieldValues extends FieldValues>
     className?: string;
     label: string;
     setUrls: React.Dispatch<React.SetStateAction<string[]>>;
-    initialFileStates?: FileState[];
 }
 
 export const ImagesField = <TFieldValues extends FieldValues>({
     label,
-    initialFileStates,
     setUrls,
     ...fieldProps
 }: ImagesFieldProps<TFieldValues>) => (
@@ -276,7 +274,7 @@ export const ImagesField = <TFieldValues extends FieldValues>({
             <UploadImages
                 setUrls={setUrls}
                 onChange={field.onChange}
-                initialFileStates={initialFileStates}
+                initialFileStates={field.value}
             />
         )}
     />

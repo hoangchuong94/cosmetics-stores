@@ -50,3 +50,16 @@ export interface UploadedImage {
     };
     pathOrder: 'type'[];
 }
+
+export interface productCreate {
+    name: string;
+    description: string;
+    type: string;
+    price: number;
+    quantity: number;
+    capacity: number;
+    colors: Color[];
+    thumbnailUrl: string;
+    imageUrls: string[];
+    detailCategoryId: string;
+}

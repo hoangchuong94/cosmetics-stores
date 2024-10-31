@@ -19,6 +19,8 @@ import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { ProductSchema } from '@/schema';
 import { useFilteredCategories } from '@/hooks/use-filtered-categories';
+import { productCreate } from '@/types';
+import { createProduct } from '@/actions/product-crud';
 import LinkHierarchy from '@/components/link-hierarchy';
 import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
 
@@ -38,10 +40,8 @@ const CreateProductForm = ({
     const { toast } = useToast();
     const { edgestore } = useEdgeStore();
     const [isPending, startTransition] = useTransition();
-    const [uploadImageUrls, setUploadImageUrls] = useState<string[]>([]);
-    const [uploadThumbnailUrl, setUploadThumbnailUrl] = useState<
-        string | undefined
-    >(undefined);
+    const [imageUrls, setImageUrls] = useState<string[]>([]);
+    const [thumbnailUrl, setThumbnailUrl] = useState<string | undefined>();
 
     const form = useForm<z.infer<typeof ProductSchema>>({
         resolver: zodResolver(ProductSchema),
@@ -84,7 +84,7 @@ const CreateProductForm = ({
             timeStyle: 'short',
         }).format(now);
 
-        if (uploadImageUrls.length === 0 || !uploadThumbnailUrl) {
+        if (imageUrls.length === 0 || !thumbnailUrl) {
             toast({
                 title: 'upload images failed',
                 description: formattedDate,
@@ -92,21 +92,32 @@ const CreateProductForm = ({
         } else {
             startTransition(async () => {
                 try {
-                    console.log(values);
-                    // const { thumbnailFile, imageFiles, ...newProduct } = values;
-                    // const productDetail : ProductDetail = await createProduct(newProduct);
-                    // if (!product) {
-                    //     throw new Error('Product creation failed');
-                    // }
-                    // await confirmUploadImages(
-                    //     [...uploadImageUrls, uploadThumbnailUrl],
-                    //     edgestore,
-                    // );
-                    // toast({
-                    //     title: 'The product has been successfully created',
-                    //     description: formattedDate,
-                    // });
-                    // form.reset();
+                    const newProduct: productCreate = {
+                        name: values.name,
+                        description: values.description,
+                        type: values.type,
+                        price: values.price,
+                        quantity: values.quantity,
+                        capacity: values.capacity,
+                        colors: values.colors,
+                        thumbnailUrl: thumbnailUrl,
+                        imageUrls: imageUrls,
+                        detailCategoryId: values.detailCategory.id,
+                    };
+
+                    const product = await createProduct(newProduct);
+                    if (!product) {
+                        throw new Error('Product creation failed');
+                    }
+                    await confirmUploadImages(
+                        [...imageUrls, thumbnailUrl],
+                        edgestore,
+                    );
+                    toast({
+                        title: 'The product has been successfully created',
+                        description: formattedDate,
+                    });
+                    form.reset();
                 } catch (error) {
                     console.error(error);
                     toast({
@@ -117,8 +128,6 @@ const CreateProductForm = ({
             });
         }
     };
-
-    console.log(uploadImageUrls);
 
     const confirmUploadImages = async (urls: string[], edgestore: any) => {
         const confirmPromises = urls.map(async (item) => {
@@ -233,14 +242,14 @@ const CreateProductForm = ({
                             control={form.control}
                             name="thumbnailFile"
                             label="Thumbnail"
-                            setUrl={setUploadThumbnailUrl}
+                            setUrl={setThumbnailUrl}
                         />
 
                         <ImagesField
                             control={form.control}
                             name="imageFiles"
                             label="Images"
-                            setUrls={setUploadImageUrls}
+                            setUrls={setImageUrls}
                         />
 
                         <Button
