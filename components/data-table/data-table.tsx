@@ -52,6 +52,8 @@ export function DataTable<TData extends { createdAt?: Date }, TValue>({
         undefined,
     );
 
+    console.log();
+
     const filteredData = React.useMemo(() => {
         if (!dateRange || !dateRange.from || !dateRange.to) return data;
 
@@ -163,11 +165,9 @@ export function DataTable<TData extends { createdAt?: Date }, TValue>({
                 </Table>
             </div>
 
-            {table.getRowModel().rows?.length > 10 && (
-                <div className="pt-2">
-                    <DataTablePagination table={table} />
-                </div>
-            )}
+            <div className="pt-2">
+                <DataTablePagination table={table} />
+            </div>
         </div>
     );
 }

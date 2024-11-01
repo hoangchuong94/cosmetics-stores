@@ -48,7 +48,7 @@ const UpdateProduct = ({ product }: UpdateProductProps) => {
     const form = useForm<z.infer<typeof Image>>({
         resolver: zodResolver(Image),
         defaultValues: {
-            images: [],
+            images: initialFileStates,
         },
     });
 

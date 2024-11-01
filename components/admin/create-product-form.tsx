@@ -106,13 +106,10 @@ const CreateProductForm = ({
                     };
 
                     const product = await createProduct(newProduct);
-                    if (!product) {
+                    if (!product || Array.isArray(product)) {
                         throw new Error('Product creation failed');
                     }
-                    await confirmUploadImages(
-                        [...imageUrls, thumbnailUrl],
-                        edgestore,
-                    );
+
                     toast({
                         title: 'The product has been successfully created',
                         description: formattedDate,
@@ -127,20 +124,6 @@ const CreateProductForm = ({
                 }
             });
         }
-    };
-
-    const confirmUploadImages = async (urls: string[], edgestore: any) => {
-        const confirmPromises = urls.map(async (item) => {
-            try {
-                await edgestore.publicImages.confirmUpload({
-                    url: item,
-                });
-            } catch (error) {
-                console.error(error);
-            }
-        });
-
-        await Promise.all(confirmPromises);
     };
 
     return (
