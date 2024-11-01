@@ -21,7 +21,7 @@ import { ProductSchema } from '@/schema';
 import { useFilteredCategories } from '@/hooks/use-filtered-categories';
 import LinkHierarchy from '@/components/link-hierarchy';
 import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
-import { ProductWithDetails, UploadedImage } from '@/types';
+import { ProductWithDetails } from '@/types';
 import { FileState } from '@/components/edgestore/multi-image-dropzone';
 
 interface ProductUpdate extends ProductWithDetails {
