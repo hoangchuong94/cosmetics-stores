@@ -234,7 +234,7 @@ interface ImageFieldProps<TFieldValues extends FieldValues>
     extends UseControllerProps<TFieldValues> {
     className?: string;
     label: string;
-    setUrl: React.Dispatch<React.SetStateAction<string | undefined>>;
+    setUrl: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const ImageField = <TFieldValues extends FieldValues>({

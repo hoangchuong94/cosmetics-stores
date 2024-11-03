@@ -8,7 +8,7 @@ import { Progress } from '@/components/ui/progress';
 interface UploadImageProps {
     file: File | string;
     onChange: (file: File | string) => void;
-    setUrl: React.Dispatch<React.SetStateAction<string | undefined>>;
+    setUrl: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function UploadImage({

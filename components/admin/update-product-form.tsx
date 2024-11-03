@@ -13,7 +13,13 @@ import * as z from 'zod';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Color, Category, SubCategory, DetailCategory } from '@prisma/client';
+import {
+    Color,
+    Category,
+    SubCategory,
+    DetailCategory,
+    Promotion,
+} from '@prisma/client';
 import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { ProductSchema } from '@/schema';
@@ -21,20 +27,21 @@ import { ProductSchema } from '@/schema';
 import { useFilteredCategories } from '@/hooks/use-filtered-categories';
 import LinkHierarchy from '@/components/link-hierarchy';
 import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
-import { ProductWithDetails } from '@/types';
+import { Product, ProductWithDetails } from '@/types';
 import { FileState } from '@/components/edgestore/multi-image-dropzone';
 
-interface ProductUpdate extends ProductWithDetails {
+interface ProductToUpdate extends ProductWithDetails {
     subCategory: SubCategory;
     category: Category;
 }
 
 interface UpdateProductFormProps {
-    product: ProductUpdate;
+    product: ProductToUpdate;
     colors: Color[];
     categories: Category[];
     subCategories: SubCategory[];
     detailCategories: DetailCategory[];
+    promotions: Promotion[];
 }
 
 const UpdateProductForm = ({
@@ -43,11 +50,14 @@ const UpdateProductForm = ({
     categories,
     subCategories,
     detailCategories,
+    promotions,
 }: UpdateProductFormProps) => {
     const { toast } = useToast();
     const [isPending, startTransition] = useTransition();
-    const [imageUrls, setImageUrls] = useState<string[]>([]);
-    const [thumbnailUrl, setThumbnailUrl] = useState<string | undefined>();
+    const [imageUrls, setImageUrls] = useState<string[]>(
+        product.images.map((item) => item.image.url),
+    );
+    const [thumbnailUrl, setThumbnailUrl] = useState<string>(product.thumbnail);
 
     const convertImageFromUrlsProduct: FileState[] = product.images.map(
         (item) => ({
@@ -91,7 +101,21 @@ const UpdateProductForm = ({
 
     const onSubmit = async (values: z.infer<typeof ProductSchema>) => {
         startTransition(async () => {
+            console.log(values);
             try {
+                const newProduct: Product = {
+                    name: values.name,
+                    description: values.description,
+                    type: values.type,
+                    price: values.price,
+                    quantity: values.quantity,
+                    capacity: values.capacity,
+                    colors: values.colors,
+                    thumbnailUrl: thumbnailUrl,
+                    imageUrls: imageUrls,
+                    promotions: values.promotions,
+                    detailCategoryId: values.detailCategory.id,
+                };
             } catch (error) {
                 toast({
                     title: 'Update Error',
@@ -182,10 +206,19 @@ const UpdateProductForm = ({
                         <CheckboxField
                             control={control}
                             name="colors"
-                            label="Select Colors"
+                            label="Colors"
                             items={colors}
                             getItemKey={(color) => color.id}
                             renderItem={(color) => color.name}
+                        />
+
+                        <CheckboxField
+                            control={control}
+                            name="promotions"
+                            label="Promotions"
+                            items={promotions}
+                            getItemKey={(promotion) => promotion.id}
+                            renderItem={(promotion) => promotion.name}
                         />
 
                         <TextAreaField

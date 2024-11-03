@@ -27,19 +27,26 @@ export const fetchDataToCreateAndUpdateProducts = async (): Promise<
     DataToCreateAndUpdateProduct | never[]
 > => {
     try {
-        const [colors, categories, subCategories, detailCategories] =
-            await Promise.all([
-                prisma.color.findMany(),
-                prisma.category.findMany({}),
-                prisma.subCategory.findMany(),
-                prisma.detailCategory.findMany(),
-            ]);
+        const [
+            colors,
+            categories,
+            subCategories,
+            detailCategories,
+            promotions,
+        ] = await Promise.all([
+            prisma.color.findMany(),
+            prisma.category.findMany(),
+            prisma.subCategory.findMany(),
+            prisma.detailCategory.findMany(),
+            prisma.promotion.findMany(),
+        ]);
 
         return {
             colors,
             categories,
             subCategories,
             detailCategories,
+            promotions,
         };
     } catch (error) {
         return handleError(

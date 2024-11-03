@@ -1,34 +1,35 @@
 import { FileState } from '@/components/edgestore/multi-image-dropzone';
 import {
-    Category,
-    SubCategory,
-    DetailCategory,
-    Product,
-    Color,
-    Image,
-    Promotion,
+    Category as CategoryPrima,
+    SubCategory as SubCategoryPrisma,
+    DetailCategory as DetailCategoryPrisma,
+    Product as ProductPrisma,
+    Color as ColorPrisma,
+    Image as ImagePrisma,
+    Promotion as PromotionPrisma,
 } from '@prisma/client';
 
 export type DataToCreateAndUpdateProduct = {
-    colors: Color[];
-    categories: Category[];
-    subCategories: SubCategory[];
-    detailCategories: DetailCategory[];
+    colors: ColorPrisma[];
+    categories: CategoryPrima[];
+    subCategories: SubCategoryPrisma[];
+    detailCategories: DetailCategoryPrisma[];
+    promotions: PromotionPrisma[];
 };
 
-export type ProductWithDetails = Product & {
-    images: { image: Image }[];
-    colors: { color: Color }[];
-    promotions: { promotion: Promotion }[];
-    detailCategory: DetailCategory;
+export type ProductWithDetails = ProductPrisma & {
+    images: { image: ImagePrisma }[];
+    colors: { color: ColorPrisma }[];
+    promotions: { promotion: PromotionPrisma }[];
+    detailCategory: DetailCategoryPrisma;
 };
 
-export type CategoryWithDetails = Category & {
+export type CategoryWithDetails = CategoryPrima & {
     subCategories: SubCategoryWithDetails[];
 };
 
-export type SubCategoryWithDetails = SubCategory & {
-    detailCategories: DetailCategory[];
+export type SubCategoryWithDetails = SubCategoryPrisma & {
+    detailCategories: DetailCategoryPrisma[];
 };
 
 export interface CustomTypeUser {
@@ -51,15 +52,16 @@ export interface UploadedImage {
     pathOrder: 'type'[];
 }
 
-export interface productCreate {
+export interface Product {
     name: string;
     description: string;
     type: string;
     price: number;
     quantity: number;
     capacity: number;
-    colors: Color[];
     thumbnailUrl: string;
+    colors: ColorPrisma[];
     imageUrls: string[];
+    promotions: PromotionPrisma[];
     detailCategoryId: string;
 }

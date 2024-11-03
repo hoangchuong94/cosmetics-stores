@@ -14,12 +14,18 @@ import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
 import { useEdgeStore } from '@/lib/edgestore';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Color, Category, SubCategory, DetailCategory } from '@prisma/client';
+import {
+    Color,
+    Category,
+    SubCategory,
+    DetailCategory,
+    Promotion,
+} from '@prisma/client';
 import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { ProductSchema } from '@/schema';
 import { useFilteredCategories } from '@/hooks/use-filtered-categories';
-import { productCreate } from '@/types';
+import { Product } from '@/types';
 import { createProduct } from '@/actions/product-crud';
 import LinkHierarchy from '@/components/link-hierarchy';
 import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
@@ -29,6 +35,7 @@ interface CreateProductFormProps {
     categories: Category[];
     subCategories: SubCategory[];
     detailCategories: DetailCategory[];
+    promotions: Promotion[];
 }
 
 const CreateProductForm = ({
@@ -36,12 +43,12 @@ const CreateProductForm = ({
     categories,
     subCategories,
     detailCategories,
+    promotions,
 }: CreateProductFormProps) => {
     const { toast } = useToast();
-    const { edgestore } = useEdgeStore();
     const [isPending, startTransition] = useTransition();
     const [imageUrls, setImageUrls] = useState<string[]>([]);
-    const [thumbnailUrl, setThumbnailUrl] = useState<string | undefined>();
+    const [thumbnailUrl, setThumbnailUrl] = useState<string>('');
 
     const form = useForm<z.infer<typeof ProductSchema>>({
         resolver: zodResolver(ProductSchema),
@@ -92,7 +99,7 @@ const CreateProductForm = ({
         } else {
             startTransition(async () => {
                 try {
-                    const newProduct: productCreate = {
+                    const newProduct: Product = {
                         name: values.name,
                         description: values.description,
                         type: values.type,
@@ -102,6 +109,7 @@ const CreateProductForm = ({
                         colors: values.colors,
                         thumbnailUrl: thumbnailUrl,
                         imageUrls: imageUrls,
+                        promotions: values.promotions,
                         detailCategoryId: values.detailCategory.id,
                     };
 
@@ -207,10 +215,19 @@ const CreateProductForm = ({
                         <CheckboxField
                             control={control}
                             name="colors"
-                            label="Select Colors"
+                            label="Colors"
                             items={colors}
                             getItemKey={(color) => color.id}
                             renderItem={(color) => color.name}
+                        />
+
+                        <CheckboxField
+                            control={control}
+                            name="promotions"
+                            label="Promotions"
+                            items={promotions}
+                            getItemKey={(promotion) => promotion.id}
+                            renderItem={(promotion) => promotion.name}
                         />
 
                         <TextAreaField

@@ -146,7 +146,15 @@ model Image {
   @@map("images")
 }
 
+model ProductImage {
+  productId String
+  imageId   String
+  product   Product @relation(fields: [productId], references: [id])
+  image     Image   @relation(fields: [imageId], references: [id])
 
+  @@id([productId, imageId])
+  @@map("product_images")
+}
 
 model Promotion {
   id                String        @id @default(cuid())
@@ -162,18 +170,6 @@ model Promotion {
   @@unique([name])
 }
 
-
-model ProductImage {
-  productId String
-  imageId   String
-  product   Product @relation(fields: [productId], references: [id])
-  image     Image   @relation(fields: [imageId], references: [id])
-
-  @@id([productId, imageId])
-  @@map("product_images")
-}
-
-
 model ProductPromotion {
   productId   String
   promotionId String
@@ -183,6 +179,9 @@ model ProductPromotion {
   @@id([productId, promotionId])
   @@map("product_promotions")
 }
+
+
+
 
 
 

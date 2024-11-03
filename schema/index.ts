@@ -1,26 +1,6 @@
 import { z } from 'zod';
 
-export const Image = z.object({
-    images: z
-        .array(
-            z.object({
-                file: z.union([z.instanceof(File), z.string()]),
-                key: z.string(),
-                progress: z.union([
-                    z.literal('PENDING'),
-                    z.literal('COMPLETE'),
-                    z.literal('ERROR'),
-                    z.number(),
-                ]),
-            }),
-        )
-        .min(1, 'At least one image must be selected')
-        .refine((arr) => arr.every((item) => item.progress !== 'ERROR'), {
-            message: 'Please check image uploader ',
-        }),
-});
-
-export const ImageSchema = z
+export const ImagesSchema = z
     .array(
         z.object({
             file: z.union([z.instanceof(File), z.string()]),
@@ -44,10 +24,16 @@ export const ImageSchema = z
         },
     );
 
-export const ThumbnailSchema = z.union([
-    z.instanceof(File),
-    z.string().min(1, { message: 'Thumbnail is required' }),
-]);
+export const ThumbnailSchema = z.preprocess(
+    (input) => {
+        if (input instanceof File || typeof input === 'string') return input;
+        return undefined;
+    },
+    z.union([
+        z.instanceof(File, { message: 'Thumbnail is required' }),
+        z.string().min(1, { message: 'Thumbnail is required' }),
+    ]),
+);
 
 export const LoginSchema = z.object({
     email: z
@@ -161,23 +147,21 @@ export const ProductSchema = z.object({
         )
         .nonempty('At least one color must be selected'),
 
-    promotions: z
-        .array(
-            z.object({
-                id: z.string(),
-                name: z.string(),
-                description: z.string(),
-                startDay: z.date(),
-                endDay: z.date().nullable(),
-                createdAt: z.date(),
-                updatedAt: z.date(),
-            }),
-        )
-        .optional(),
+    promotions: z.array(
+        z.object({
+            id: z.string(),
+            name: z.string(),
+            description: z.string(),
+            startDay: z.date(),
+            endDay: z.date(),
+            createdAt: z.date(),
+            updatedAt: z.date(),
+        }),
+    ),
 
     thumbnailFile: ThumbnailSchema,
 
-    imageFiles: ImageSchema,
+    imageFiles: ImagesSchema,
 
     category: z.object({
         id: z.string(),

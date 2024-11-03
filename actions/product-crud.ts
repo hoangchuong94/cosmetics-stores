@@ -2,9 +2,9 @@
 
 import prisma from '@/lib/prisma';
 import { backendClient } from '@/lib/edgestore-server';
-import { productCreate } from '@/types';
+import { Product } from '@/types';
 
-export const createProduct = async (values: productCreate) => {
+export const createProduct = async (values: Product) => {
     try {
         const newProduct = await prisma.$transaction(async (prisma) => {
             const imagePromises = values.imageUrls.map((url) =>
@@ -47,6 +47,13 @@ export const createProduct = async (values: productCreate) => {
                         create: values.colors.map((color) => ({
                             color: {
                                 connect: { id: color.id },
+                            },
+                        })),
+                    },
+                    promotions: {
+                        create: values.promotions.map((promotion) => ({
+                            promotion: {
+                                connect: { id: promotion.id },
                             },
                         })),
                     },

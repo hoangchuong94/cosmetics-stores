@@ -17,7 +17,8 @@ const page = async ({ params }: { params: { crud: string[] } }) => {
         );
     }
 
-    const { colors, categories, subCategories, detailCategories } = result;
+    const { colors, categories, subCategories, detailCategories, promotions } =
+        result;
 
     if (
         colors.length === 0 ||
@@ -47,6 +48,7 @@ const page = async ({ params }: { params: { crud: string[] } }) => {
                     categories={categories}
                     subCategories={subCategories}
                     detailCategories={detailCategories}
+                    promotions={promotions}
                 />
             );
 
@@ -89,7 +91,16 @@ const page = async ({ params }: { params: { crud: string[] } }) => {
                 category: category,
             };
 
-            // return <UpdateProductForm product={product} />;
+            return (
+                <UpdateProductForm
+                    product={product}
+                    colors={colors}
+                    categories={categories}
+                    subCategories={subCategories}
+                    detailCategories={detailCategories}
+                    promotions={promotions}
+                />
+            );
         }
 
         default:
