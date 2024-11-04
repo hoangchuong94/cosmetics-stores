@@ -12,7 +12,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import LinkHierarchy from '@/components/link-hierarchy';
-import { ProductWithDetails } from '@/types';
+import { ProductDetail } from '@/types';
 import { DataTable } from '@/components/data-table/data-table';
 import { MoreHorizontal } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -20,10 +20,10 @@ import { DataTableColumnHeader } from '../data-table/data-table-column-header';
 import TagList from '@/components/tag-list';
 
 interface ProductManagementProps {
-    listProduct: ProductWithDetails[];
+    listProduct: ProductDetail[];
 }
 
-export const columns: ColumnDef<ProductWithDetails>[] = [
+export const columns: ColumnDef<ProductDetail>[] = [
     {
         accessorKey: 'select',
         header: ({ table }) => (
@@ -88,10 +88,7 @@ export const columns: ColumnDef<ProductWithDetails>[] = [
             const colors = product.colors.map((item) => item);
 
             return (
-                <TagList
-                    tagList={colors}
-                    renderItem={(item) => item.color.name}
-                />
+                <TagList tagList={colors} renderItem={(item) => item.name} />
             );
         },
     },
@@ -128,16 +125,34 @@ export const columns: ColumnDef<ProductWithDetails>[] = [
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
-                            <Link
-                                href={{
-                                    pathname: `/dashboard/product/update/${product.id}`,
-                                }}
-                            >
-                                Update
-                            </Link>
+                            <DropdownMenuItem>
+                                <Link
+                                    className="block w-full"
+                                    href={`/dashboard/product/update?id=${row.original.id}`}
+                                >
+                                    <Button
+                                        className="w-full hover:no-underline"
+                                        variant="link"
+                                    >
+                                        Update
+                                    </Button>
+                                </Link>
+                            </DropdownMenuItem>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                        <DropdownMenuItem>
+                            <Link
+                                className="block w-full"
+                                href={`/dashboard/product/delete?id=${row.original.id}`}
+                            >
+                                <Button
+                                    className="w-full hover:no-underline"
+                                    variant="link"
+                                >
+                                    Delete
+                                </Button>
+                            </Link>
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );

@@ -1,30 +1,9 @@
 'use server';
 import prisma from '@/lib/prisma';
-import { ProductWithDetails, DataToCreateAndUpdateProduct } from '@/types';
+import { ProductDetail, ProductActionData } from '@/types';
 
-const handleError = (
-    error: unknown,
-    message: string,
-    returnEmptyArray = true,
-) => {
-    let err = '';
-
-    if (error instanceof Error) {
-        err = error.message;
-        console.error(`${message}:`, err);
-    } else {
-        err = message;
-        console.error(`${message}:`, err);
-    }
-
-    if (returnEmptyArray) {
-        return [];
-    }
-    throw error;
-};
-
-export const fetchDataToCreateAndUpdateProducts = async (): Promise<
-    DataToCreateAndUpdateProduct | never[]
+export const fetchProductActionData = async (): Promise<
+    ProductActionData | never[]
 > => {
     try {
         const [
@@ -69,13 +48,19 @@ export const fetchCategories = async () => {
     }
 };
 
-export const fetchAllProduct = async (): Promise<
-    ProductWithDetails[] | null
-> => {
+export const fetchAllProduct = async (): Promise<ProductDetail[] | null> => {
     try {
         const products = await prisma.product.findMany({
             include: {
-                detailCategory: true,
+                detailCategory: {
+                    include: {
+                        subCategory: {
+                            include: {
+                                category: true,
+                            },
+                        },
+                    },
+                },
                 images: {
                     include: {
                         image: true,
@@ -94,13 +79,36 @@ export const fetchAllProduct = async (): Promise<
             },
         });
 
-        return products;
+        const formattedProducts: ProductDetail[] = products.map((product) => ({
+            id: product.id,
+            name: product.name,
+            description: product.description,
+            type: product.type,
+            price: product.price,
+            quantity: product.quantity,
+            capacity: product.capacity,
+            thumbnail: product.thumbnail,
+            images: product.images.map((img) => img.image),
+            colors: product.colors.map((color) => color.color),
+            promotions: product.promotions.map(
+                (promotion) => promotion.promotion,
+            ),
+            detailCategory: product.detailCategory,
+            subCategory: product.detailCategory.subCategory,
+            category: product.detailCategory.subCategory.category,
+            createdAt: product.createdAt,
+            updatedAt: product.updatedAt,
+        }));
+
+        return formattedProducts;
     } catch (error) {
         return handleError(error, 'Error fetching products');
     }
 };
 
-export const fetchProductById = async (productId: string) => {
+export const fetchProductById = async (
+    productId: string,
+): Promise<ProductDetail | null | never[]> => {
     try {
         const product = await prisma.product.findUnique({
             where: {
@@ -117,7 +125,15 @@ export const fetchProductById = async (productId: string) => {
                         color: true,
                     },
                 },
-                detailCategory: true,
+                detailCategory: {
+                    include: {
+                        subCategory: {
+                            include: {
+                                category: true,
+                            },
+                        },
+                    },
+                },
                 promotions: {
                     include: {
                         promotion: true,
@@ -126,9 +142,54 @@ export const fetchProductById = async (productId: string) => {
             },
         });
 
-        return product;
+        if (!product) {
+            return null;
+        }
+
+        const formattedProduct: ProductDetail = {
+            id: product.id,
+            name: product.name,
+            description: product.description,
+            type: product.type,
+            price: product.price,
+            quantity: product.quantity,
+            capacity: product.capacity,
+            thumbnail: product.thumbnail,
+            images: product.images.map((img) => img.image),
+            colors: product.colors.map((color) => color.color),
+            promotions: product.promotions.map(
+                (promotion) => promotion.promotion,
+            ),
+            detailCategory: product.detailCategory,
+            subCategory: product.detailCategory.subCategory,
+            category: product.detailCategory.subCategory.category,
+            createdAt: product.createdAt,
+            updatedAt: product.updatedAt,
+        };
+
+        return formattedProduct;
     } catch (error) {
-        console.error('Error retrieving product:', error);
-        throw error;
+        return handleError(error, 'Error fetching products');
     }
+};
+
+const handleError = (
+    error: unknown,
+    message: string,
+    returnEmptyArray = true,
+) => {
+    let err = '';
+
+    if (error instanceof Error) {
+        err = error.message;
+        console.error(`${message}:`, err);
+    } else {
+        err = message;
+        console.error(`${message}:`, err);
+    }
+
+    if (returnEmptyArray) {
+        return [];
+    }
+    throw error;
 };

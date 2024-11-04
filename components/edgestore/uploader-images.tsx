@@ -119,6 +119,13 @@ export default function UploadImages({
         }
     }, [fileStates, onChange]);
 
+    useEffect(() => {
+        //reset form
+        if (initialFileStates.length === 0) {
+            setFileStates([]);
+        }
+    }, [setFileStates, initialFileStates]);
+
     return (
         <MultiImageDropzone
             className="h-[200px] w-[200px] bg-white"

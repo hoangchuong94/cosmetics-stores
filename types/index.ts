@@ -1,46 +1,93 @@
-import { FileState } from '@/components/edgestore/multi-image-dropzone';
-import {
-    Category as CategoryPrima,
-    SubCategory as SubCategoryPrisma,
-    DetailCategory as DetailCategoryPrisma,
-    Product as ProductPrisma,
-    Color as ColorPrisma,
-    Image as ImagePrisma,
-    Promotion as PromotionPrisma,
-} from '@prisma/client';
-
-export type DataToCreateAndUpdateProduct = {
-    colors: ColorPrisma[];
-    categories: CategoryPrima[];
-    subCategories: SubCategoryPrisma[];
-    detailCategories: DetailCategoryPrisma[];
-    promotions: PromotionPrisma[];
-};
-
-export type ProductWithDetails = ProductPrisma & {
-    images: { image: ImagePrisma }[];
-    colors: { color: ColorPrisma }[];
-    promotions: { promotion: PromotionPrisma }[];
-    detailCategory: DetailCategoryPrisma;
-};
-
-export type CategoryWithDetails = CategoryPrima & {
-    subCategories: SubCategoryWithDetails[];
-};
-
-export type SubCategoryWithDetails = SubCategoryPrisma & {
-    detailCategories: DetailCategoryPrisma[];
-};
-
-export interface CustomTypeUser {
+export type CustomTypeUser = {
     id: string;
     email: string;
     name: string;
     image: string;
     role: string;
-}
+};
 
-export interface UploadedImage {
+export type Color = {
+    name: string;
+    id: string;
+    code: string;
+    createdAt: Date;
+    updatedAt: Date;
+};
+
+export type Category = {
+    name: string;
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+};
+
+export type SubCategory = {
+    name: string;
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+    categoryId: string;
+};
+
+export type DetailCategory = {
+    name: string;
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+    subCategoryId: string;
+};
+
+export type Image = {
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+    url: string;
+};
+
+export type Promotion = {
+    id: string;
+    name: string;
+    createdAt: Date;
+    updatedAt: Date;
+    description: string;
+    startDay: Date;
+    endDay: Date;
+};
+
+export type Product = {
+    name: string;
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+    description: string;
+    type: string;
+    price: number;
+    quantity: number;
+    capacity: number;
+    thumbnail: string;
+    detailCategoryId: string;
+};
+
+export type ProductDetail = {
+    id: string;
+    name: string;
+    description: string;
+    type: string;
+    price: number;
+    quantity: number;
+    capacity: number;
+    thumbnail: string;
+    images: Image[];
+    colors: Color[];
+    promotions: Promotion[];
+    detailCategory: DetailCategory;
+    subCategory: SubCategory;
+    category: Category;
+    createdAt: Date;
+    updatedAt: Date;
+};
+
+export type UploadedImage = {
     url: string;
     thumbnailUrl: string | null;
     size: number;
@@ -50,18 +97,12 @@ export interface UploadedImage {
         type: string;
     };
     pathOrder: 'type'[];
-}
+};
 
-export interface Product {
-    name: string;
-    description: string;
-    type: string;
-    price: number;
-    quantity: number;
-    capacity: number;
-    thumbnailUrl: string;
-    colors: ColorPrisma[];
-    imageUrls: string[];
-    promotions: PromotionPrisma[];
-    detailCategoryId: string;
-}
+export type ProductActionData = {
+    colors: Color[];
+    categories: Category[];
+    subCategories: SubCategory[];
+    detailCategories: DetailCategory[];
+    promotions: Promotion[];
+};

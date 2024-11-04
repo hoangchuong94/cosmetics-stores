@@ -6,7 +6,7 @@ interface ProductListProps {
     products: ProductWithDetails[] | null;
 }
 
-export default async function ProductList({ products }: ProductListProps) {
+export default function ProductList({ products }: ProductListProps) {
     return (
         <div>
             {products && products.length > 0 ? (

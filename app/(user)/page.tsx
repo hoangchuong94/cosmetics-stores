@@ -5,8 +5,8 @@ import Supplier from '@/components/user/supplier';
 import OverviewComment from '@/components/user/overview-comment';
 import GiftProduct from '@/components/user/gift-product';
 import ShippingInformation from '@/components/user/shipping-information';
-import { fetchAllProduct } from '@/data/fetch-data';
 import ProductList from '@/components/user/product-list';
+import { fetchAllProduct } from '@/data/fetch-data';
 
 export default async function HomePage() {
     const products = await fetchAllProduct();

@@ -25,26 +25,16 @@ import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { ProductSchema } from '@/schema';
 import { useFilteredCategories } from '@/hooks/use-filtered-categories';
-import { Product } from '@/types';
+import { ProductActionData, Product } from '@/types';
 import { createProduct } from '@/actions/product-crud';
 import LinkHierarchy from '@/components/link-hierarchy';
 import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
 
 interface CreateProductFormProps {
-    colors: Color[];
-    categories: Category[];
-    subCategories: SubCategory[];
-    detailCategories: DetailCategory[];
-    promotions: Promotion[];
+    productActionData: ProductActionData;
 }
 
-const CreateProductForm = ({
-    colors,
-    categories,
-    subCategories,
-    detailCategories,
-    promotions,
-}: CreateProductFormProps) => {
+const CreateProductForm = ({ productActionData }: CreateProductFormProps) => {
     const { toast } = useToast();
     const [isPending, startTransition] = useTransition();
     const [imageUrls, setImageUrls] = useState<string[]>([]);
@@ -79,8 +69,8 @@ const CreateProductForm = ({
         useFilteredCategories(
             selectedCategory,
             selectedSubCategory,
-            subCategories,
-            detailCategories,
+            productActionData.subCategories,
+            productActionData.detailCategories,
             resetField,
         );
 
@@ -99,30 +89,28 @@ const CreateProductForm = ({
         } else {
             startTransition(async () => {
                 try {
-                    const newProduct: Product = {
-                        name: values.name,
-                        description: values.description,
-                        type: values.type,
-                        price: values.price,
-                        quantity: values.quantity,
-                        capacity: values.capacity,
-                        colors: values.colors,
-                        thumbnailUrl: thumbnailUrl,
-                        imageUrls: imageUrls,
-                        promotions: values.promotions,
-                        detailCategoryId: values.detailCategory.id,
-                    };
-
-                    const product = await createProduct(newProduct);
-                    if (!product || Array.isArray(product)) {
-                        throw new Error('Product creation failed');
-                    }
-
-                    toast({
-                        title: 'The product has been successfully created',
-                        description: formattedDate,
-                    });
-                    form.reset();
+                    // const newProduct: Product = {
+                    //     name: values.name,
+                    //     description: values.description,
+                    //     type: values.type,
+                    //     price: values.price,
+                    //     quantity: values.quantity,
+                    //     capacity: values.capacity,
+                    //     colors: values.colors,
+                    //     thumbnailUrl: thumbnailUrl,
+                    //     imageUrls: imageUrls,
+                    //     promotions: values.promotions,
+                    //     detailCategoryId: values.detailCategory.id,
+                    // };
+                    // const product = await createProduct(newProduct);
+                    // if (!product || Array.isArray(product)) {
+                    //     throw new Error('Product creation failed');
+                    // }
+                    // toast({
+                    //     title: 'The product has been successfully created',
+                    //     description: formattedDate,
+                    // });
+                    // form.reset();
                 } catch (error) {
                     console.error(error);
                     toast({
@@ -190,7 +178,7 @@ const CreateProductForm = ({
                             <SelectField
                                 name="category"
                                 label="Category"
-                                items={categories}
+                                items={productActionData.categories}
                                 renderItem={(item) => item.name}
                                 getItemKey={(item) => item.id}
                             />
@@ -216,7 +204,7 @@ const CreateProductForm = ({
                             control={control}
                             name="colors"
                             label="Colors"
-                            items={colors}
+                            items={productActionData.colors}
                             getItemKey={(color) => color.id}
                             renderItem={(color) => color.name}
                         />
@@ -225,7 +213,7 @@ const CreateProductForm = ({
                             control={control}
                             name="promotions"
                             label="Promotions"
-                            items={promotions}
+                            items={productActionData.promotions}
                             getItemKey={(promotion) => promotion.id}
                             renderItem={(promotion) => promotion.name}
                         />

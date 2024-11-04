@@ -24,45 +24,33 @@ import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { ProductSchema } from '@/schema';
 
-import { useFilteredCategories } from '@/hooks/use-filtered-categories';
 import LinkHierarchy from '@/components/link-hierarchy';
 import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
-import { Product, ProductWithDetails } from '@/types';
+import { useFilteredCategories } from '@/hooks/use-filtered-categories';
+import { updateProduct } from '@/actions/product-crud';
+import { Product, ProductActionData, ProductDetail } from '@/types';
 import { FileState } from '@/components/edgestore/multi-image-dropzone';
 
-interface ProductToUpdate extends ProductWithDetails {
-    subCategory: SubCategory;
-    category: Category;
-}
-
 interface UpdateProductFormProps {
-    product: ProductToUpdate;
-    colors: Color[];
-    categories: Category[];
-    subCategories: SubCategory[];
-    detailCategories: DetailCategory[];
-    promotions: Promotion[];
+    product: ProductDetail;
+    productActionData: ProductActionData;
 }
 
 const UpdateProductForm = ({
     product,
-    colors,
-    categories,
-    subCategories,
-    detailCategories,
-    promotions,
+    productActionData,
 }: UpdateProductFormProps) => {
     const { toast } = useToast();
     const [isPending, startTransition] = useTransition();
     const [imageUrls, setImageUrls] = useState<string[]>(
-        product.images.map((item) => item.image.url),
+        product.images.map((item) => item.url),
     );
     const [thumbnailUrl, setThumbnailUrl] = useState<string>(product.thumbnail);
 
     const convertImageFromUrlsProduct: FileState[] = product.images.map(
         (item) => ({
-            file: item.image.url,
-            key: item.image.id,
+            file: item.url,
+            key: item.id,
             progress: 'COMPLETE',
         }),
     );
@@ -70,6 +58,7 @@ const UpdateProductForm = ({
     const form = useForm<z.infer<typeof ProductSchema>>({
         resolver: zodResolver(ProductSchema),
         defaultValues: {
+            id: product.id,
             name: product.name,
             description: product.description,
             type: product.type,
@@ -77,12 +66,12 @@ const UpdateProductForm = ({
             quantity: product.quantity,
             capacity: product.capacity,
             thumbnailFile: product.thumbnail,
-            colors: product.colors.map((item) => item.color),
-            imageFiles: convertImageFromUrlsProduct,
-            promotions: product.promotions.map((item) => item.promotion),
+            colors: product.colors,
+            promotions: product.promotions,
             category: product.category,
             subCategory: product.subCategory,
             detailCategory: product.detailCategory,
+            imageFiles: convertImageFromUrlsProduct,
         },
     });
 
@@ -94,28 +83,43 @@ const UpdateProductForm = ({
         useFilteredCategories(
             selectedCategory,
             selectedSubCategory,
-            subCategories,
-            detailCategories,
+            productActionData.subCategories,
+            productActionData.detailCategories,
             resetField,
         );
 
     const onSubmit = async (values: z.infer<typeof ProductSchema>) => {
+        const now = new Date();
+        const formattedDate = new Intl.DateTimeFormat('en-US', {
+            dateStyle: 'long',
+            timeStyle: 'short',
+        }).format(now);
+
         startTransition(async () => {
             console.log(values);
             try {
-                const newProduct: Product = {
-                    name: values.name,
-                    description: values.description,
-                    type: values.type,
-                    price: values.price,
-                    quantity: values.quantity,
-                    capacity: values.capacity,
-                    colors: values.colors,
-                    thumbnailUrl: thumbnailUrl,
-                    imageUrls: imageUrls,
-                    promotions: values.promotions,
-                    detailCategoryId: values.detailCategory.id,
-                };
+                // const newProduct = {
+                //     id: values.id,
+                //     name: values.name,
+                //     description: values.description,
+                //     type: values.type,
+                //     price: values.price,
+                //     quantity: values.quantity,
+                //     capacity: values.capacity,
+                //     colors: values.colors,
+                //     promotions: values.promotions,
+                //     detailCategoryId: values.detailCategory.id,
+                //     thumbnailUrl: thumbnailUrl,
+                //     imageUrls: imageUrls,
+                // };
+                // const product = await updateProduct(newProduct);
+                // if (!product || Array.isArray(product)) {
+                //     throw new Error('Product update failed');
+                // }
+                // toast({
+                //     title: 'The product has been successfully updated',
+                //     description: formattedDate,
+                // });
             } catch (error) {
                 toast({
                     title: 'Update Error',
@@ -181,7 +185,7 @@ const UpdateProductForm = ({
                             <SelectField
                                 name="category"
                                 label="Category"
-                                items={categories}
+                                items={productActionData.categories}
                                 renderItem={(item) => item.name}
                                 getItemKey={(item) => item.id}
                             />
@@ -207,7 +211,7 @@ const UpdateProductForm = ({
                             control={control}
                             name="colors"
                             label="Colors"
-                            items={colors}
+                            items={productActionData.colors}
                             getItemKey={(color) => color.id}
                             renderItem={(color) => color.name}
                         />
@@ -216,7 +220,7 @@ const UpdateProductForm = ({
                             control={control}
                             name="promotions"
                             label="Promotions"
-                            items={promotions}
+                            items={productActionData.promotions}
                             getItemKey={(promotion) => promotion.id}
                             renderItem={(promotion) => promotion.name}
                         />
@@ -245,7 +249,7 @@ const UpdateProductForm = ({
 
                         <Button disabled={isPending} className="w-full">
                             {isPending && <LoadingSpinner />}
-                            Create Product
+                            Update Product
                         </Button>
                     </form>
                 </Form>
