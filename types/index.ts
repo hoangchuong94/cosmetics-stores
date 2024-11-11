@@ -54,17 +54,32 @@ export type Promotion = {
     endDay: Date;
 };
 
-export type Product = {
+export type ProductCreate = {
     name: string;
-    id: string;
-    createdAt: Date;
-    updatedAt: Date;
     description: string;
     type: string;
     price: number;
     quantity: number;
     capacity: number;
-    thumbnail: string;
+    colors: Color[];
+    promotions: Promotion[];
+    imageUrls: string[];
+    thumbnailUrl: string;
+    detailCategoryId: string;
+};
+
+export type ProductUpdate = {
+    id: string;
+    name: string;
+    description: string;
+    type: string;
+    price: number;
+    quantity: number;
+    capacity: number;
+    colors: Color[];
+    imageUrls: string[];
+    thumbnailUrl: string;
+    promotions: Promotion[];
     detailCategoryId: string;
 };
 

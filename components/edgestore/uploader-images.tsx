@@ -83,7 +83,6 @@ export default function UploadImages({
             if (typeof item.file === 'string' && item.progress === 'COMPLETE') {
                 acc.push(item.file);
             }
-            console.log(acc);
             return acc;
         }, []);
         setUrls(urlChange);

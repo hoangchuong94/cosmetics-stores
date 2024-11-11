@@ -25,7 +25,7 @@ import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { ProductSchema } from '@/schema';
 import { useFilteredCategories } from '@/hooks/use-filtered-categories';
-import { ProductActionData, Product } from '@/types';
+import { ProductActionData, ProductCreate } from '@/types';
 import { createProduct } from '@/actions/product-crud';
 import LinkHierarchy from '@/components/link-hierarchy';
 import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
@@ -89,28 +89,28 @@ const CreateProductForm = ({ productActionData }: CreateProductFormProps) => {
         } else {
             startTransition(async () => {
                 try {
-                    // const newProduct: Product = {
-                    //     name: values.name,
-                    //     description: values.description,
-                    //     type: values.type,
-                    //     price: values.price,
-                    //     quantity: values.quantity,
-                    //     capacity: values.capacity,
-                    //     colors: values.colors,
-                    //     thumbnailUrl: thumbnailUrl,
-                    //     imageUrls: imageUrls,
-                    //     promotions: values.promotions,
-                    //     detailCategoryId: values.detailCategory.id,
-                    // };
-                    // const product = await createProduct(newProduct);
-                    // if (!product || Array.isArray(product)) {
-                    //     throw new Error('Product creation failed');
-                    // }
-                    // toast({
-                    //     title: 'The product has been successfully created',
-                    //     description: formattedDate,
-                    // });
-                    // form.reset();
+                    const newProduct: ProductCreate = {
+                        name: values.name,
+                        description: values.description,
+                        type: values.type,
+                        price: values.price,
+                        quantity: values.quantity,
+                        capacity: values.capacity,
+                        colors: values.colors,
+                        thumbnailUrl: thumbnailUrl,
+                        imageUrls: imageUrls,
+                        promotions: values.promotions,
+                        detailCategoryId: values.detailCategory.id,
+                    };
+                    const product = await createProduct(newProduct);
+                    if (!product || Array.isArray(product)) {
+                        throw new Error('Product creation failed');
+                    }
+                    toast({
+                        title: 'The product has been successfully created',
+                        description: formattedDate,
+                    });
+                    form.reset();
                 } catch (error) {
                     console.error(error);
                     toast({

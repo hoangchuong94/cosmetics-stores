@@ -28,7 +28,7 @@ import LinkHierarchy from '@/components/link-hierarchy';
 import LoadingSpinner from '@/components/loading-and-stream/loading-spinner';
 import { useFilteredCategories } from '@/hooks/use-filtered-categories';
 import { updateProduct } from '@/actions/product-crud';
-import { Product, ProductActionData, ProductDetail } from '@/types';
+import { ProductUpdate, ProductActionData, ProductDetail } from '@/types';
 import { FileState } from '@/components/edgestore/multi-image-dropzone';
 
 interface UpdateProductFormProps {
@@ -58,7 +58,6 @@ const UpdateProductForm = ({
     const form = useForm<z.infer<typeof ProductSchema>>({
         resolver: zodResolver(ProductSchema),
         defaultValues: {
-            id: product.id,
             name: product.name,
             description: product.description,
             type: product.type,
@@ -96,30 +95,28 @@ const UpdateProductForm = ({
         }).format(now);
 
         startTransition(async () => {
-            console.log(values);
             try {
-                // const newProduct = {
-                //     id: values.id,
-                //     name: values.name,
-                //     description: values.description,
-                //     type: values.type,
-                //     price: values.price,
-                //     quantity: values.quantity,
-                //     capacity: values.capacity,
-                //     colors: values.colors,
-                //     promotions: values.promotions,
-                //     detailCategoryId: values.detailCategory.id,
-                //     thumbnailUrl: thumbnailUrl,
-                //     imageUrls: imageUrls,
-                // };
-                // const product = await updateProduct(newProduct);
-                // if (!product || Array.isArray(product)) {
-                //     throw new Error('Product update failed');
-                // }
-                // toast({
-                //     title: 'The product has been successfully updated',
-                //     description: formattedDate,
-                // });
+                const newProduct: ProductUpdate = {
+                    id: product.id,
+                    name: values.name,
+                    description: values.description,
+                    type: values.type,
+                    price: values.price,
+                    quantity: values.quantity,
+                    capacity: values.capacity,
+                    colors: values.colors,
+                    promotions: values.promotions,
+                    detailCategoryId: values.detailCategory.id,
+                    thumbnailUrl: thumbnailUrl,
+                    imageUrls: imageUrls,
+                };
+
+                await updateProduct(newProduct);
+
+                toast({
+                    title: 'The product has been successfully updated',
+                    description: formattedDate,
+                });
             } catch (error) {
                 toast({
                     title: 'Update Error',

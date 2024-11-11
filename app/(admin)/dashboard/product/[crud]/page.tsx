@@ -1,8 +1,14 @@
 'use server';
-import UpdateProductForm from '@/components/admin/update-product-form';
-import CreateProductForm from '@/components/admin/create-product-form';
+
+import { redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
+
 import { fetchProductActionData } from '@/data/fetch-data';
 import { fetchProductById } from '@/data/fetch-data';
+
+import UpdateProductForm from '@/components/admin/update-product-form';
+import CreateProductForm from '@/components/admin/create-product-form';
+import TestImage from '@/components/admin/test-image';
 
 const page = async ({
     params,
@@ -14,8 +20,6 @@ const page = async ({
     const action = params.crud;
     const productId = searchParams.id;
     const data = await fetchProductActionData();
-
-    console.log(`productId : ${productId}`);
 
     if (Array.isArray(data)) {
         return (
@@ -42,47 +46,33 @@ const page = async ({
     switch (action) {
         case 'create':
             return <CreateProductForm productActionData={data} />;
+
         case 'update': {
             if (!productId) {
+                redirect('/dashboard/product');
+            }
+            const product = await fetchProductById(productId);
+            if (!product || Array.isArray(product)) {
                 return (
-                    <div className="flex h-screen items-center justify-center">
-                        <h1>
-                            Product ID is required for updating (ID: {productId}
-                            )
-                        </h1>
+                    <div className="flex h-full items-center justify-center">
+                        An error occurred. Please check your product ID or try
+                        again later.
                     </div>
                 );
-            } else {
-                const product = await fetchProductById(productId);
-                if (!product || Array.isArray(product)) {
-                    return (
-                        <div className="flex h-full items-center justify-center">
-                            An error occurred. Please check your product ID or
-                            try again later.
-                        </div>
-                    );
-                }
-                return (
-                    <UpdateProductForm
-                        product={product}
-                        productActionData={data}
-                    />
-                );
             }
+            return (
+                <UpdateProductForm product={product} productActionData={data} />
+            );
         }
 
         case 'delete':
             return (
                 <div className="flex h-screen items-center justify-center">
-                    <h1>Delete Product (ID: {productId})</h1>
+                    <TestImage />
                 </div>
             );
         default:
-            return (
-                <div className="flex h-screen items-center justify-center">
-                    <h1>Error: Unknown action</h1>
-                </div>
-            );
+            notFound();
     }
 };
 
